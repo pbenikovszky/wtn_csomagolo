@@ -21,6 +21,16 @@ defined ('_JEXEC') or die('Restricted access');
 if ((!isset($_SESSION['vik_csinal']))) $_SESSION['vik_csinal']=0;
 $_SESSION['vik_csinal'] = 1 - $_SESSION['vik_csinal'];
 
+$fnev[0]="fj";
+$fnev[1]="excel";
+
+$fileName = $fnev[$_SESSION['vik_csinal']] . date('Y-m-d') . ".csv";
+
+// TODO: UTF-8 charset
+
+header('Content-Type: application/csv');
+header('Content-Disposition: attachment; filename="'.$fileName.'"');
+
 echo $this->exportCSV;
 
 
