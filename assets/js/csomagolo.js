@@ -11,6 +11,9 @@ window.addEventListener('load', function () {
     var btnStateToDelivered = document.getElementById('btnStateToDelivered');
     var btnGLSExport = document.getElementById('btnGLSExport');
 
+    addDropdownEventListeners();
+
+
     // Select every checkbox in first column
     btnSelectAll.addEventListener('click', function (e) {
         document.getElementsByName('cbSelect').forEach(cb => {
@@ -163,11 +166,23 @@ window.addEventListener('load', function () {
 
 
     // handling Dropdown box change event
-    let dropboxes = document.getElementsByClassName('db-state');
-    Array.prototype.forEach.call(dropboxes, function (dbox) {
-        dbox.addEventListener('change', function () {
-            console.log('changed');
-        });
-    });
+    function addDropdownEventListeners() {
+        let rows = document.querySelector(".orderTable").rows;
+        for (let i = 2; i < rows.length; i++) {
+            let dbox = rows[i].getElementsByTagName('td')[8].firstElementChild;
+            dbox.addEventListener('change', function(e) {
+                onDropdownChange(e, i);
+            });
+        }
+    }
+
+    function onDropdownChange(event, rowIndex) {
+        let rows = document.querySelector(".orderTable").rows;
+        let oNumber = rows[rowIndex].getElementsByTagName('td')[1].firstElementChild.innerText;
+        let newState = event.target.value;
+        
+        changeState(oNumber, newState);
+        //location.reload();
+    }
 
 });

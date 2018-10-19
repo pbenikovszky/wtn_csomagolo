@@ -53,8 +53,17 @@ class VirtuemartViewCsomagolo extends VmViewAdmin {
 			}	// foreach
 		} // if (count)
 
+		// Set the toolbar
+		$this->addToolBar();
+
 		parent::display($tpl);
 	}
+
+	protected function addToolBar() {
+		JToolbarHelper::title("Csomagoló nézet", 'csomagolo');
+		JToolbarHelper::save('csomagolo.save');		
+	}
+
 
 }
 
