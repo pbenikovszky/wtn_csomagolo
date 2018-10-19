@@ -61,7 +61,6 @@ class VirtuemartViewCsomagolo extends VmViewAdmin {
 
 	protected function addToolBar() {
 		JToolbarHelper::title("Csomagoló nézet", 'csomagolo');
-		JToolbarHelper::save('csomagolo.save');		
 	}
 
 
