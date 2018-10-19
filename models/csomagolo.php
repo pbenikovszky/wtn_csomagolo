@@ -486,6 +486,13 @@ class VirtueMartModelCsomagolo extends VmModel
 			$orderinfo = $db->loadResult();
 			$line->orderstate = $orderinfo;
 
+			// check if order has invoice issued or not
+			$query = 'SELECT COUNT(*) FROM #__cloud_szamlazzhu 
+					  WHERE virtuemart_order_id=' . $line->virtuemart_order_id;
+			$db->setQuery($query);
+			$hasInvoice = $db->loadResult();
+			$line->hasInvoice = ($hasInvoice > 0);
+
 		}
 
 		return $result;

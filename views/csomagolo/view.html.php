@@ -53,23 +53,6 @@ class VirtuemartViewCsomagolo extends VmViewAdmin {
 			}	// foreach
 		} // if (count)
 
-
-		// ! This code is for the glsexport layout
-		// ! needs to be moved to view.json.php once finished
-
-		
-		// $this->glsOrderList = explode(",", $this->ordersToExport);
-		// $this->glsOrders = array();
-		// if (count($this->glsOrderList) > 0) {
-		// 	foreach($this->glsOrderList as $ordernum) {
-		// 		$oID = $csomagoloModel->getIdFromNumber($ordernum);
-		// 		$currentOrder = $csomagoloModel->getOrderById($oID);
-		// 		array_push($this->glsOrders, $currentOrder);
-		// 	}	// foreach
-		// } // if (count)
-
-		// $this->test = $csomagoloModel->getGlsOrder('test');
-
 		parent::display($tpl);
 	}
 

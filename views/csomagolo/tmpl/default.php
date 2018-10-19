@@ -240,9 +240,10 @@ defined ('_JEXEC') or die('Restricted access');
                         //     <img src=\"./components/com_virtuemart/assets/images/icon_32/printer.png\" alt=\"Smiley face\" height=\"32\" width=\"32\">
                         // </a></td>";
 
-                        // Számla kiállítva
+                // Számla kiállítva
                 echo "<td align=\"center\"><input type=\"checkbox\" name=\"cbInvoice$cnt\" disabled=\"disabled\" value=\"$order->order_number\"";
-                echo ($cnt % 2 == 0) ?" checked></td>" : "></td>";
+                echo ($order->hasInvoice) ?" checked></td>" : "></td>";
+                // echo ($cnt % 2 == 0) ?" checked></td>" : "></td>";
 
                 // Megrendelés állapota
                 // echo "<td align=\"center\">$order->orderstate</td>";
