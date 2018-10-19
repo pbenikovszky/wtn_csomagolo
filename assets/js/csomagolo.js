@@ -137,7 +137,7 @@ window.addEventListener('load', function () {
         // ! under development phase the html view format is used
 
         let urlTest = 'index.php?option=com_virtuemart&view=csomagolo&task=glsexport&glsorders=' + oids.join(',');
-        window.open(urlTest, '_blank');
+        window.open(url, '_blank');
 
     }); // btnGLSExport.click
 

@@ -48,6 +48,10 @@ class VirtuemartViewCsomagolo extends VmViewAdmin {
 				  "newState" => $this->newState,
 				  "code" => 200));
 
+
+		// * GLS Export 
+		$this->test = $csomagoloModel->getGlsOrder('test');
+
 		parent::display($tpl);
 	}
 

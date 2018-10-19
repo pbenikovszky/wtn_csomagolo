@@ -139,6 +139,53 @@ class VirtueMartModelCsomagolo extends VmModel
 // --------------------
 
 
+	// * GLS Export models
+
+	public function getGlsOrder($orderNumber) {
+		date_default_timezone_set('Europe/Paris');
+		$datum = date("Y-m-d");
+
+		// Create instances of Joomla's DB Object
+		$db=JFactory::getDBO();
+		$db2=JFactory::getDBO();
+		$db3=JFactory::getDBO();
+		$db5=JFactory::getDBO();
+		$db6=JFactory::getDBO();
+
+		$prefix = "#__";
+
+		$query="SELECT a.*,b.virtuemart_order_userinfo_id, b.virtuemart_user_id, b.address_type, b.address_type_name, b.company, b.title, b.last_name, b.first_name, b.middle_name, b.phone_1, b.phone_2, b.fax, b.address_1, b.address_2, b.city, b.virtuemart_country_id, b.zip, b.email
+        FROM 
+          ".$prefix."virtuemart_orders a
+          LEFT JOIN ".$prefix."virtuemart_order_userinfos b on b.virtuemart_order_id = a.virtuemart_order_id
+          LEFT JOIN ".$prefix."virtuemart_order_histories h on h.virtuemart_order_id = a.virtuemart_order_id
+        WHERE 
+          b.address_type = 'BT' AND a.order_status='L' GROUP BY a.virtuemart_order_id ORDER BY h.created_on DESC";
+
+		$db->setQuery($query);
+		$db->query() or die();
+		$num_rows = $db->getNumRows();
+		
+		if ($num_rows == 0) {
+			return "Nincs listázásra váró rendelés! Statusza: GLS futárra vár!";
+			exit();
+		} else {
+			$lista = 'Utánvét összege;cimzett;ország;irszam;város;cím;telefon;email;sms;cegnev;Utánvét hivatkozás;Ügyfél hivatkozás;Szolgáltatások;Megjegyzés';
+			$lista .= "\r\n";
+			$list2a='';
+			$rendelesek = $db->loadObjectList();			
+		}
+
+		if ($_SESSION['vik_csinal'] == 1) {
+			return $list2a;
+		} else {
+			return $lista;
+		}
+
+	}
+
+// --------------------
+
 	public function getOrderByNumber($orderNumber) {
 		$db = JFactory::getDBO();
 		$query = $db->getQuery(true);
