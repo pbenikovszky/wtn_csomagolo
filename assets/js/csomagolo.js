@@ -123,20 +123,8 @@ window.addEventListener('load', function () {
     // TODO implement 
     btnGLSExport.addEventListener('click', function (e) {
 
-        let oids = [];
-        let rows = document.querySelector(".orderTable").rows;
-        for (let i = 2; i < rows.length; i++) {
-            if (rows[i].getElementsByTagName('td')[8].firstElementChild.value == "L") {
-                let oid = rows[i].getElementsByTagName('td')[1].firstElementChild.innerText;
-                oids.push(oid);
-            } // if value == "L"
-        } // for 
 
-
-        let url = 'index.php?option=com_virtuemart&view=csomagolo&task=glsexport&=glsexport&glsorders=' + oids.join(',') + '&format=json';
-        // ! under development phase the html view format is used
-
-        let urlTest = 'index.php?option=com_virtuemart&view=csomagolo&task=glsexport&glsorders=' + oids.join(',');
+        let url = 'index.php?option=com_virtuemart&view=csomagolo&task=glsexport&format=json';
         window.open(url, '_blank');
 
     }); // btnGLSExport.click

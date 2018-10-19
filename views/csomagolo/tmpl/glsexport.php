@@ -21,7 +21,6 @@ defined ('_JEXEC') or die('Restricted access');
 if ((!isset($_SESSION['vik_csinal']))) $_SESSION['vik_csinal']=0;
 $_SESSION['vik_csinal'] = 1 - $_SESSION['vik_csinal'];
 
-echo "vik_csinal: " . $_SESSION['vik_csinal'] . "\n";
-echo "test: \n" . $this->test;
+echo $this->exportCSV;
 
 

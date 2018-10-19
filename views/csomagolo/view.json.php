@@ -50,7 +50,7 @@ class VirtuemartViewCsomagolo extends VmViewAdmin {
 
 
 		// * GLS Export 
-		$this->test = $csomagoloModel->getGlsOrder('test');
+		$this->exportCSV = $csomagoloModel->getGlsOrder();
 
 		parent::display($tpl);
 	}

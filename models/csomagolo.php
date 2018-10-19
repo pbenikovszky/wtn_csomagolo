@@ -141,7 +141,8 @@ class VirtueMartModelCsomagolo extends VmModel
 
 	// * GLS Export models
 
-	public function getGlsOrder($orderNumber) {
+	public function getGlsOrder() {
+
 		date_default_timezone_set('Europe/Paris');
 		$datum = date("Y-m-d");
 
@@ -173,7 +174,186 @@ class VirtueMartModelCsomagolo extends VmModel
 			$lista = 'Utánvét összege;cimzett;ország;irszam;város;cím;telefon;email;sms;cegnev;Utánvét hivatkozás;Ügyfél hivatkozás;Szolgáltatások;Megjegyzés';
 			$lista .= "\r\n";
 			$list2a='';
-			$rendelesek = $db->loadObjectList();			
+			$rendelesek = $db->loadAssocList();		
+			foreach ($rendelesek as $sor) {
+				$szall_cimzett = '';
+				$szall_orszag = '';
+				$szall_irszam = '';
+				$szall_varos = '';
+				$szall_cim = '';
+				$szall_sms = '';
+				$szall_email = '';
+				$szall_cegnev = '';
+				$szla_cimzett = '';
+				$szla_orszag = '';
+				$szla_irszam = '';
+				$szla_varos = '';
+				$szla_cim = '';
+				$szla_sms = '';
+				$szla_email = '';
+				$szla_cegnev = '';
+				
+				$query2 = "SELECT * FROM ".$prefix."virtuemart_order_userinfos WHERE address_type = 'ST' AND virtuemart_order_id = ".$sor['virtuemart_order_id']." LIMIT 0,1";
+				$db2->setQuery($query2);
+				$db2->query() or die();
+				$num_rows2 = $db2->getNumRows();
+				
+				if ($num_rows2 > 0) {
+					// Van külön szállítási cím
+					$szallitas = $db2->loadAssocList();
+					foreach ($szallitas as $szall_sor) {
+						$szall_cimzett = $szall_sor['first_name']." ".$szall_sor['last_name'];
+						if (strlen($szall_cimzett)<2) { $szall_cimzett = $sor['first_name']." ".$sor['last_name'];}
+						$szall_orszag = 'Magyarország';
+						$szall_irszam = $szall_sor['zip'];
+						$szall_varos = $szall_sor['city'];
+						$szall_cim = $szall_sor['address_1'];
+						$szall_sms = $szall_telefon = $szall_sor['phone_1'];
+						IF (strlen($szall_sms)<2) {$szall_sms = $szall_telefon = $sor['phone_1'];}
+						$szall_email = $szall_sor['email'];
+						IF (strlen($szall_email)<2) {$szall_email = $sor['email'];}
+						$szall_cegnev = $szall_sor['company'];
+					}
+				} else {
+						$szla_cimzett = $sor['first_name']." ".$sor['last_name'];
+						$szla_orszag = 'Magyarország';
+						$szla_irszam = $sor['zip'];
+						$szla_varos = $sor['city'];
+						$szla_cim = $sor['address_1'];
+						$szla_sms = $szla_telefon = $sor['phone_1'];
+						$szla_email = $sor['email'];
+						$szla_cegnev = $sor['company'];
+				}
+	
+
+				$query5 = "SELECT * FROM ".$prefix."virtuemart_orders WHERE virtuemart_order_id = ".$sor['virtuemart_order_id']." LIMIT 0,1";
+				$db5->setQuery($query5);
+				$db5->query() or die();
+				$num_rows5 = $db5->getNumRows();
+				$vUserId="";$kisker="";
+
+				if ($num_rows5 > 0) {
+				
+					$sor5 = $db5->loadAssocList();
+					$couponKod=$sor5[0]['coupon_code'];
+							$vUserId=$sor5[0]['virtuemart_user_id'];	
+
+					if ($vUserId>0){
+
+						$query6 = "SELECT * FROM ".$prefix."virtuemart_vmuser_shoppergroups WHERE virtuemart_user_id=$vUserId LIMIT 1";
+						$db6->setQuery($query6);
+						$db6->query() or die();
+						$num_rows6 = $db6->getNumRows();
+						if ($num_rows6 > 0 ) {
+							$sor6 = $db6->loadAssocList();
+							if ($sor6[0]['virtuemart_shoppergroup_id']==6) $kisker="(kisker)";
+						}
+				
+					}//if vUserId
+				  
+	
+				} else {
+					$couponKod="NEM LEHET!!!!Viktornak szólni(171124)!";
+				}
+	  
+				  $query6 = "SELECT * FROM ".$prefix."affiliate_tracker_conversions WHERE reference_id = ".($sor['virtuemart_order_id']*1)." LIMIT 0,1";
+				  $db6->setQuery($query6);
+				  $db6->query() or die();
+				  $num_rows6 = $db6->getNumRows();
+				  if ($num_rows6 > 0) {
+					$sor6 = $db6->loadAssocList();
+
+					$query5 = "SELECT * FROM ".$prefix."affiliate_tracker_accounts WHERE id = ".($sor6[0]['atid']*1)." LIMIT 0,1";
+					$db5->setQuery($query5);
+					$db5->query() or die();
+					$num_rows5 = $db5->getNumRows();
+					if ($num_rows5 > 0) {
+						$sor5 = $db5->loadAssocList();
+						if (trim($couponKod)!="") $couponKod.=" - ";
+						$couponKod.=$sor5[0]['account_name'];
+					}else $couponKod="NEM LEHET!!!!Viktornak szólni(171123)!(".$sor5[0]['atid'].")";
+	
+
+				  }
+	
+
+				$query3 = "SELECT * FROM ".$prefix."cloud_szamlazzhu_szamlaszam WHERE order_id = ".$sor['virtuemart_order_id']." LIMIT 0,1";
+				$db3->setQuery($query3);
+				$db3->query() or die();
+				$num_rows3 = $db3->getNumRows();
+				if ($num_rows3 > 0) {
+				  $sor3 = $db3->loadAssocList();
+				  $query3 = "SELECT * FROM ".$prefix."virtuemart_orders WHERE virtuemart_order_id = ".$sor['virtuemart_order_id']." LIMIT 0,1";
+				  $db3->setQuery($query3);
+				  $db3->query() or die();
+				  $num_rows3 = $db3->getNumRows();
+				  if ($num_rows3 > 0) {
+					$sor4 = $db3->loadAssocList();
+					if ($sor4[0]['virtuemart_paymentmethod_id']==6 or $sor4[0]['virtuemart_paymentmethod_id']==10) $sor3[0]['osszeg']='0';
+				  }
+				} else {$sor3[0]['order_id']='IMSERETLEN!!!'; $sor3[0]['osszeg']='0'; $sor3[0]['szamlaszam']=date('Y').'-';}//XXXX
+	
+	
+				IF(strlen($szall_sms) > 0) {$telefon = $szall_sms;}
+				ELSE {$telefon = $szla_sms;}
+				IF(strlen($szall_email) > 0) {$email = $szall_email;}
+				ELSE {$email = $szla_email;}
+			 
+				IF (strlen($szall_cimzett) > 0) {
+					$lista .= ''.$sor3[0]['osszeg'].';'.$szall_cimzett.';'.$szall_orszag.';'.$szall_irszam.';'.$szall_varos.';'.$szall_cim.';'.$telefon.';'.$email.';'.$telefon.';'.$szall_cegnev.';'.$sor3[0]['szamlaszam'].';'.$sor3[0]['szamlaszam'].';sm2();';
+				} ELSE {
+					$lista .= ''.$sor3[0]['osszeg'].';'.$szla_cimzett.';'.$szla_orszag.';'.$szla_irszam.';'.$szla_varos.';'.$szla_cim.';'.$telefon.';'.$email.';'.$telefon.';'.$szla_cegnev.';'.$sor3[0]['szamlaszam'].';'.$sor3[0]['szamlaszam'].';sm2();';
+				}
+
+				$guery="UPDATE ".$prefix."virtuemart_orders SET order_status = 'L' WHERE virtuemart_order_id =".$sor['virtuemart_order_id'];
+				$db->setQuery($query);
+				$kesz = $db->query();
+				IF (!$kesz) {echo "UPDATE hiba 1. - ".$sor['virtuemart_order_id']."<br />"; exit();}
+	
+				$guery="UPDATE ".$prefix."virtuemart_order_items SET order_status = 'L' WHERE virtuemart_order_id =".$sor['virtuemart_order_id'];
+				$db->setQuery($query) ;
+				$kesz = $db->query();
+				IF (!$kesz) {echo "UPDATE hiba 1. - ".$sor['virtuemart_order_id']."<br />"; exit();}
+	
+				$guery="INSERT INTO ".$prefix."virtuemart_order_histories (virtuemart_order_id,order_status_code,customer_notified,published,created_on,modified_on) VALUES ('".$sor['virtuemart_order_id']."','L','0','1','".date('Y-m-d H:i:s')."','".date('Y-m-d H:i:s')."')";        
+				$db->setQuery($query);
+				$kesz = $db->query();
+				IF (!$kesz) {echo "INSERT hiba - ".$sor['virtuemart_order_id']."<br />"; exit();}
+	
+				$query = "SELECT * FROM ".$prefix."virtuemart_order_userinfos WHERE virtuemart_order_id = ".$sor['virtuemart_order_id']." ORDER BY address_type LIMIT 1";
+				$db->setQuery($query);
+				$db->query() or die();
+				$num_rows = $db->getNumRows();
+				if ($num_rows > 0) {
+					$nev = $db->loadAssocList();
+				}
+	
+				$query = "SELECT * FROM ".$prefix."virtuemart_order_items WHERE virtuemart_order_id = ".$sor['virtuemart_order_id'];
+				$db->setQuery($query);
+				$db->query() or die();
+				$num_rows = $db->getNumRows();
+	
+				$vesszo="";
+	
+				if ($num_rows > 0) {
+					$rendelesTetel = $db->loadAssocList();
+					if ($nev[0]['first_name']==$nev[0]['last_name']) $nevseg1=$nev[0]['first_name']; else $nevseg1=$nev[0]['first_name'] ." ".$nev[0]['last_name'];
+					$list2a.= $sor['virtuemart_order_id'].";$couponKod;".strtr($kisker.$nevseg1,$replace_rule).";";
+	
+				  foreach ($rendelesTetel as $rend_sor) {
+					$list2a.= $vesszo.$rend_sor['virtuemart_product_id']."(".$rend_sor['product_quantity'].")"	;
+					$vesszo=",";
+				  }
+				  if (trim($nev[0]['customer_note'])=="") $seg1="-";else $seg1=strtr($nev[0]['customer_note'],$replace_rule);
+	
+				  $list2a.= ";".$seg1;
+	
+				  $lista .=";".strtr($nev[0]['customer_note'],$replace_rule)."\r\n";
+				  $list2a.="\r\n";//deldel<br>
+				}
+	
+			}			
+			
 		}
 
 		if ($_SESSION['vik_csinal'] == 1) {
