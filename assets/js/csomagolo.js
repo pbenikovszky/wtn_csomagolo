@@ -133,7 +133,7 @@ window.addEventListener('load', function () {
     }); // btnGLSExport.click
 
     // Function to change state of the selected orders
-    function changeState(data, stateCode) {
+    function changeState(data, stateCode, isFromDropDown = false) {
 
         let xhr = new XMLHttpRequest();
         let method = 'POST';
@@ -155,12 +155,18 @@ window.addEventListener('load', function () {
 
             // Reload the page after the successful change
             if (result.result === "SUCCESS") {
-                location.reload();
+                if (isFromDropDown) {
+                    loader.classList.add('tss-hidden');
+                } else {
+                    location.reload();
+                }
             } // if
         } // onload
 
         let params = "ordernumbers=" + data + "&newstate=" + stateCode;
+        let loader = document.getElementById('loader');
         xhr.send(params);
+        loader.classList.remove('tss-hidden');
 
     } // changeState
 
@@ -181,8 +187,7 @@ window.addEventListener('load', function () {
         let oNumber = rows[rowIndex].getElementsByTagName('td')[1].firstElementChild.innerText;
         let newState = event.target.value;
         
-        changeState(oNumber, newState);
-        //location.reload();
+        changeState(oNumber, newState, true);
     }
 
 });

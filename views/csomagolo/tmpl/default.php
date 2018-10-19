@@ -72,7 +72,65 @@ defined ('_JEXEC') or die('Restricted access');
         display: none;
     }
 
+    /* Style for the loader */
+
+    .loader {
+        position: absolute;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0,0,0,0.8);
+        text-align: center;
+    }
+
+    .loader-wrapper {
+        position: absolute;
+        top: 30%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .lds-ripple {
+        display: inline-block;
+        position: relative;
+        width: 64px;
+        height: 64px;
+    }
+
+    .lds-ripple div {
+        position: absolute;
+        border: 4px solid #fff;
+        opacity: 1;
+        border-radius: 50%;
+        animation: lds-ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+    }
+
+    .lds-ripple div:nth-child(2) {
+        animation-delay: -0.5s;
+    }
+
+    @keyframes lds-ripple {
+        0% {
+            top: 28px;
+            left: 28px;
+            width: 0;
+            height: 0;
+            opacity: 1;
+        }
+        100% {
+            top: -1px;
+            left: -1px;
+            width: 58px;
+            height: 58px;
+            opacity: 0;
+        }
+    }
 </style>
+
+<div id="loader" class="loader tss-hidden">
+    <div class="loader-wrapper">
+        <div class="lds-ripple"><div></div><div></div></div>
+    </div>
+</div>
 
 <h1><?php echo JText::_('COM_VIRTUEMART_TITLE'); ?></h1>
 <h3 style="margin-bottom: 20px;"><?php echo JText::_('COM_VIRTUEMART_SUBTITLE'); ?></h3>
