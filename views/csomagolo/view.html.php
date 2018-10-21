@@ -21,6 +21,7 @@ defined('_JEXEC') or die('Restricted access');
 // Load the view framework
 if(!class_exists('VmViewAdmin'))require(VMPATH_ADMIN.DS.'helpers'.DS.'vmviewadmin.php');
 
+
 /**
  * HTML View class for the VirtueMart Component
  *
@@ -53,12 +54,19 @@ class VirtuemartViewCsomagolo extends VmViewAdmin {
 			}	// foreach
 		} // if (count)
 
+
+		// print invoice
+		$this->invoiceNumber  = "E-2018-7927";
+		$this->invoiceOrderID = "szamla_teszt";
+		
 		// Set the toolbar
 		$this->addToolBar();
 
 		parent::display($tpl);
 	}
 
+
+	// Funcion to add title to toolbar
 	protected function addToolBar() {
 		JToolbarHelper::title("Csomagoló nézet", 'csomagolo');
 	}

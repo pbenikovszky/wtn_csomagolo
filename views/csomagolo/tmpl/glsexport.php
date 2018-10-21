@@ -26,8 +26,6 @@ $fnev[1]="excel";
 
 $fileName = $fnev[$_SESSION['vik_csinal']] . date('Y-m-d') . ".csv";
 
-// TODO: UTF-8 charset
-
 header('Content-Type: application/csv');
 header('Content-Disposition: attachment; filename="'.$fileName.'"');
 

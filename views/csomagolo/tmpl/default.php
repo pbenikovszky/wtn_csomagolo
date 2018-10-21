@@ -262,7 +262,7 @@ defined ('_JEXEC') or die('Restricted access');
             $cnt = 0;
             foreach ($this->orders as $order) { 
                 $cnt += 1;
-                echo "<tr class=\"tss-table-row\">";
+                echo "<tr class=\"tss-table-row\" data-invoicenumber=\"$order->invoiceNumber\" data-invoiceurl=\"$order->invoiceURL\">";
 
                 // Kijelölés
                 echo "<td align=\"center\"><input type=\"checkbox\" name=\"cbSelect\" value=\"$order->order_number\"></td>";

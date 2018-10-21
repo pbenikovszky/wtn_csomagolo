@@ -21,6 +21,9 @@ class VirtueMartModelCsomagolo extends VmModel
 		parent::__construct();
 	}
 
+	/**
+	 * Return the value of the states which should be shown in the main view
+	 */
 	public function getOrderstates() {
 		return array("Megerősített"=>"C", "GLS futárra vár"=>"L", "Várakoztatva"=>"V");
 	}
@@ -405,6 +408,9 @@ class VirtueMartModelCsomagolo extends VmModel
 
 // --------------------
 
+	/**
+	 * Get the order from DB by searching for the order_number field
+	 */
 	public function getOrderByNumber($orderNumber) {
 		$db = JFactory::getDBO();
 		$query = $db->getQuery(true);
@@ -426,6 +432,9 @@ class VirtueMartModelCsomagolo extends VmModel
 		return $result;
 	}
 
+	/**
+	 * Set the state of the order which has the number $orderNumber to $newState
+	 */
 	public function setOrder($orderNumber, $newState) {
 
 		$db = JFactory::getDBO();
@@ -438,7 +447,7 @@ class VirtueMartModelCsomagolo extends VmModel
 	}
 
 	/**
-	 * Get the orders from DB
+	 * Get the orders from DB for the main view
 	 */
 	public function getOrders() {
 		$db = JFactory::getDBO();
@@ -453,7 +462,7 @@ class VirtueMartModelCsomagolo extends VmModel
 
 			// get the user's name and email address from the #__virtuemart_order_userinfos table
 			$query = 'SELECT first_name, last_name, middle_name, email, customer_note, virtuemart_user_id, gls_note from #__virtuemart_order_userinfos u
-					  WHERE u.virtuemart_order_id=' . $line->virtuemart_order_id;
+						WHERE u.virtuemart_order_id=' . $line->virtuemart_order_id;
 			$db->setQuery($query);
 			$userinfo = $db->loadObject();
 
@@ -468,7 +477,7 @@ class VirtueMartModelCsomagolo extends VmModel
 			
 			// get the user's shoppergroup id from the #__virtuemart_vmuser_shoppergroups table
 			$query = 'SELECT virtuemart_shoppergroup_id FROM #__virtuemart_vmuser_shoppergroups s
-					  WHERE s.virtuemart_user_id = ' . $db->quote($userinfo->virtuemart_user_id);
+						WHERE s.virtuemart_user_id = ' . $db->quote($userinfo->virtuemart_user_id);
 			$db->setQuery($query);
 			$isKisker = $db->loadResult();
 			$line->isKisker = ($isKisker == 6);
@@ -481,21 +490,94 @@ class VirtueMartModelCsomagolo extends VmModel
 
 			// get the order state from the #__virtuemart_orderstates table
 			$query = 'SELECT order_status_name from #__virtuemart_orderstates o
-					  WHERE o.order_status_code = ' . $db->quote($line->order_status);
+						WHERE o.order_status_code = ' . $db->quote($line->order_status);
 			$db->setQuery($query);
 			$orderinfo = $db->loadResult();
 			$line->orderstate = $orderinfo;
 
 			// check if order has invoice issued or not
-			$query = 'SELECT COUNT(*) FROM #__cloud_szamlazzhu 
-					  WHERE virtuemart_order_id=' . $line->virtuemart_order_id;
+			$query = 'SELECT szamlaszam FROM #__cloud_szamlazzhu_szamlaszam
+						WHERE order_id=' . $line->virtuemart_order_id;
 			$db->setQuery($query);
-			$hasInvoice = $db->loadResult();
-			$line->hasInvoice = ($hasInvoice > 0);
+			// $line->invoiceNumber = $db->loadResult();
+			$line->invoiceNumber = "E-2017-2215"; // test id : 5997; 
+			$line->hasInvoice = ($line->invoiceNumber != "");
+
+			// get the invoiceURL if issue has been invoiced
+			if ($line->hasInvoice) {
+				// $query = 'SELECT szla_url FROM #__cloud_szamlazzhu
+				// 			WHERE order_id=' . $line->virtuemart_order_id;
+				$query = 'SELECT szla_url FROM #__cloud_szamlazzhu
+							WHERE virtuemart_order_id=5997'; // . $line->virtuemart_order_id;
+				$db->setQuery($query);
+				$line->invoiceURL = $db->loadResult();
+			}
 
 		}
 
 		return $result;
 	}
 
+
+	// * Print invoice
+
+	// Working directory: /web/drbiroszabo/masolat1/administrator
+
+	public function getInvoicePDF($invoiceNumber, $order_id) {
+		$xmlPath = $this->getInvoiceXML($invoiceNumber, $order_id);
+
+		$path = getcwd();
+		$pdfPath = $path . "\\myInvoices\\";
+		$pdfFullFileName = $pdfPath . $order_id . ".pdf";
+
+		$ch = curl_init("https://www.szamlazz.hu/szamla/");
+		$fp = fopen($pdfFullFileName, "w");
+	
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); 
+		curl_setopt($ch, CURLOPT_FILE, $fp);
+		curl_setopt($ch, CURLOPT_POST, true);
+	
+		$cFile = new CURLFile($xmlPath, "text/xml", "invoice_xml");
+		$data = array('action-szamla_agent_pdf'=>$cFile);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $data); 
+		   
+		$response = curl_exec($ch);
+	
+		fclose($fp);
+	
+		if ($response == true) {
+			$result->result = "SUCCESS";
+			$result->pdfFileName = $order_id . ".pdf";
+		} else {
+			$result->result = "FAIL";
+		}
+	
+		curl_close($ch);		
+
+		return $result;
+	}
+
+	public function getInvoiceXML($invoiceNumber, $order_id) {
+	
+		$componentParams = JComponentHelper::getParams('com_cloudszamlazzhu');
+		$szamlazzhu_user = $componentParams->get('szamlazzhu_user', '');
+		$szamlazzhu_pass = $componentParams->get('szamlazzhu_pass', '');	
+		
+		$szamla = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><xmlszamlapdf xmlns="http://www.szamlazz.hu/xmlszamlapdf" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.szamlazz.hu/xmlszamlapdf xmlszamlapdf.xsd"></xmlszamlapdf>');
+		$szamla->addChild('felhasznalo', $szamlazzhu_user);
+		$szamla->addChild('jelszo', $szamlazzhu_pass);
+		$szamla->addChild('szamlaszam', $invoiceNumber);
+		$szamla->addChild('valaszVerzio', 1);
+		
+		$xml = $szamla->asXML();
+				
+		$path = getcwd();
+		$xmlPath = $path . "\\myInvoices\\XMLs\\";
+		$xmlFullFileName = $xmlPath . $order_id . ".xml";
+		
+		file_put_contents($xmlFullFileName, $xml);
+		 
+		return $xmlFullFileName;
+		
+	}	
 }

@@ -79,9 +79,10 @@ window.addEventListener('load', function () {
         alert(e.srcElement.id);
     }); // btnIssueInvoice.click
 
-    // TODO implement 
+    // * implementing
     btnPrintInvoice.addEventListener('click', function (e) {
-        alert(e.srcElement.id);
+        let url = 'index.php?option=com_virtuemart&view=csomagolo&task=printinvoice';
+        window.open(url, '_blank');
 
     }); // btnPrintInvoice.click
 
@@ -122,10 +123,9 @@ window.addEventListener('load', function () {
         } // if
     }); // btnStateToDelivered.click
 
+    
 
-    // TODO implement 
     btnGLSExport.addEventListener('click', function (e) {
-
 
         let url = 'index.php?option=com_virtuemart&view=csomagolo&task=glsexport&format=json';
         window.open(url, '_blank');

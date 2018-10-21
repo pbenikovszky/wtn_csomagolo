@@ -67,7 +67,13 @@ class VirtuemartControllerCsomagolo extends VmController {
 	public function glsexport() {
 		$view = $this->getView( 'csomagolo', 'json' );
 		$view->setLayout('glsexport');
-		$view->display();
+		$view->display(); 
+	}
+
+	public function printinvoice() {
+		$view = $this->getView( 'csomagolo', 'html' );
+		$view->setLayout('printinvoice');
+		$view->display(); 
 	}
 
 	/**
