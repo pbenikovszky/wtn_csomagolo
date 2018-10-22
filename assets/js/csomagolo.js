@@ -81,8 +81,9 @@ window.addEventListener('load', function () {
 
     // * implementing
     btnPrintInvoice.addEventListener('click', function (e) {
-        let url = 'index.php?option=com_virtuemart&view=csomagolo&task=printinvoice';
-        window.open(url, '_blank');
+        alert("Button is just a placeholder until further action");
+        // let url = 'index.php?option=com_virtuemart&view=csomagolo&task=printinvoice';
+        // window.open(url, '_blank');
 
     }); // btnPrintInvoice.click
 
