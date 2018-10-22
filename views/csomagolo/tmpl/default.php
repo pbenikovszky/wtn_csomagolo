@@ -185,27 +185,14 @@ defined ('_JEXEC') or die('Restricted access');
                 </div>
             </th>
 
-            <!-- Előnézet -->
-            <!-- <th colspan="2">
-                <div class="header-container">
-                    <div class="header-buttonTitle"><span><?php // echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER7'); ?></span></div>
-                    <div id="btnPrintAll" class="btn tssBtn"><?php // echo JText::_('COM_VIRTUEMART_PACKAGE_PRINTALL'); ?></div>
-                </div>
-            </th> -->
-           <th>
+            <!-- Számla / nyomtatás  -->
+           <th colspan="2" style="width: 125px;">
                 <div class="header-container">
                     <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER7'); ?></span></div>
                     <div id="btnPrintAll" class="btn tssBtn"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_PRINTALL'); ?></div>
                 </div>
             </th>
-            
-            <!-- Nyomtatás -->
-            <!-- <th>
-                <div class="header-container">
-                    <div class="header-buttonTitle"><span><?php //echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER8'); ?></span></div>
-                </div>
-            </th> -->
-            
+           
             <!-- Számla kiállítva -->
             <th>
                 <div class="header-container">
@@ -249,7 +236,7 @@ defined ('_JEXEC') or die('Restricted access');
             <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH4'); ?></div></th>
             <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH5'); ?></div></th>
             <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH6'); ?></div></th>
-            <!-- <th><div><?php // echo JText::_('COM_VIRTUEMART_PACKAGE_TH7'); ?></div></th> -->
+            <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH7'); ?></div></th>
             <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH8'); ?></div></th>
             <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH9'); ?></div></th>
             <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH10'); ?></div></th>
@@ -285,10 +272,13 @@ defined ('_JEXEC') or die('Restricted access');
                 echo "<td align=\"center\">$order->user_email</td>";
 
                 // Előnézet
-                //echo "<td align=\"center\"><a href=\"index.php\"><img src=\"./components/com_virtuemart/assets/images/icon_32/invoicenew.png\" alt=\"Smiley face\" height=\"32\" width=\"32\"></a></td>";
+                echo "<td style=\"width:60px\" align=\"center\">
+                        <a href=\"javascript:void window.open('index.php?option=com_virtuemart&view=csomagolo&task=printinvoice&invoicenumber=$order->invoiceNumber&invoiceorderid=$order->virtuemart_order_id', '_blank');\">
+                            <img src=\"./components/com_virtuemart/assets/images/icon_32/invoicenew.png\" alt=\"Smiley face\" height=\"32\" width=\"32\">
+                        </a></td>";
 
                 // Nyomtatás
-                echo "<td align=\"center\">
+                echo "<td style=\"width:60px\" align=\"center\">
                         <a href=\"javascript:void window.open('index.php?option=com_virtuemart&view=csomagolo&task=printorder&orderid=$order->virtuemart_order_id', 'win2', 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no');\">
                             <img src=\"./components/com_virtuemart/assets/images/icon_32/printer.png\" alt=\"Smiley face\" height=\"32\" width=\"32\">
                         </a></td>";
@@ -301,10 +291,8 @@ defined ('_JEXEC') or die('Restricted access');
                 // Számla kiállítva
                 echo "<td align=\"center\"><input type=\"checkbox\" name=\"cbInvoice$cnt\" disabled=\"disabled\" value=\"$order->order_number\"";
                 echo ($order->hasInvoice) ?" checked></td>" : "></td>";
-                // echo ($cnt % 2 == 0) ?" checked></td>" : "></td>";
 
                 // Megrendelés állapota
-                // echo "<td align=\"center\">$order->orderstate</td>";
                 echo "<td><select align=\"center\" class=\"db-state\">";
                 foreach ($this->orderstates as $orderstate => $state_value) {
                     if ($state_value == $order->order_status) {

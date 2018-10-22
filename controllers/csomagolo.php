@@ -73,6 +73,8 @@ class VirtuemartControllerCsomagolo extends VmController {
 	public function printinvoice() {
 		$view = $this->getView( 'csomagolo', 'html' );
 		$view->setLayout('printinvoice');
+		$view->invoiceNumber = JRequest::getVar('invoicenumber');
+		$view->invoiceOrderID = JRequest::getVar('invoiceorderid');
 		$view->display(); 
 	}
 

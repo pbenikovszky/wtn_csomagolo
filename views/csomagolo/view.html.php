@@ -56,8 +56,8 @@ class VirtuemartViewCsomagolo extends VmViewAdmin {
 
 
 		// print invoice
-		$this->invoiceNumber  = "E-2018-7927";
-		$this->invoiceOrderID = "szamla_teszt";
+		// $this->invoiceNumber  = "E-2018-7927";
+		// $this->invoiceOrderID = "szamla_teszt";
 		
 		// Set the toolbar
 		$this->addToolBar();

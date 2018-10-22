@@ -527,7 +527,8 @@ class VirtueMartModelCsomagolo extends VmModel
 		$xmlPath = $this->getInvoiceXML($invoiceNumber, $order_id);
 
 		$path = getcwd();
-		$pdfPath = $path . "\\myInvoices\\";
+		// $pdfPath = $path . "\\myInvoices\\";
+		$pdfPath = $path . "/myInvoices/";
 		$pdfFullFileName = $pdfPath . $order_id . ".pdf";
 
 		$ch = curl_init("https://www.szamlazz.hu/szamla/");
@@ -572,7 +573,8 @@ class VirtueMartModelCsomagolo extends VmModel
 		$xml = $szamla->asXML();
 				
 		$path = getcwd();
-		$xmlPath = $path . "\\myInvoices\\XMLs\\";
+		// $xmlPath = $path . "\\myInvoices\\XMLs\\";
+		$xmlPath = $path . "/myInvoices/XMLs/";
 		$xmlFullFileName = $xmlPath . $order_id . ".xml";
 		
 		file_put_contents($xmlFullFileName, $xml);
