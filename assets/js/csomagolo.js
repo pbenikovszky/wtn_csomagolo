@@ -91,9 +91,9 @@ window.addEventListener('load', function () {
         let oids = [];
         let rows = document.querySelector(".orderTable").rows;
         for (let i = 2; i < rows.length; i++) {
-            let cb = rows[i].getElementsByTagName('td')[7].firstElementChild;
+            let cb = rows[i].getElementsByTagName('td')[8].firstElementChild;
             if (cb.checked) {
-                if (rows[i].getElementsByTagName('td')[8].firstElementChild.value == "C") {
+                if (rows[i].getElementsByTagName('td')[9].firstElementChild.value == "C") {
                     let oid = rows[i].getElementsByTagName('td')[1].firstElementChild.innerText;
                     oids.push(oid);
                 } // if value == "C"
@@ -109,9 +109,9 @@ window.addEventListener('load', function () {
         let oids = [];
         let rows = document.querySelector(".orderTable").rows;
         for (let i = 2; i < rows.length; i++) {
-            let cb = rows[i].getElementsByTagName('td')[7].firstElementChild;
+            let cb = rows[i].getElementsByTagName('td')[8].firstElementChild;
             if (cb.checked) {
-                if (rows[i].getElementsByTagName('td')[8].firstElementChild.value == "L") {
+                if (rows[i].getElementsByTagName('td')[9].firstElementChild.value == "L") {
                     let oid = rows[i].getElementsByTagName('td')[1].firstElementChild.innerText;
                     oids.push(oid);
                 } // if value == "L"
@@ -175,7 +175,7 @@ window.addEventListener('load', function () {
     function addDropdownEventListeners() {
         let rows = document.querySelector(".orderTable").rows;
         for (let i = 2; i < rows.length; i++) {
-            let dbox = rows[i].getElementsByTagName('td')[8].firstElementChild;
+            let dbox = rows[i].getElementsByTagName('td')[9].firstElementChild;
             dbox.addEventListener('change', function(e) {
                 onDropdownChange(e, i);
             });
