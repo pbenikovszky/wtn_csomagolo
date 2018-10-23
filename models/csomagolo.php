@@ -450,13 +450,28 @@ class VirtueMartModelCsomagolo extends VmModel
 				  SET order_status=' . $db->quote($newState) . ' WHERE order_number=' . $db->quote($orderNumber);
         $db->setQuery($query);
         $db->execute();
+
+        $user = JFactory::getUser();
+        $comment = "Csomagoló nézetből módosítva. Username: " . $user->username;
+        $orderID = $this->getIdFromNumber($orderNumber);
+
+        $query = 'SELECT MAX(virtuemart_order_history_id)+1 FROM #__virtuemart_order_histories';
+        $db->setQuery($query);
+        $newID = $db->loadResult();
+
+        $query = "INSERT INTO #__virtuemart_order_histories (virtuemart_order_history_id, virtuemart_order_id, order_status_code, customer_notified, comments, published, created_on, created_by, modified_on, modified_by)
+                   VALUES ($newID, $orderID, '$newState', 0, '$comment', 1, NOW(), $user->id, NOW(), $user->id)";
+        $db->setQuery($query);
+        $db->execute();
+
         return 1;
     }
 
     /**
      * Get the orders from DB for the main view
      */
-    public function getOrders() {
+    public function getOrders()
+    {
         $db = JFactory::getDBO();
 
         // Change the status of orders to "Megerősített

@@ -3,7 +3,7 @@
  *
  * Description
  *
- * @package	VirtueMart
+ * @package    VirtueMart
  * @subpackage
  * @author
  * @link https://virtuemart.net
@@ -19,43 +19,43 @@
 defined('_JEXEC') or die('Restricted access');
 
 // Load the view framework
-if(!class_exists('VmViewAdmin'))require(VMPATH_ADMIN.DS.'helpers'.DS.'vmviewadmin.php');
+if (!class_exists('VmViewAdmin')) {
+    require VMPATH_ADMIN . DS . 'helpers' . DS . 'vmviewadmin.php';
+}
 
 /**
  * HTML View class for the VirtueMart Component
  *
- * @package		VirtueMart
+ * @package        VirtueMart
  * @author
  */
-class VirtuemartViewCsomagolo extends VmViewAdmin {
+class VirtuemartViewCsomagolo extends VmViewAdmin
+{
 
-	function display($tpl = null) {
+    public function display($tpl = null)
+    {
 
-		// get the instance of our model
-		$csomagoloModel=VmModel::getModel('csomagolo');
-		$orderNumberList = explode(",", $this->orderNumbers);
-		$orderIDs = array(); 
+        // get the instance of our model
+        $csomagoloModel = VmModel::getModel('csomagolo');
+        // $orderNumberList = explode(",", $this->orderNumbers);
+        // $orderIDs = array();
 
-		foreach ($orderNumberList as $orderNumber) {
-			$current_order = $csomagoloModel->getOrderByNumber($orderNumber);
-			$csomagoloModel->setOrder($orderNumber, $this->newState);
-			array_push($orderIDs, $order->virtuemart_order_id);
-		}
+        // foreach ($orderNumberList as $orderNumber) {
+        //     $current_order = $csomagoloModel->getOrderByNumber($orderNumber);
+        //     $csomagoloModel->setOrder($orderNumber, $this->newState);
+        //     array_push($orderIDs, $order->virtuemart_order_id);
+        // }
 
-		$this->response = json_encode( 
-			array("result" => "SUCCESS", 
-				  "data" => $this->orderNumbers,
-				  "newState" => $this->newState,
-				  "code" => 200));
+        // $this->response = json_encode(
+        //     array("result" => "SUCCESS",
+        //         "data" => $this->orderNumbers,
+        //         "newState" => $this->newState,
+        //         "code" => 200));
 
+        // * GLS Export
+        $this->exportCSV = $csomagoloModel->getGlsOrder();
 
-		// * GLS Export 
-		$this->exportCSV = $csomagoloModel->getGlsOrder();
-
-		parent::display($tpl);
-	}
-
-
+        parent::display($tpl);
+    }
 
 }
-

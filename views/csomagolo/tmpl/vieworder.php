@@ -17,14 +17,11 @@
  */
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
-JToolbarHelper::title("Megrendelés (ID: $this->viewOrderID)", 'csomagolo');
+
+$order = $this->orderToView;
+
+JToolbarHelper::title("Megrendelés (Megrendelés száma: $order->order_number)", 'csomagolo');
 JToolBarHelper::back();
 
 $user = JFactory::getUser();
-echo "<p>Your name is {$user->name}, your email is {$user->email}, and your username is {$user->username}</p>";
-
-$test = 'COM_VIRTUEMART_ORDER_STATUS_CONFIRMED';
-
-echo "<p>";
-echo "Állapot: " . JText::_($test);
-echo "</p>";
+echo "<p>Your name is {$user->name}, your email is {$user->email}, your ID is {$user->id} and your username is {$user->username}</p>";

@@ -163,6 +163,9 @@ window.addEventListener('load', function () {
                 } else {
                     location.reload();
                 }
+            } else {
+                loader.classList.add('tss-hidden');
+                alert("Something went wrong");
             } // if
         } // onload
 

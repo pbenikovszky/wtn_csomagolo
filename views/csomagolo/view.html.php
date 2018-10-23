@@ -56,9 +56,8 @@ class VirtuemartViewCsomagolo extends VmViewAdmin
             } // foreach
         } // if (count)
 
-        // print invoice
-        // $this->invoiceNumber  = "E-2018-7927";
-        // $this->invoiceOrderID = "szamla_teszt";
+        // vieworder layout
+        $this->orderToView = $csomagoloModel->getOrderById($this->viewOrderID);
 
         // Set the toolbar
         JToolbarHelper::title(JText::_('COM_VIRTUEMART_TITLE'), 'csomagolo');
