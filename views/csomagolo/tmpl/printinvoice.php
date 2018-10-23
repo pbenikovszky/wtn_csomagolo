@@ -17,24 +17,24 @@
  */
 // Check to ensure this file is included in Joomla!
 
-defined ('_JEXEC') or die('Restricted access');
+defined('_JEXEC') or die('Restricted access');
 
-$csModel=VmModel::getModel('csomagolo');
+$csModel = VmModel::getModel('csomagolo');
 
 $pdf = $csModel->getInvoicePDF($this->invoiceNumber, $this->invoiceOrderID);
 
 if ($pdf->result == "SUCCESS") {
     echo "A $this->invoiceNumber számú számla sikeresen lekérdezve";
-?>
+    ?>
     <script src="components/com_virtuemart/assets/js/print.min.js"></script>
     <link rel="stylesheet" type="text/css" href="components/com_virtuemart/assets/css/print.min.css">
 
     <script>
         let pdfName = '<?php echo $pdf->pdfFileName; ?>';
-        //let url = 'http://localhost/joomla/administrator/myInvoices/' + pdfName; 
-        let url = 'http://masolat1.drbiroszabolcs.com/administrator/myInvoices/' + pdfName;
+        let url = 'http://localhost/joomla/administrator/myInvoices/' + pdfName;
+        // let url = 'http://masolat1.drbiroszabolcs.com/administrator/myInvoices/' + pdfName;
         printJS({
-            printable: url, 
+            printable: url,
             type: 'pdf',
             showModal: true
         });

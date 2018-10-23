@@ -3,7 +3,7 @@
  *
  * Description
  *
- * @package	VirtueMart
+ * @package    VirtueMart
  * @subpackage
  * @author
  * @link https://virtuemart.net
@@ -19,58 +19,57 @@
 defined('_JEXEC') or die('Restricted access');
 
 // Load the view framework
-if(!class_exists('VmViewAdmin'))require(VMPATH_ADMIN.DS.'helpers'.DS.'vmviewadmin.php');
-
+if (!class_exists('VmViewAdmin')) {
+    require VMPATH_ADMIN . DS . 'helpers' . DS . 'vmviewadmin.php';
+}
 
 /**
  * HTML View class for the VirtueMart Component
  *
- * @package		VirtueMart
+ * @package        VirtueMart
  * @author
  */
-class VirtuemartViewCsomagolo extends VmViewAdmin {
+class VirtuemartViewCsomagolo extends VmViewAdmin
+{
 
-	function display($tpl = null) {
+    public function display($tpl = null)
+    {
 
-		// get the instance of our model
-		$csomagoloModel=VmModel::getModel('csomagolo');
+        // get the instance of our model
+        $csomagoloModel = VmModel::getModel('csomagolo');
 
-		// get the data from our model
-		$this->orders = $csomagoloModel->getOrders();
-		$this->orderstates = $csomagoloModel->getOrderstates();
-		
+        // get the data from our model
+        $this->orders = $csomagoloModel->getOrders();
+        $this->orderstates = $csomagoloModel->getOrderstates();
 
-		// get the parameters passed in the URL
-		$this->orderDetails = $csomagoloModel->getOrderById($this->orderid);
+        // get the parameters passed in the URL
+        $this->orderDetails = $csomagoloModel->getOrderById($this->orderid);
 
-		// for printorders view
-		$this->orderNumberList = explode(",", $this->orderNumbers);
-		$this->ordersToPrint = array();
-		if (count($this->orderNumberList) > 0) {
-			foreach($this->orderNumberList as $ordernum) {
-				$oID = $csomagoloModel->getIdFromNumber($ordernum);
-				$currentOrder = $csomagoloModel->getOrderById($oID);
-				array_push($this->ordersToPrint, $currentOrder);
-			}	// foreach
-		} // if (count)
+        // for printorders view
+        $this->orderNumberList = explode(",", $this->orderNumbers);
+        $this->ordersToPrint = array();
+        if (count($this->orderNumberList) > 0) {
+            foreach ($this->orderNumberList as $ordernum) {
+                $oID = $csomagoloModel->getIdFromNumber($ordernum);
+                $currentOrder = $csomagoloModel->getOrderById($oID);
+                array_push($this->ordersToPrint, $currentOrder);
+            } // foreach
+        } // if (count)
 
+        // print invoice
+        // $this->invoiceNumber  = "E-2018-7927";
+        // $this->invoiceOrderID = "szamla_teszt";
 
-		// print invoice
-		// $this->invoiceNumber  = "E-2018-7927";
-		// $this->invoiceOrderID = "szamla_teszt";
-		
-		// Set the toolbar
-		$this->addToolBar();
+        // Set the toolbar
+        $this->addToolBar();
 
-		parent::display($tpl);
-	}
+        parent::display($tpl);
+    }
 
-
-	// Funcion to add title to toolbar
-	protected function addToolBar() {
-		JToolbarHelper::title("Csomagoló nézet", 'csomagolo');
-	}
-
+    // Funcion to add title to toolbar
+    protected function addToolBar()
+    {
+        JToolbarHelper::title(JText::_('COM_VIRTUEMART_TITLE'), 'csomagolo');
+    }
 
 }
-

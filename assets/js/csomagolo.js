@@ -1,5 +1,5 @@
 window.addEventListener('load', function () {
-    
+
     var btnSelectAll = document.getElementById('btnSelectAll');
     var btnDeselect = document.getElementById('btnDeselect');
     var btnShowRetail = document.getElementById('btnShowRetail');
@@ -12,7 +12,6 @@ window.addEventListener('load', function () {
     var btnGLSExport = document.getElementById('btnGLSExport');
 
     addDropdownEventListeners();
-
 
     // Select every checkbox in first column
     btnSelectAll.addEventListener('click', function (e) {
@@ -87,7 +86,7 @@ window.addEventListener('load', function () {
 
     }); // btnPrintInvoice.click
 
-    // Change the status of the selected orders to 'GLS futárra vár'
+    // Change the status of the selected orders to 'GLS futárra vár' (L)
     btnStateToGLS.addEventListener('click', function (e) {
         let oids = [];
         let rows = document.querySelector(".orderTable").rows;
@@ -106,6 +105,9 @@ window.addEventListener('load', function () {
         } // if
     }); // btnStateToGLS.click
 
+    // Change the status of the selected orders to 'Kiszállítva' (S)
+    // ! Currrently it is changes the state back to "Megerősített" (C)
+    // TODO once finished change the state here to 'Kiszállítva' (S)
     btnStateToDelivered.addEventListener('click', function (e) {
         let oids = [];
         let rows = document.querySelector(".orderTable").rows;
@@ -124,7 +126,7 @@ window.addEventListener('load', function () {
         } // if
     }); // btnStateToDelivered.click
 
-    
+
 
     btnGLSExport.addEventListener('click', function (e) {
 
@@ -177,7 +179,7 @@ window.addEventListener('load', function () {
         let rows = document.querySelector(".orderTable").rows;
         for (let i = 2; i < rows.length; i++) {
             let dbox = rows[i].getElementsByTagName('td')[9].firstElementChild;
-            dbox.addEventListener('change', function(e) {
+            dbox.addEventListener('change', function (e) {
                 onDropdownChange(e, i);
             });
         }
@@ -187,7 +189,7 @@ window.addEventListener('load', function () {
         let rows = document.querySelector(".orderTable").rows;
         let oNumber = rows[rowIndex].getElementsByTagName('td')[1].firstElementChild.innerText;
         let newState = event.target.value;
-        
+
         changeState(oNumber, newState, true);
     }
 

@@ -16,8 +16,14 @@
  * @version $Id: orders.php 9522 2017-05-02 14:23:52Z StefanSTS $
  */
 // Check to ensure this file is included in Joomla!
-defined ('_JEXEC') or die('Restricted access');
+defined('_JEXEC') or die('Restricted access');
 //AdminUIHelper::startAdminArea ($this);
+
+// if (!isset($_SESSION['hasRun']) && $_SESSION['hasRun'] != 1) {
+//     echo "<h1>First run</h1>";
+//     $_SESSION['hasRun'] = 1;
+// }
+
 ?>
 
 
@@ -46,13 +52,13 @@ defined ('_JEXEC') or die('Restricted access');
         min-width: 115px;
     }
 
-    /* Table rowheight */ 
+    /* Table rowheight */
 
     .orderTable {
 
         width: 1850px;
         table-layout: fixed;
-        
+
     }
 
     td {
@@ -132,8 +138,8 @@ defined ('_JEXEC') or die('Restricted access');
     </div>
 </div>
 
-<h1><?php echo JText::_('COM_VIRTUEMART_TITLE'); ?></h1>
-<h3 style="margin-bottom: 20px;"><?php echo JText::_('COM_VIRTUEMART_SUBTITLE'); ?></h3>
+<!-- <h1><?php // echo JText::_('COM_VIRTUEMART_TITLE'); ?></h1>
+<h3 style="margin-bottom: 20px;"><?php // echo JText::_('COM_VIRTUEMART_SUBTITLE'); ?></h3> -->
 
 <table class="orderTable">
     <thead valign="top">
@@ -144,24 +150,24 @@ defined ('_JEXEC') or die('Restricted access');
                 <div class="header-container">
                     <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER1'); ?></span></div>
                     <div id="btnSelectAll" class="btn tssBtn"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_SELECTALL'); ?></div>
-                    <div id="btnDeselect" class="btn tssBtn"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_DESELECT'); ?></div>                    
+                    <div id="btnDeselect" class="btn tssBtn"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_DESELECT'); ?></div>
                 </div>
             </th>
-            
+
             <!-- Megrendelés száma -->
             <th>
                 <div class="header-container">
                     <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER2'); ?></span></div>
                 </div>
             </th>
-            
+
             <!-- Megrendelés dátuma -->
             <th>
                 <div class="header-container">
                     <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER3'); ?></span></div>
                 </div>
             </th>
-            
+
             <!-- Kisker checkbox -->
             <th>
                 <div class="header-container">
@@ -170,7 +176,7 @@ defined ('_JEXEC') or die('Restricted access');
                     <div id="btnShowAll" class="btn tssBtn btnList"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_SHOWALL'); ?></div>
                 </div>
             </th>
-            
+
             <!-- Megrendelő neve -->
             <th>
                 <div class="header-container">
@@ -178,7 +184,7 @@ defined ('_JEXEC') or die('Restricted access');
                 </div>
             </th>
 
-            <!-- Megrendelő emailcíme -->        
+            <!-- Megrendelő emailcíme -->
             <th>
                 <div class="header-container">
                     <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER6'); ?></span></div>
@@ -192,24 +198,24 @@ defined ('_JEXEC') or die('Restricted access');
                     <div id="btnPrintAll" class="btn tssBtn"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_PRINTALL'); ?></div>
                 </div>
             </th>
-           
+
             <!-- Számla kiállítva -->
             <th>
                 <div class="header-container">
                     <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER9'); ?></span></div>
                     <div id="btnIssueInvoice" class="btn tssBtn btnInvoice"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_ISSUEINVOICE'); ?></div>
-                    <div id="btnPrintInvoice" class="btn tssBtn btnInvoice"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_PRINTINVOICE'); ?></div>                    
+                    <div id="btnPrintInvoice" class="btn tssBtn btnInvoice"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_PRINTINVOICE'); ?></div>
                 </div>
             </th>
-            
+
             <!-- Megrendelés állapota -->
             <th>
                 <div class="header-container">
                     <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER10'); ?></span></div>
                     <div id="btnStateToGLS" class="btn tssBtn"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_STATETOGLS'); ?></div>
-                    <div id="btnStateToDelivered" class="btn tssBtn"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_STATETODELIVERED'); ?></div>                    
+                    <div id="btnStateToDelivered" class="btn tssBtn"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_STATETODELIVERED'); ?></div>
                 </div>
-            </th> 
+            </th>
 
             <!-- Megjegyzés -->
             <th>
@@ -217,14 +223,14 @@ defined ('_JEXEC') or die('Restricted access');
                     <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER11'); ?></span></div>
                 </div>
             </th>
-            
+
             <!-- GLS megjegyzés -->
             <th>
                 <div class="header-container">
                     <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER12'); ?></span></div>
                         <div id="btnGLSExport" class="btn tssBtn"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_GLSEXPORT'); ?></div>
                     </div>
-            </th> 
+            </th>
 
         </tr>
 
@@ -246,77 +252,77 @@ defined ('_JEXEC') or die('Restricted access');
     </thead>
     <tbody>
         <?php
-            $cnt = 0;
-            foreach ($this->orders as $order) { 
-                $cnt += 1;
-                echo "<tr class=\"tss-table-row\" data-invoicenumber=\"$order->invoiceNumber\" data-invoiceurl=\"$order->invoiceURL\">";
+$cnt = 0;
+foreach ($this->orders as $order) {
+    $cnt += 1;
+    //echo "<tr class=\"tss-table-row\" data-invoicenumber=\"$order->invoiceNumber\" data-invoiceurl=\"$order->invoiceURL\">";
+    echo "<tr class=\"tss-table-row\">";
+    // Kijelölés
+    echo "<td align=\"center\"><input type=\"checkbox\" name=\"cbSelect\" value=\"$order->order_number\"></td>";
 
-                // Kijelölés
-                echo "<td align=\"center\"><input type=\"checkbox\" name=\"cbSelect\" value=\"$order->order_number\"></td>";
+    // Megrendelésszám
+    echo "<td align=\"center\"><a href=\"index.php?option=com_virtuemart&view=orders&task=edit&virtuemart_order_id=$order->virtuemart_order_id\">$order->order_number</a></td>";
 
-                // Megrendelésszám
-                echo "<td align=\"center\"><a href=\"index.php?option=com_virtuemart&view=orders&task=edit&virtuemart_order_id=$order->virtuemart_order_id\">$order->order_number</a></td>";
+    // Megrendelés dátuma
+    echo "<td align=\"center\">$order->dateFormatted</td>";
+    // echo "<td align=\"center\">$order->created_on</td>";
 
-                // Megrendelés dátuma
-                echo "<td align=\"center\">$order->dateFormatted</td>";
-                // echo "<td align=\"center\">$order->created_on</td>";
+    // Kisker-e checkbox
+    echo "<td align=\"center\"><input type=\"checkbox\" name=\"cbKisker$cnt\" disabled=\"disabled\" value=\"$order->order_number\"";
+    echo ($order->isKisker == true) ? " checked></td>" : "></td>";
 
-                // Kisker-e checkbox
-                echo "<td align=\"center\"><input type=\"checkbox\" name=\"cbKisker$cnt\" disabled=\"disabled\" value=\"$order->order_number\"";
-                echo ($order->isKisker == true) ?" checked></td>" : "></td>";
+    // Megrendelő neve
+    echo "<td align=\"center\">$order->user_name</td>";
 
-                // Megrendelő neve
-                echo "<td align=\"center\">$order->user_name</td>";
+    // Megrendelő emailcíme
+    echo "<td align=\"center\">$order->user_email</td>";
 
-                // Megrendelő emailcíme
-                echo "<td align=\"center\">$order->user_email</td>";
-
-                // Előnézet
-                echo "<td style=\"width:60px\" align=\"center\">
+    // Előnézet
+    echo "<td style=\"width:60px\" align=\"center\">
                         <a href=\"javascript:void window.open('index.php?option=com_virtuemart&view=csomagolo&task=printinvoice&invoicenumber=$order->invoiceNumber&invoiceorderid=$order->virtuemart_order_id', '_blank');\">
                             <img src=\"./components/com_virtuemart/assets/images/icon_32/invoicenew.png\" alt=\"Smiley face\" height=\"32\" width=\"32\">
                         </a></td>";
 
-                // Nyomtatás
-                echo "<td style=\"width:60px\" align=\"center\">
+    // Nyomtatás
+    echo "<td style=\"width:60px\" align=\"center\">
                         <a href=\"javascript:void window.open('index.php?option=com_virtuemart&view=csomagolo&task=printorder&orderid=$order->virtuemart_order_id', 'win2', 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no');\">
                             <img src=\"./components/com_virtuemart/assets/images/icon_32/printer.png\" alt=\"Smiley face\" height=\"32\" width=\"32\">
                         </a></td>";
 
-                        // echo "<td align=\"center\" colspan=\"2\">
-                        // <a href=\"javascript:void window.open('index.php?option=com_virtuemart&view=csomagolo&task=printorder&orderid=$order->virtuemart_order_id', 'win2', 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no');\">
-                        //     <img src=\"./components/com_virtuemart/assets/images/icon_32/printer.png\" alt=\"Smiley face\" height=\"32\" width=\"32\">
-                        // </a></td>";
+    // echo "<td align=\"center\" colspan=\"2\">
+    // <a href=\"javascript:void window.open('index.php?option=com_virtuemart&view=csomagolo&task=printorder&orderid=$order->virtuemart_order_id', 'win2', 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no');\">
+    //     <img src=\"./components/com_virtuemart/assets/images/icon_32/printer.png\" alt=\"Smiley face\" height=\"32\" width=\"32\">
+    // </a></td>";
 
-                // Számla kiállítva
-                echo "<td align=\"center\"><input type=\"checkbox\" name=\"cbInvoice$cnt\" disabled=\"disabled\" value=\"$order->order_number\"";
-                echo ($order->hasInvoice) ?" checked></td>" : "></td>";
+    // Számla kiállítva
+    echo "<td align=\"center\"><input type=\"checkbox\" name=\"cbInvoice$cnt\" disabled=\"disabled\" value=\"$order->order_number\"";
+    echo ($order->hasInvoice) ? " checked></td>" : "></td>";
 
-                // Megrendelés állapota
-                echo "<td><select align=\"center\" class=\"db-state\">";
-                foreach ($this->orderstates as $orderstate => $state_value) {
-                    if ($state_value == $order->order_status) {
-                        echo "<option value=\"$state_value\" selected=\"selected\">$orderstate</option>";
-                    } else {
-                        echo "<option value=\"$state_value\">$orderstate</option>";
-                    }
-                }
-                echo "</select></td>";
+    // Megrendelés állapota
+    echo "<td><select align=\"center\" class=\"db-state\">";
+    foreach ($this->orderstates as $orderstate => $state_value) {
+        if ($state_value == $order->order_status) {
+            echo "<option value=\"$state_value\" selected=\"selected\">$orderstate</option>";
+        } else {
+            echo "<option value=\"$state_value\">$orderstate</option>";
+        }
+    }
+    echo "</select></td>";
 
-                // Megjegyzés
-                echo "<td class=\"note-field\" align=\"center\">$order->comment</td>";
+    // Megjegyzés
+    echo "<td class=\"note-field\" align=\"center\">$order->comment</td>";
 
-                // GLS megjegyzés
-                echo "<td class=\"note-field\" align=\"center\">$order->gls_note</td>";
+    // GLS megjegyzés
+    echo "<td class=\"note-field\" align=\"center\">$order->gls_note</td>";
 
-                echo "</tr>";
-            }
-        ?>
+    echo "</tr>";
+}
+?>
     </tbody>
 </table>
 
 <?php
-    vmJsApi::addJScript('/administrator/components/com_virtuemart/assets/js/csomagolo.js',false,false);
+vmJsApi::addJScript('/administrator/components/com_virtuemart/assets/js/csomagolo.js', false, false);
 ?>
 
 <script>
