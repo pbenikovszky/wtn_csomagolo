@@ -456,8 +456,7 @@ class VirtueMartModelCsomagolo extends VmModel
     /**
      * Get the orders from DB for the main view
      */
-    public function getOrders()
-    {
+    public function getOrders() {
         $db = JFactory::getDBO();
 
         // Change the status of orders to "Megerősített

@@ -17,12 +17,6 @@
  */
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
-//AdminUIHelper::startAdminArea ($this);
-
-// if (!isset($_SESSION['hasRun']) && $_SESSION['hasRun'] != 1) {
-//     echo "<h1>First run</h1>";
-//     $_SESSION['hasRun'] = 1;
-// }
 
 ?>
 
@@ -261,7 +255,7 @@ foreach ($this->orders as $order) {
     echo "<td align=\"center\"><input type=\"checkbox\" name=\"cbSelect\" value=\"$order->order_number\"></td>";
 
     // Megrendelésszám
-    echo "<td align=\"center\"><a href=\"index.php?option=com_virtuemart&view=orders&task=edit&virtuemart_order_id=$order->virtuemart_order_id\">$order->order_number</a></td>";
+    echo "<td align=\"center\"><a href=\"index.php?option=com_virtuemart&view=csomagolo&task=vieworder&order_id=$order->virtuemart_order_id\">$order->order_number</a></td>";
 
     // Megrendelés dátuma
     echo "<td align=\"center\">$order->dateFormatted</td>";

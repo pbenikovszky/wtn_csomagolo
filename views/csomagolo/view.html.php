@@ -61,15 +61,9 @@ class VirtuemartViewCsomagolo extends VmViewAdmin
         // $this->invoiceOrderID = "szamla_teszt";
 
         // Set the toolbar
-        $this->addToolBar();
+        JToolbarHelper::title(JText::_('COM_VIRTUEMART_TITLE'), 'csomagolo');
 
         parent::display($tpl);
-    }
-
-    // Funcion to add title to toolbar
-    protected function addToolBar()
-    {
-        JToolbarHelper::title(JText::_('COM_VIRTUEMART_TITLE'), 'csomagolo');
     }
 
 }

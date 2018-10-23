@@ -16,7 +16,7 @@
  * @version $Id: orders.php 9522 2017-05-02 14:23:52Z StefanSTS $
  */
 // Check to ensure this file is included in Joomla!
-defined ('_JEXEC') or die('Restricted access');
+defined('_JEXEC') or die('Restricted access');
 
 ?>
 
@@ -102,7 +102,7 @@ defined ('_JEXEC') or die('Restricted access');
             <td><strong>
                     <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_ORDER_STATE'); ?></strong></td>
             <td>
-                <?php echo $this->orderDetails->statusName; ?>
+                <?php echo JText::_($this->orderDetails->statusName); ?>
             </td>
         </tr>
 
@@ -139,10 +139,10 @@ defined ('_JEXEC') or die('Restricted access');
                     <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_BANKACCOUNT'); ?></strong></td>
             <td>
                 <?php
-                    if ($this->orderDetails->virtuemart_paymentmethod_id == 6) {
-                        echo $this->orderDetails->paymentDesc;
-                    }
-                ?>
+if ($this->orderDetails->virtuemart_paymentmethod_id == 6) {
+    echo $this->orderDetails->paymentDesc;
+}
+?>
             </td>
         </tr>
 
@@ -304,13 +304,13 @@ defined ('_JEXEC') or die('Restricted access');
         </thead>
         <tbody>
             <?php
-                foreach ($this->orderDetails->orderItems as $orderItem) { 
-                    echo "<tr>";
-                    echo "<td align=\"center\">$orderItem->order_item_name</td>";
-                    echo "<td align=\"center\">$orderItem->product_quantity db</td>";
-                    echo "</tr>";
-                }
-            ?>
+foreach ($this->orderDetails->orderItems as $orderItem) {
+    echo "<tr>";
+    echo "<td align=\"center\">$orderItem->order_item_name</td>";
+    echo "<td align=\"center\">$orderItem->product_quantity db</td>";
+    echo "</tr>";
+}
+?>
         </tbody>
     </table>
 </div>
