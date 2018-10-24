@@ -51,8 +51,18 @@ JToolBarHelper::back();
         border-top: 1px solid #ddd;
     }
 
+    .bottom-border {
+        border-bottom: 1px solid #ddd;
+    }
+
     .top-margin {
         margin-top: 30px;
+    }
+
+    /* History table */
+
+    .history thead tr th {
+        text-align: left;
     }
 
     /* Billing and payment addresses */
@@ -126,9 +136,29 @@ JToolBarHelper::back();
         </td>
         <td style="width: 20%;"></td>
         <td style="width: 50%; vertical-align: top;">
-            Order history table place holder
-            <!-- <table class="history">
-        </table> -->
+            <table class="history tss-table">
+                <thead>
+                    <tr>
+                        <th>Beérkezés dátuma</th>
+                        <th style="padding-left: 20px;">Értesítsük a vásárlót?</th>
+                        <th>Állapot</th>
+                        <th>Kapcsolódó megjegyzések</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+foreach ($order->orderHistory as $historyEntry) {
+    echo "<tr class=\"top-border\">";
+    echo "<td>$historyEntry->dateFormatted</td>";
+    echo "<td style=\"padding-left: 20px;\">$historyEntry->notifyCustomer</td>";
+    echo "<td>$historyEntry->order_status_name</td>";
+    echo "<td>$historyEntry->comments</td>";
+    echo "</tr>";
+}
+?>
+                </tbody>
+
+            </table>
         </td>
     </tr>
 
@@ -140,7 +170,7 @@ JToolBarHelper::back();
         <td style="width: 35%; vertical-align: top;">
             <table style="width: 100%;">
                 <tr>
-                    <td colspan="2">Fizetés és szállítás</td>
+                    <td colspan="2"><strong>Fizetés és szállítás</strong></td>
                 </tr>
                 <tr class="top-border">
                     <td>Fizetési mód</td>
@@ -169,9 +199,9 @@ JToolBarHelper::back();
 <!-- Billing and shipping addresses -->
 <table class="tss-table billing-shipping-address top-margin">
     <thead>
-        <tr>
-            <th>Számlázási cím</th>
-            <th>Szállítási cím</th>
+        <tr class="bottom-border">
+            <th style="padding: 9px 0;">Számlázási cím</th>
+            <th style="padding: 9px 0;">Szállítási cím</th>
         </tr>
     </thead>
     <tbody>
@@ -180,56 +210,82 @@ JToolBarHelper::back();
                 <table class="billing-address-table tss-table">
                     <tr>
                         <td class="billing-address-header">Megjegyzések és különleges kérések</td>
-                        <td class="billing-address-content">Place holder for now</td>
+                        <td class="billing-address-content">
+                            <?php echo $order->customerNote; ?>
+                        </td>
                     </tr>
-                    <tr>
+                    <tr class="top-border">
                         <td class="billing-address-header">Megjegyzés a GLS futárnak</td>
-                        <td class="billing-address-content">Place holder for now</td>
+                        <td class="billing-address-content">
+                            <?php echo $order->glsNote; ?>
+                        </td>
                     </tr>
-                    <tr>
+                    <tr class="top-border">
                         <td class="billing-address-header">Email</td>
-                        <td class="billing-address-content">Place holder for now</td>
+                        <td class="billing-address-content">
+                            <?php echo $order->BT->email; ?>
+                        </td>
                     </tr>
-                    <tr>
+                    <tr class="top-border">
                         <td class="billing-address-header">Vezetéknév</td>
-                        <td class="billing-address-content">Place holder for now</td>
+                        <td class="billing-address-content">
+                            <?php echo $order->BT->firstName; ?>
+                        </td>
                     </tr>
-                    <tr>
+                    <tr class="top-border">
                         <td class="billing-address-header">Keresztnév</td>
-                        <td class="billing-address-content">Place holder for now</td>
+                        <td class="billing-address-content">
+                            <?php echo $order->BT->lastName; ?>
+                        </td>
                     </tr>
-                    <tr>
+                    <tr class="top-border">
                         <td class="billing-address-header">Utca, házszám</td>
-                        <td class="billing-address-content">Place holder for now</td>
+                        <td class="billing-address-content">
+                            <?php echo $order->BT->address; ?>
+                        </td>
                     </tr>
-                    <tr>
+                    <tr class="top-border">
                         <td class="billing-address-header">Irányítószám</td>
-                        <td class="billing-address-content">Place holder for now</td>
+                        <td class="billing-address-content">
+                            <?php echo $order->BT->zip; ?>
+                        </td>
                     </tr>
-                    <tr>
+                    <tr class="top-border">
                         <td class="billing-address-header">Város</td>
-                        <td class="billing-address-content">Place holder for now</td>
+                        <td class="billing-address-content">
+                            <?php echo $order->BT->city; ?>
+                        </td>
                     </tr>
-                    <tr>
+                    <tr class="top-border">
                         <td class="billing-address-header">Ország</td>
-                        <td class="billing-address-content">Place holder for now</td>
+                        <td class="billing-address-content">
+                            <?php echo $order->BT->country; ?>
+                        </td>
                     </tr>
-                    <tr>
+                    <tr class="top-border">
                         <td class="billing-address-header">Telefon</td>
-                        <td class="billing-address-content">Place holder for now</td>
+                        <td class="billing-address-content">
+                            <?php echo $order->BT->phone; ?>
+                        </td>
                     </tr>
-                    <tr>
+                    <tr class="top-border">
                         <td class="billing-address-header">Kérjük segítsd a munkánkat. Milyen csatornán keresztül
                             jutottál el hozzánk?</td>
-                        <td class="billing-address-content">Place holder for now</td>
+                        <td class="billing-address-content">
+                            <?php echo $order->honnanHallott; ?>
+                        </td>
                     </tr>
-                    <tr>
+                    <tr class="top-border">
                         <td class="billing-address-header">Adatkezelés</td>
-                        <td class="billing-address-content">Place holder for now</td>
+                        <td class="billing-address-content">
+                            <?php echo $order->adatkezeles; ?>
+                        </td>
                     </tr>
-                    <tr>
+                    <tr class="top-border">
                         <td class="billing-address-header">Hírlevél</td>
-                        <td class="billing-address-content">Place holder for now</td>
+                        <td class="billing-address-content">
+                            <?php echo $order->hirlevel; ?>
+                        </td>
                     </tr>
                 </table>
             </td>
@@ -238,35 +294,51 @@ JToolBarHelper::back();
                 <table class="shipping-address-table tss-table">
                     <tr>
                         <td class="shipping-address-header">Felhasználói címke a névhez</td>
-                        <td class="shipping-address-content">Place holder for now</td>
+                        <td class="shipping-address-content">
+                            <?php echo $order->ST->username; ?>
+                        </td>
                     </tr>
                     <tr>
                         <td class="shipping-address-header">Vezetéknév</td>
-                        <td class="shipping-address-content">Place holder for now</td>
+                        <td class="shipping-address-content">
+                            <?php echo $order->ST->firstName; ?>
+                        </td>
                     </tr>
                     <tr>
                         <td class="shipping-address-header">Keresztnév</td>
-                        <td class="shipping-address-content">Place holder for now</td>
+                        <td class="shipping-address-content">
+                            <?php echo $order->ST->lastName; ?>
+                        </td>
                     </tr>
                     <tr>
                         <td class="shipping-address-header">Utca, házszám</td>
-                        <td class="shipping-address-content">Place holder for now</td>
+                        <td class="shipping-address-content">
+                            <?php echo $order->ST->address; ?>
+                        </td>
                     </tr>
                     <tr>
                         <td class="shipping-address-header">Irányítószám</td>
-                        <td class="shipping-address-content">Place holder for now</td>
+                        <td class="shipping-address-content">
+                            <?php echo $order->ST->zip; ?>
+                        </td>
                     </tr>
                     <tr>
                         <td class="shipping-address-header">Város</td>
-                        <td class="shipping-address-content">Place holder for now</td>
+                        <td class="shipping-address-content">
+                            <?php echo $order->ST->city; ?>
+                        </td>
                     </tr>
                     <tr>
                         <td class="shipping-address-header">Ország</td>
-                        <td class="shipping-address-content">Place holder for now</td>
+                        <td class="shipping-address-content">
+                            <?php echo $order->ST->country; ?>
+                        </td>
                     </tr>
                     <tr>
                         <td class="shipping-address-header">Telefon</td>
-                        <td class="shipping-address-content">Place holder for now</td>
+                        <td class="shipping-address-content">
+                            <?php echo $order->ST->phone; ?>
+                        </td>
                     </tr>
                 </table>
             </td>
@@ -293,22 +365,22 @@ JToolBarHelper::back();
     </thead>
     <tbody>
         <?php
-            for ($i = 1; $i <= 5; $i++) {
-                echo "<tr>";
-                echo "<td>$i</td>";
-                echo "<td>Placeholder</td>";
-                echo "<td>Placeholder</td>";
-                echo "<td>Placeholder</td>";
-                echo "<td>Placeholder</td>";
-                echo "<td>Placeholder</td>";
-                echo "<td>Placeholder</td>";
-                echo "<td>Placeholder</td>";
-                echo "<td>Placeholder</td>";
-                echo "<td>Placeholder</td>";
-                echo "<td>Placeholder</td>";
-                echo "</tr>";
-            }
-        ?>
+for ($i = 1; $i <= 5; $i++) {
+    echo "<tr>";
+    echo "<td>$i</td>";
+    echo "<td>Placeholder</td>";
+    echo "<td>Placeholder</td>";
+    echo "<td>Placeholder</td>";
+    echo "<td>Placeholder</td>";
+    echo "<td>Placeholder</td>";
+    echo "<td>Placeholder</td>";
+    echo "<td>Placeholder</td>";
+    echo "<td>Placeholder</td>";
+    echo "<td>Placeholder</td>";
+    echo "<td>Placeholder</td>";
+    echo "</tr>";
+}
+?>
     </tbody>
     <tfoot>
         <tr>

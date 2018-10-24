@@ -83,6 +83,13 @@ class VirtueMartModelCsomagolo extends VmModel
         // Customer notes
         $result->customerNote = $userinfo[0]->customer_note;
         $result->glsNote = $userinfo[0]->gls_note;
+        $result->adatkezeles = ($userinfo[0]->adatkezeles == 1) ? "Igen" : "Nem";
+        $result->hirlevel = ($userinfo[0]->marketing == 1) ? "Igen" : "Nem";
+
+        $query = 'SELECT fieldtitle FROM #__virtuemart_userfield_values
+                    WHERE fieldvalue=' . $db->quote($userinfo[0]->honnanhallott);
+        $db->setQuery($query);
+        $result->honnanHallott = $db->loadResult();
 
         // Customer's detail: first & last name, email address, address
         $result->BT->firstName = $userinfo[0]->first_name;
@@ -92,6 +99,7 @@ class VirtueMartModelCsomagolo extends VmModel
         $result->BT->city = $userinfo[0]->city;
         $result->BT->zip = $userinfo[0]->zip;
         $result->BT->phone = $userinfo[0]->phone_1;
+        $result->BT->username = $userinfo[0]->username;
 
         $stIndex = count($userinfo) - 1;
         $result->ST->firstName = $userinfo[$stIndex]->first_name;
@@ -101,6 +109,7 @@ class VirtueMartModelCsomagolo extends VmModel
         $result->ST->city = $userinfo[$stIndex]->city;
         $result->ST->zip = $userinfo[$stIndex]->zip;
         $result->ST->phone = $userinfo[$stIndex]->phone_1;
+        $result->ST->username = $userinfo[$stIndex]->username;
 
         // get the Country for the order address(es)
         $query = 'SELECT country_name FROM #__virtuemart_countries
@@ -120,6 +129,21 @@ class VirtueMartModelCsomagolo extends VmModel
             ->where($db->quoteName('virtuemart_order_id') . ' LIKE ' . $db->quote($orderID));
         $db->setQuery($query);
         $result->orderItems = $db->loadObjectList();
+
+        // get the order history
+        $query = 'SELECT order_status_code, customer_notified, comments, modified_on FROM #__virtuemart_order_histories
+                    WHERE virtuemart_order_id=' . $db->quote($orderID);
+        $db->setQuery($query);
+        $result->orderHistory = $db->loadObjectList();
+        foreach ($result->orderHistory as $entry) {
+            $entry->notifyCustomer = ($entry->customer_notified == 1 ? "Igen" : "Nem");
+            $entryDate = strtotime($entry->modified_on);
+            $entry->dateFormatted = strftime("%Y. %B %d, %A. %R", $entryDate);
+            $query = 'SELECT order_status_name FROM #__virtuemart_orderstates
+                        WHERE order_status_code=' . $db->quote($entry->order_status_code);
+            $db->setQuery($query);
+            $entry->order_status_name = JText::_($db->loadResult());
+        }
 
         // return the object
         return $result;
@@ -540,16 +564,6 @@ class VirtueMartModelCsomagolo extends VmModel
             $line->invoiceNumber = $db->loadResult();
             // $line->invoiceNumber = "E-2017-2215"; // test id : 5997;
             $line->hasInvoice = ($line->invoiceNumber != "");
-
-            // get the invoiceURL if issue has been invoiced
-            // if ($line->hasInvoice) {
-            //     // $query = 'SELECT szla_url FROM #__cloud_szamlazzhu
-            //     //             WHERE order_id=' . $line->virtuemart_order_id;
-            //     $query = 'SELECT szla_url FROM #__cloud_szamlazzhu
-            //                 WHERE virtuemart_order_id=5997'; // . $line->virtuemart_order_id;
-            //     $db->setQuery($query);
-            //     $line->invoiceURL = $db->loadResult();
-            // }
 
         }
 
