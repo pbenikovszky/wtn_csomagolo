@@ -51,6 +51,10 @@ JToolBarHelper::back();
         border-top: 1px solid #ddd;
     }
 
+    .top-border-double {
+        border-top: 3px double #ddd;
+    }
+
     .bottom-border {
         border-bottom: 1px solid #ddd;
     }
@@ -68,10 +72,12 @@ JToolBarHelper::back();
     /* Billing and payment addresses */
     .billing-address-header {
         width: 70%;
+        vertical-align: top;
     }
 
     .billing-address-content {
         width: 30%;
+        vertical-align: top;
     }
 
     .shipping-address-header {
@@ -298,43 +304,43 @@ foreach ($order->orderHistory as $historyEntry) {
                             <?php echo $order->ST->username; ?>
                         </td>
                     </tr>
-                    <tr>
+                    <tr class="top-border">
                         <td class="shipping-address-header">Vezetéknév</td>
                         <td class="shipping-address-content">
                             <?php echo $order->ST->firstName; ?>
                         </td>
                     </tr>
-                    <tr>
+                    <tr class="top-border">
                         <td class="shipping-address-header">Keresztnév</td>
                         <td class="shipping-address-content">
                             <?php echo $order->ST->lastName; ?>
                         </td>
                     </tr>
-                    <tr>
+                    <tr class="top-border">
                         <td class="shipping-address-header">Utca, házszám</td>
                         <td class="shipping-address-content">
                             <?php echo $order->ST->address; ?>
                         </td>
                     </tr>
-                    <tr>
+                    <tr class="top-border">
                         <td class="shipping-address-header">Irányítószám</td>
                         <td class="shipping-address-content">
                             <?php echo $order->ST->zip; ?>
                         </td>
                     </tr>
-                    <tr>
+                    <tr class="top-border">
                         <td class="shipping-address-header">Város</td>
                         <td class="shipping-address-content">
                             <?php echo $order->ST->city; ?>
                         </td>
                     </tr>
-                    <tr>
+                    <tr class="top-border">
                         <td class="shipping-address-header">Ország</td>
                         <td class="shipping-address-content">
                             <?php echo $order->ST->country; ?>
                         </td>
                     </tr>
-                    <tr>
+                    <tr class="top-border">
                         <td class="shipping-address-header">Telefon</td>
                         <td class="shipping-address-content">
                             <?php echo $order->ST->phone; ?>
@@ -351,7 +357,7 @@ foreach ($order->orderHistory as $historyEntry) {
     <thead>
         <tr>
             <th>#</th>
-            <th>Mennyiség</th>
+            <th style="padding-left:15px;">Mennyiség</th>
             <th>Név</th>
             <th>Cikkszám</th>
             <th>A megrendelt termék állapota</th>
@@ -365,63 +371,65 @@ foreach ($order->orderHistory as $historyEntry) {
     </thead>
     <tbody>
         <?php
-for ($i = 1; $i <= 5; $i++) {
-    echo "<tr>";
-    echo "<td>$i</td>";
-    echo "<td>Placeholder</td>";
-    echo "<td>Placeholder</td>";
-    echo "<td>Placeholder</td>";
-    echo "<td>Placeholder</td>";
-    echo "<td>Placeholder</td>";
-    echo "<td>Placeholder</td>";
-    echo "<td>Placeholder</td>";
-    echo "<td>Placeholder</td>";
-    echo "<td>Placeholder</td>";
-    echo "<td>Placeholder</td>";
+$cnt = 0;
+foreach ($order->orderItems as $orderItem) {
+    $cnt++;
+    echo "<tr class=\"top-border\">";
+    echo "<td>$cnt</td>";
+    echo "<td style=\"padding-left:15px;\">$orderItem->product_quantity</td>";
+    echo "<td>$orderItem->order_item_name</td>";
+    echo "<td>$orderItem->order_item_sku</td>";
+    echo "<td>$orderItem->order_status_name</td>";
+    echo "<td>" . number_format(round($orderItem->product_item_price), 0, ',', ' ') . " " . $order->currency->currency_symbol . "</td>";
+    echo "<td>" . number_format(round($orderItem->product_basePriceWithTax), 0, ',', ' ') . " " . $order->currency->currency_symbol . "</td>";
+    echo "<td>" . number_format(round($orderItem->product_subtotal_with_tax), 0, ',', ' ') . " " . $order->currency->currency_symbol . "</td>";
+    echo "<td>" . number_format(round($orderItem->product_tax), 0, ',', ' ') . " Ft</td>";
+    echo "<td>" . number_format(round($orderItem->product_subtotal_discount), 0, ',', ' ') . " " . $order->currency->currency_symbol . "</td>";
+    echo "<td>" . number_format(round($orderItem->product_final_price), 0, ',', ' ') . " " . $order->currency->currency_symbol . "</td>";
     echo "</tr>";
 }
 ?>
     </tbody>
     <tfoot>
-        <tr>
+        <tr class="top-border-double">
             <td colspan="4"></td>
             <td style="text-align: right; padding-right: 10px;"><strong>Részösszeg:</strong></td>
-            <td>PH</td>
-            <td>PH</td>
-            <td>PH</td>
-            <td>PH</td>
-            <td>PH</td>
-            <td>PH</td>
+            <td><?php echo number_format(round($order->order_subtotal), 0, ',', ' '); ?> Ft</td>
+            <td></td>
+            <td></td>
+            <td><?php echo number_format(round($order->order_tax), 0, ',', ' '); ?> Ft</td>
+            <td><?php echo number_format(round($order->order_discount), 0, ',', ' '); ?> Ft</td>
+            <td><?php echo number_format(round($order->salesPrice), 0, ',', ' '); ?> Ft</td>
         </tr>
-        <tr>
+        <tr class="top-border">
             <td colspan="4"></td>
             <td style="text-align: right; padding-right: 10px;"><strong>Szállítási és kezelési költség:</strong></td>
-            <td>PH</td>
-            <td>PH</td>
-            <td>PH</td>
-            <td>PH</td>
-            <td>PH</td>
-            <td>PH</td>
+            <td><?php echo number_format(round($order->order_shipment), 0, ',', ' '); ?> Ft</td>
+            <td></td>
+            <td></td>
+            <td><?php echo number_format(round($order->order_shipment_tax), 0, ',', ' '); ?> Ft</td>
+            <td></td>
+            <td><?php echo number_format(round($order->shipmentTotal), 0, ',', ' '); ?> Ft</td>
         </tr>
-        <tr>
+        <tr class="top-border">
             <td colspan="4"></td>
             <td style="text-align: right; padding-right: 10px;"><strong>Fizetési mód díja:</strong></td>
-            <td>PH</td>
-            <td>PH</td>
-            <td>PH</td>
-            <td>PH</td>
-            <td>PH</td>
-            <td>PH</td>
+            <td><?php echo number_format(round($order->order_payment), 0, ',', ' '); ?> Ft</td>
+            <td></td>
+            <td></td>
+            <td><?php echo number_format(round($order->order_payment_tax), 0, ',', ' '); ?> Ft</td>
+            <td></td>
+            <td><?php echo number_format(round($order->paymentTotal), 0, ',', ' '); ?> Ft</td>
         </tr>
-        <tr>
+        <tr class="top-border">
             <td colspan="4"></td>
             <td style="text-align: right; padding-right: 10px;"><strong>Összesen:</strong></td>
-            <td>PH</td>
-            <td>PH</td>
-            <td>PH</td>
-            <td>PH</td>
-            <td>PH</td>
-            <td>PH</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><strong><?php echo number_format(round($order->order_billTaxAmount), 0, ',', ' '); ?> Ft</strong></td>
+            <td><strong><?php echo number_format(round($order->order_billDiscountAmount), 0, ',', ' '); ?> Ft</strong></td>
+            <td><strong><?php echo number_format(round($order->order_total), 0, ',', ' '); ?> Ft</strong></td>
         </tr>
     </tfoot>
 </table> <!-- Order items table -->
@@ -429,7 +437,7 @@ for ($i = 1; $i <= 5; $i++) {
 <!-- Shipping and payment details -->
 <table class="tss-table billing-shipping-address top-margin">
     <thead>
-        <tr>
+        <tr class="bottom-border">
             <th>Szállítás</th>
             <th>Fizetési mód</th>
         </tr>
@@ -440,23 +448,33 @@ for ($i = 1; $i <= 5; $i++) {
                 <table class="tss-table">
                     <tr>
                         <td style="width: 35%; vertical-align: top;">Szállítási díj neve</td>
-                        <td style="width: 65%; vertical-align: top;">Placeholder</td>
+                        <td style="width: 65%; vertical-align: top;">
+                            <?php echo $order->shipmentDetails->name; ?>
+                        </td>
                     </tr>
-                    <tr>
+                    <tr class="top-border">
                         <td style="width: 35%; vertical-align: top;">Megrendelés súlya</td>
-                        <td style="width: 65%; vertical-align: top;">Placeholder</td>
+                        <td style="width: 65%; vertical-align: top;">
+                            <?php echo $order->shipmentDetails->weight; ?>
+                        </td>
                     </tr>
-                    <tr>
+                    <tr class="top-border">
                         <td style="width: 35%; vertical-align: top;">Szállítási díj értéke</td>
-                        <td style="width: 65%; vertical-align: top;">Placeholder</td>
+                        <td style="width: 65%; vertical-align: top;">
+                            <?php echo $order->shipmentDetails->shipment_cost . ' ' . $order->currency->currency_symbol; ?>
+                        </td>
                     </tr>
-                    <tr>
+                    <tr class="top-border">
                         <td style="width: 35%; vertical-align: top;">Csomagolási díj</td>
-                        <td style="width: 65%; vertical-align: top;">Placeholder</td>
+                        <td style="width: 65%; vertical-align: top;">
+                            <?php echo $order->shipmentDetails->shipment_package_fee . ' ' . $order->currency->currency_symbol; ?>
+                        </td>
                     </tr>
-                    <tr>
+                    <tr class="top-border">
                         <td style="width: 35%; vertical-align: top;">Adó</td>
-                        <td style="width: 65%; vertical-align: top;">Placeholder</td>
+                        <td style="width: 65%; vertical-align: top;">
+                            <?php echo $order->shipmentDetails->tax; ?>
+                        </td>
                     </tr>
                 </table>
             </td>
@@ -464,15 +482,21 @@ for ($i = 1; $i <= 5; $i++) {
                 <table class="tss-table">
                     <tr>
                         <td style="width: 35%; vertical-align: top;">Név</td>
-                        <td style="width: 65%; vertical-align: top;">Placeholder</td>
+                        <td style="width: 65%; vertical-align: top;">
+                            <?php echo $order->paymentDetails->name; ?>
+                        </td>
                     </tr>
-                    <tr>
+                    <tr class="top-border">
                         <td style="width: 35%; vertical-align: top;">Teljes összeg a fizetés pénznemében</td>
-                        <td style="width: 65%; vertical-align: top;">Placeholder</td>
+                        <td style="width: 65%; vertical-align: top;">
+                            <?php echo $order->paymentDetails->total; ?>
+                        </td>
                     </tr>
-                    <tr>
+                    <tr class="top-border">
                         <td style="width: 35%; vertical-align: top;">Az email pénzneme</td>
-                        <td style="width: 65%; vertical-align: top;">Placeholder</td>
+                        <td style="width: 65%; vertical-align: top;">
+                            <?php echo $order->paymentDetails->email_currency; ?>
+                        </td>
                     </tr>
                 </table>
             </td>

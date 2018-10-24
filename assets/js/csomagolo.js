@@ -16,7 +16,7 @@ window.addEventListener('load', function () {
     // Select every checkbox in first column
     btnSelectAll.addEventListener('click', function (e) {
         document.getElementsByName('cbSelect').forEach(cb => {
-            if (!cb.parentElement.parentElement.hasClass('tss-hidden')) {
+            if (!cb.parentElement.parentElement.classList.contains('tss-hidden')) {
                 cb.checked = true;
             } // if
         }); // getElementsByNAme
@@ -25,7 +25,7 @@ window.addEventListener('load', function () {
     // Deselect every checkbox in first column
     btnDeselect.addEventListener('click', function (e) {
         document.getElementsByName('cbSelect').forEach(cb => {
-            if (!cb.parentElement.parentElement.hasClass('tss-hidden')) {
+            if (!cb.parentElement.parentElement.classList.contains('tss-hidden')) {
                 cb.checked = false;
             } // if
         }); // getElementsByNAme
@@ -62,8 +62,10 @@ window.addEventListener('load', function () {
         for (let i = 2; i < rows.length; i++) {
             let cb = rows[i].getElementsByTagName('td')[0].firstElementChild;
             if (cb.checked) {
-                let oid = rows[i].getElementsByTagName('td')[1].firstElementChild.innerText;
-                oids.push(oid);
+                if (!cb.parentElement.parentElement.classList.contains('tss-hidden')) {
+                    let oid = rows[i].getElementsByTagName('td')[1].firstElementChild.innerText;
+                    oids.push(oid);
+                }
             } // if cb.checked
         } // for   
 
@@ -81,8 +83,6 @@ window.addEventListener('load', function () {
     // * implementing
     btnPrintInvoice.addEventListener('click', function (e) {
         alert("Button is just a placeholder until further action");
-        // let url = 'index.php?option=com_virtuemart&view=csomagolo&task=printinvoice';
-        // window.open(url, '_blank');
 
     }); // btnPrintInvoice.click
 
@@ -93,10 +93,12 @@ window.addEventListener('load', function () {
         for (let i = 2; i < rows.length; i++) {
             let cb = rows[i].getElementsByTagName('td')[8].firstElementChild;
             if (cb.checked) {
-                if (rows[i].getElementsByTagName('td')[9].firstElementChild.value == "C") {
-                    let oid = rows[i].getElementsByTagName('td')[1].firstElementChild.innerText;
-                    oids.push(oid);
-                } // if value == "C"
+                if (!cb.parentElement.parentElement.classList.contains('tss-hidden')) {
+                    if (rows[i].getElementsByTagName('td')[9].firstElementChild.value == "C") {
+                        let oid = rows[i].getElementsByTagName('td')[1].firstElementChild.innerText;
+                        oids.push(oid);
+                    } // if value == "C"
+                } // if classList contains tss-hidden
             } // if cb.checked
         } // for   
 
@@ -114,10 +116,12 @@ window.addEventListener('load', function () {
         for (let i = 2; i < rows.length; i++) {
             let cb = rows[i].getElementsByTagName('td')[8].firstElementChild;
             if (cb.checked) {
-                if (rows[i].getElementsByTagName('td')[9].firstElementChild.value == "L") {
-                    let oid = rows[i].getElementsByTagName('td')[1].firstElementChild.innerText;
-                    oids.push(oid);
-                } // if value == "L"
+                if (!cb.parentElement.parentElement.classList.contains('tss-hidden')) {
+                    if (rows[i].getElementsByTagName('td')[9].firstElementChild.value == "L") {
+                        let oid = rows[i].getElementsByTagName('td')[1].firstElementChild.innerText;
+                        oids.push(oid);
+                    } // if value == "L"
+                } // if classList contains tss-hidden
             } // if cb.checked
         } // for   
 
@@ -140,7 +144,7 @@ window.addEventListener('load', function () {
 
         let xhr = new XMLHttpRequest();
         let method = 'POST';
-        let url = 'index.php?option=com_virtuemart&view=csomagolo&task=statechange&format=json'; //&ordernumbers=' + oids.join(',');
+        let url = 'index.php?option=com_virtuemart&view=csomagolo&task=statechange&format=json';
 
         xhr.open(method, url, true);
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');

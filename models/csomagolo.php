@@ -66,6 +66,12 @@ class VirtueMartModelCsomagolo extends VmModel
         $result->paymentMethod = $paymentDetails->payment_name;
         $result->paymentDesc = $paymentDetails->payment_desc;
 
+        // get currency details
+        $query = 'SELECT currency_code_3, currency_symbol FROM #__virtuemart_currencies
+                    WHERE virtuemart_currency_id=' . $db->quote($result->order_currency);
+        $db->setQuery($query);
+        $result->currency = $db->loadObject();
+
         // shipment method
         $query = 'SELECT shipment_name FROM #__virtuemart_shipmentmethods_hu_hu
 				  WHERE virtuemart_shipmentmethod_id=' . $db->quote($result->virtuemart_shipmentmethod_id);
@@ -130,6 +136,16 @@ class VirtueMartModelCsomagolo extends VmModel
         $db->setQuery($query);
         $result->orderItems = $db->loadObjectList();
 
+        foreach ($result->orderItems as $orderItem) {
+            $query = 'SELECT order_status_name FROM #__virtuemart_orderstates
+                        WHERE order_status_code=' . $db->quote($orderItem->order_status);
+            $db->setQuery($query);
+            $orderItem->order_status_name = JText::_($db->loadResult());
+        }
+
+        $result->paymentTotal = floatval($result->order_payment) + floatval($result->order_payment_tax);
+        $result->shipmentTotal = floatval($result->order_shipment) + floatval($result->order_shipment_tax);
+
         // get the order history
         $query = 'SELECT order_status_code, customer_notified, comments, modified_on FROM #__virtuemart_order_histories
                     WHERE virtuemart_order_id=' . $db->quote($orderID);
@@ -144,6 +160,34 @@ class VirtueMartModelCsomagolo extends VmModel
             $db->setQuery($query);
             $entry->order_status_name = JText::_($db->loadResult());
         }
+
+        // Get shipment method details
+        $query = 'SELECT * FROM #__virtuemart_shipment_plg_weight_countries
+                    WHERE virtuemart_order_id=' . $db->quote($orderID);
+        $db->setQuery($query);
+        $result->shipmentDetails = $db->loadObject();
+        $result->shipmentDetails->weight = $result->shipmentDetails->order_weight . ' ' . $result->shipmentDetails->shipment_weight_unit;
+
+        $query = 'SELECT CONCAT(shipment_name, \'. \', shipment_desc) FROM #__virtuemart_shipmentmethods_hu_hu
+                    WHERE virtuemart_shipmentmethod_id=' . $db->quote($result->shipmentDetails->virtuemart_shipmentmethod_id);
+        $db->setQuery($query);
+        $result->shipmentDetails->name = $db->loadResult();
+
+        $result->shipmentDetails->tax = "27%";
+
+        // Get payment method details
+        $query = 'SELECT * FROM #__virtuemart_payment_plg_standard
+                    WHERE virtuemart_order_id=' . $db->quote($orderID);
+        $db->setQuery($query);
+        $result->paymentDetails = $db->loadObject();
+
+        // $result->paymentDetails->total = $result->paymentDetails->payment_order_total . ' ' . $result->paymentDetails->payment_currency;
+        $result->paymentDetails->total = number_format(round($result->paymentDetails->payment_order_total, 2), 2, ',', ' ') . ' ' . $result->paymentDetails->payment_currency;
+
+        $query = 'SELECT CONCAT(payment_name, \'. \', payment_desc) FROM #__virtuemart_paymentmethods_hu_hu
+                    WHERE virtuemart_paymentmethod_id=' . $db->quote($result->paymentDetails->virtuemart_paymentmethod_id);
+        $db->setQuery($query);
+        $result->paymentDetails->name = $db->loadResult();
 
         // return the object
         return $result;
@@ -470,14 +514,24 @@ class VirtueMartModelCsomagolo extends VmModel
 
         $db = JFactory::getDBO();
         $query = $db->getQuery(true);
+
+        // change the status of the order
         $query = 'UPDATE #__virtuemart_orders
 				  SET order_status=' . $db->quote($newState) . ' WHERE order_number=' . $db->quote($orderNumber);
         $db->setQuery($query);
         $db->execute();
 
+        // change the status of the order items
+        $orderID = $this->getIdFromNumber($orderNumber);
+        $query = 'UPDATE #__virtuemart_order_items
+				  SET order_status=' . $db->quote($newState) . ' WHERE virtuemart_order_id=' . $db->quote($orderID);
+        $db->setQuery($query);
+        $db->execute();
+
+        // record history
+
         $user = JFactory::getUser();
         $comment = "Csomagoló nézetből módosítva. Username: " . $user->username;
-        $orderID = $this->getIdFromNumber($orderNumber);
 
         $query = 'SELECT MAX(virtuemart_order_history_id)+1 FROM #__virtuemart_order_histories';
         $db->setQuery($query);
@@ -501,12 +555,14 @@ class VirtueMartModelCsomagolo extends VmModel
         // Change the status of orders to "Megerősített
         // where payment_method is "Utánvétes fizetés"
 
-        $query = $db->getQuery(true);
+        // ! LOGIC ERROR
+        // ! REMOVED, NEEDS TO BE FIXED
+        /* $query = $db->getQuery(true);
         $query = 'UPDATE #__virtuemart_orders
-                    SET order_status="C"
-                    WHERE virtuemart_paymentmethod_id IN ("4", "6")';
+        SET order_status="C"
+        WHERE virtuemart_paymentmethod_id IN ("4", "6")';
         $db->setQuery($query);
-        $db->execute();
+        $db->execute(); */
 
         // Change the status of orders to "Megerősített
         // where payment_method is "Utánvétes fizetés"
@@ -579,8 +635,8 @@ class VirtueMartModelCsomagolo extends VmModel
         $xmlPath = $this->getInvoiceXML($invoiceNumber, $order_id);
 
         $path = getcwd();
-        $pdfPath = $path . "\\myInvoices\\";
-        // $pdfPath = $path . "/myInvoices/";
+        // $pdfPath = $path . "\\myInvoices\\";
+        $pdfPath = $path . "/myInvoices/";
         $pdfFullFileName = $pdfPath . $order_id . ".pdf";
 
         $ch = curl_init("https://www.szamlazz.hu/szamla/");
@@ -626,8 +682,8 @@ class VirtueMartModelCsomagolo extends VmModel
         $xml = $szamla->asXML();
 
         $path = getcwd();
-        $xmlPath = $path . "\\myInvoices\\XMLs\\";
-        // $xmlPath = $path . "/myInvoices/XMLs/";
+        // $xmlPath = $path . "\\myInvoices\\XMLs\\";
+        $xmlPath = $path . "/myInvoices/XMLs/";
         $xmlFullFileName = $xmlPath . $order_id . ".xml";
 
         file_put_contents($xmlFullFileName, $xml);
