@@ -657,6 +657,18 @@ class VirtueMartModelCsomagolo extends VmModel
         if ($response == true) {
             $result->result = "SUCCESS";
             $result->pdfFileName = $order_id . ".pdf";
+
+            $db = JFactory::getDBO();
+            $query = "SELECT keres_szam+1 FROM #__cloud_szamlazzhu_szamlaszam
+                        WHERE order_id=$order_id";
+            $db->setQuery($query);                
+            $keres = $db->loadResult();
+
+            $query = "UPDATE #__cloud_szamlazzhu_szamlaszam 
+                        SET keres_szam=$keres, stamp=NOW()
+                        WHERE order_id=$order_id";
+            $db->setQuery($query);
+            $db->execute();
         } else {
             $result->result = "FAIL";
         }
@@ -672,12 +684,12 @@ class VirtueMartModelCsomagolo extends VmModel
 
         $path = getcwd();
         // * Local versions
-        $responsePath = $path . "\\myInvoices\\responses\\";
+        // $responsePath = $path . "\\myInvoices\\responses\\";
 
         // * masolat1 version
-        // $pdfPath = $path . "/myInvoices/responses/";
+        $pdfPath = $path . "/myInvoices/responses/";
 
-        $responseFullFileName = $responsePath . $order_id . "_response.pdf";        
+        $responseFullFileName = $responsePath . $order_id . "_response.xml";        
 
         $ch = curl_init("https://www.szamlazz.hu/szamla/");
         $fp = fopen($responseFullFileName, "w");
@@ -699,9 +711,21 @@ class VirtueMartModelCsomagolo extends VmModel
             if ($xmlResult->sikeres == "true") {
                 $result->result = "SUCCESS";
                 $result->invoiceNumber = $xmlResult->szamlaszam;
-                $result->responseFileName = $order_id . "_response.pdf";
+                $result->total = $xmlResult->szamlabrutto;
+                $result->totalWithoutTax = $xmlResult->szamlanetto;
+                $result->responseFileName = $order_id . "_response.xml";
+
+                $db = JFactory::getDBO();
+                $query = $db->getQuery(true);
+
+                $query = "INSERT INTO #__cloud_szamlazzhu_szamlaszam 
+                            VALUES ($order_id, '$result->invoiceNumber', $result->total, NOW(), NOW(), 0, '-')";
+                $db->setQuery($query);
+                $db->execute();
             } else {
-                $result->result = "FAIL";    
+                $result->result = "FAILXML";    
+                $result->errorCode = $xmlResult->hibakod;
+                $result->error = $xmlResult->hibauzenet;
             }
         } else {
             $result->result = "FAIL";
@@ -717,8 +741,10 @@ class VirtueMartModelCsomagolo extends VmModel
     {
 
         $componentParams = JComponentHelper::getParams('com_cloudszamlazzhu');
-        $szamlazzhu_user = $componentParams->get('szamlazzhu_user', '');
-        $szamlazzhu_pass = $componentParams->get('szamlazzhu_pass', '');
+        // $szamlazzhu_user = $componentParams->get('szamlazzhu_user', '');
+        // $szamlazzhu_pass = $componentParams->get('szamlazzhu_pass', '');
+        $szamlazzhu_user = "fzs@wtn.hu";
+        $szamlazzhu_pass = "Wtn-Proba";
 
         $szamla = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><xmlszamlapdf xmlns="http://www.szamlazz.hu/xmlszamlapdf" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.szamlazz.hu/xmlszamlapdf xmlszamlapdf.xsd"></xmlszamlapdf>');
         $szamla->addChild('felhasznalo', $szamlazzhu_user);
@@ -774,7 +800,7 @@ class VirtueMartModelCsomagolo extends VmModel
 
         VmConfig::$vmlang=VmConfig::setdbLanguageTag();
         VmConfig::$vmlang='hu_hu';
-        //var_dump(VmConfig::setdbLanguageTag());
+        
         $orderModel = new VirtueMartModelOrders();
         
         $order = $orderModel->getOrder($order_id);
@@ -934,10 +960,10 @@ class VirtueMartModelCsomagolo extends VmModel
         $path = getcwd();
         
         // * Local versions
-        $xmlPath = $path . "\\myInvoices\\XMLs\\";
+        // $xmlPath = $path . "\\myInvoices\\XMLs\\";
 
         // * masolat1 version
-        // $xmlPath = $path . "/myInvoices/XMLs/";
+        $xmlPath = $path . "/myInvoices/XMLs/";
         
         $xmlFullFileName = $xmlPath . $order_id . "_create.xml";
 

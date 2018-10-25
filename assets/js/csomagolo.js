@@ -77,8 +77,23 @@ window.addEventListener('load', function () {
 
     // TODO implement 
     btnIssueInvoice.addEventListener('click', function (e) {
-        let url = 'index.php?option=com_virtuemart&view=csomagolo&task=createinvoice&invoiceorderid=1';
-        window.open(url, '_blank');
+        let oids = [];
+        let rows = document.querySelector(".orderTable").rows;
+        for (let i = 2; i < rows.length; i++) {
+            let cb = rows[i].getElementsByTagName('td')[8].firstElementChild;
+            if (!cb.checked) {
+                if (!cb.parentElement.parentElement.classList.contains('tss-hidden')) {
+                    if (rows[i].getElementsByTagName('td')[0].firstElementChild.checked) {
+                        let oid = rows[i].getElementsByTagName('td')[1].firstElementChild.innerText;
+                        oids.push(oid);
+                    } // if value == "L"
+                } // if classList contains tss-hidden
+            } // if cb.checked
+        } // for           
+        if (oids.length > 0) {
+            let url = 'index.php?option=com_virtuemart&view=csomagolo&task=createinvoice&invoiceorderids=' + oids.join(',') + '&format=json';
+            window.open(url, '_blank');
+        }
     }); // btnIssueInvoice.click
 
     // * implementing
