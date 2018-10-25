@@ -19,6 +19,10 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+if ($this->invoiceNumber == "") {
+    die('Ehhez a megrendeléshez nem tartozik számla');
+}
+
 $csModel = VmModel::getModel('csomagolo');
 
 $pdf = $csModel->getInvoicePDF($this->invoiceNumber, $this->invoiceOrderID);

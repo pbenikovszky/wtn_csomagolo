@@ -666,6 +666,53 @@ class VirtueMartModelCsomagolo extends VmModel
         return $result;
     }
 
+    public function createInvoice($order_id, $eszamla = true) {
+
+        $xmlPath = $this->createInvoiceXML($order_id, $eszamla);
+
+        $path = getcwd();
+        // * Local versions
+        $responsePath = $path . "\\myInvoices\\responses\\";
+
+        // * masolat1 version
+        // $pdfPath = $path . "/myInvoices/responses/";
+
+        $responseFullFileName = $responsePath . $order_id . "_response.pdf";        
+
+        $ch = curl_init("https://www.szamlazz.hu/szamla/");
+        $fp = fopen($responseFullFileName, "w");
+
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_FILE, $fp);
+        curl_setopt($ch, CURLOPT_POST, true);
+
+        $cFile = new CURLFile($xmlPath, "text/xml", "invoice_xml");
+        $data = array('action-xmlagentxmlfile' => $cFile);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+
+        $response = curl_exec($ch);
+
+        fclose($fp);
+
+        if ($response == true) {
+            $xmlResult = simplexml_load_file($responseFullFileName);
+            if ($xmlResult->sikeres == "true") {
+                $result->result = "SUCCESS";
+                $result->invoiceNumber = $xmlResult->szamlaszam;
+                $result->responseFileName = $order_id . "_response.pdf";
+            } else {
+                $result->result = "FAIL";    
+            }
+        } else {
+            $result->result = "FAIL";
+        }
+
+        curl_close($ch);
+
+        return $result;
+
+    }
+
     public function getInvoiceXML($invoiceNumber, $order_id)
     {
 
@@ -691,4 +738,333 @@ class VirtueMartModelCsomagolo extends VmModel
         return $xmlFullFileName;
 
     }
+
+    public function createInvoiceXML($order_id, $eszamla = true)
+    {
+
+        defined('JPATH_VM_ADMINISTRATOR') or define('JPATH_VM_ADMINISTRATOR', JPATH_ROOT.DS.'administrator'.DS.'components'.DS.'com_virtuemart');
+
+        if (!class_exists('vmText')) {
+            require(JPATH_VM_ADMINISTRATOR . DS . 'helpers' . DS . 'config.php');
+        }
+           
+        if (!class_exists('VirtueMartModelOrders')){
+            require_once JPATH_ADMINISTRATOR.'/components/com_virtuemart/models/orders.php';
+        }
+
+        $componentParams = JComponentHelper::getParams('com_cloudszamlazzhu');
+        // $szamlazzhu_user = $componentParams->get('szamlazzhu_user', '');
+        // $szamlazzhu_pass = $componentParams->get('szamlazzhu_pass', '');
+
+        $szamlazzhu_user = "fzs@wtn.hu";
+        $szamlazzhu_pass = "Wtn-Proba";
+
+        // get the language of the invoice
+        $szlanyelv = $componentParams->get('szlanyelv', 1);
+       
+        if ($szlanyelv == 1) {
+            $nyelv = 'hu';
+        }else{
+            $nyelv = 'en';
+        }
+        
+        if($szamlazzhu_user == '' || $szamlazzhu_pass == ''){
+            Throw new Exception('A szamlazz.hu felhasználónév vagy jelszó üres');
+        }
+
+        VmConfig::$vmlang=VmConfig::setdbLanguageTag();
+        VmConfig::$vmlang='hu_hu';
+        //var_dump(VmConfig::setdbLanguageTag());
+        $orderModel = new VirtueMartModelOrders();
+        
+        $order = $orderModel->getOrder($order_id);
+        
+        $BT = $order["details"]['BT'];
+        
+        $fizhat_query = 'SELECT ifnull(`deadline`,8) as deadline'
+                . '      FROM `#__cloud_szamlazzhu_payment_deadline` '
+                . '      WHERE `virtuemart_paymentmethod_id` = '.intval($BT->virtuemart_paymentmethod_id);
+        $db = JFactory::getDbo();
+        $db->setQuery($fizhat_query);
+        $res = $db->loadObject();
+        
+        if (count($res) == 0) {
+            $fizhat = 8;
+        }else {
+            $fizhat = $res->deadline;
+        }
+        
+        if (isset($order["details"]['ST'])){
+            $ST = $order["details"]['ST'];
+        }else{
+            $ST = $BT;
+        }
+        
+        $orderitems = $order['items'];
+        
+        $retval = new stdClass();
+        $szamla = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><xmlszamla xmlns="http://www.szamlazz.hu/xmlszamla" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.szamlazz.hu/xmlszamla xmlszamla.xsd"></xmlszamla>');
+        
+        $beallitasok = $szamla->addChild('beallitasok');
+
+        $beallitasok->addChild('felhasznalo', $szamlazzhu_user);
+        $beallitasok->addChild('jelszo', $szamlazzhu_pass);
+
+        $beallitasok->addChild('eszamla', $eszamla ? "true" : "false");
+
+        $beallitasok->addChild('kulcstartojelszo', '');
+
+        $beallitasok->addChild('szamlaLetoltes', 'false');//viktuning
+        $beallitasok->addChild('valaszVerzio', 2);//viktuning
+
+        $fejlec = $szamla->addChild('fejlec');
+        $fejlec->addChild('keltDatum', date('Y-m-d') );
+        $fejlec->addChild('teljesitesDatum', date('Y-m-d', strtotime($this->getHistoryConfirmedDate($order['history']))));
+        $fejlec->addChild('fizetesiHataridoDatum', date('Y-m-d', strtotime('+'.$fizhat.' days')));
+        $fejlec->addChild('fizmod', $this->getPaymentMethodName($BT->virtuemart_paymentmethod_id));
+        $fejlec->addChild('penznem', $this->getCurrencyName($BT->order_currency));
+        $fejlec->addChild('szamlaNyelve', $nyelv);
+        $fejlec->addChild('megjegyzes', 'A csomagolás termékdíj-kötelezettség az eladót terheli.');
+        $fejlec->addChild('rendelesSzam', $BT->order_number);
+        $fejlec->addChild('elolegszamla', 'false');
+        $fejlec->addChild('vegszamla', 'false');
+    
+        $elado = $szamla->addChild('elado');
+        $elado->addChild('bank', '');
+        $elado->addChild('bankszamlaszam', '');
+        $elado->addChild('emailReplyto', '');
+        $elado->addChild('emailTargy', '');
+        $elado->addChild('emailSzoveg', '');
+        
+        $nev = '';
+        if ($BT->company != '') {
+            $nev =  $BT->company;
+        }else{
+            if ($BT->middle_name != '') {
+                $nev = $BT->first_name.' '.$BT->middle_name.' '.$BT->last_name;
+            }else{
+                $nev = $BT->first_name.' '.$BT->last_name;
+            }
+        }
+        
+        $vevo = $szamla->addChild('vevo');
+        $vevo->addChild('nev', $nev);
+        $vevo->addChild('irsz', $this->getCountryName($BT->virtuemart_country_id).'-'.$BT->zip);
+        $vevo->addChild('telepules', $BT->city);
+        $vevo->addChild('cim', $BT->address_1.' '.$BT->address_2);
+        $vevo->addChild('email', $BT->email);
+        $vevo->addChild('adoszam', '');
+
+        $tetelek = $szamla->addChild('tetelek');
+        
+        foreach($orderitems as $item){
+            $tetel = $tetelek->addChild('tetel');
+            $tetel->addChild('megnevezes',$item->order_item_name);
+            $tetel->addChild('mennyiseg',$item->product_quantity);
+            $tetel->addChild('mennyisegiEgyseg','db');
+            $tetel->addChild('nettoEgysegar',$item->product_discountedPriceWithoutTax);
+            
+            $calc = $this->getProductCalcNameAndValue($order['calc_rules'],$item->virtuemart_order_item_id,'VatTax');
+            //$calc = $this->getProductCalcNameAndValue($order['calc_rules'],$item->virtuemart_order_item_id,'Tax');
+            
+            $tetel->addChild('afakulcs',intval($calc->calc_value));
+            $tetel->addChild('nettoErtek',$item->product_discountedPriceWithoutTax*$item->product_quantity);
+            $afaertek = $this->kerekit($this->kerekit($item->product_discountedPriceWithoutTax * $item->product_quantity) * ($calc->calc_value / 100));
+            $tetel->addChild('afaErtek',$afaertek);
+            $tetel->addChild('bruttoErtek',$this->kerekit($this->kerekit($item->product_discountedPriceWithoutTax * $item->product_quantity) *  (1 + ($calc->calc_value / 100))));
+            $tetel->addChild('megjegyzes',$this->getProductDiscountName($order['calc_rules'],$item->virtuemart_order_item_id));
+        }
+        
+        //szállítási mód
+        if ($BT->order_shipment != 0) {//csak akkor kell a számlára rakni ha nem ingyenes volt a szállmód
+            $tetel = $tetelek->addChild('tetel');
+            $tetel->addChild('megnevezes',$this->getShipmentMethodName($BT->virtuemart_shipmentmethod_id));
+            $tetel->addChild('mennyiseg',1);
+            $tetel->addChild('mennyisegiEgyseg','db');
+            $tetel->addChild('nettoEgysegar',$BT->order_shipment);
+            $calc = $this->getNonProductCalcNameAndValue($order['calc_rules'],$BT->virtuemart_order_id,'shipment');
+            
+            $tetel->addChild('afakulcs',intval($calc->calc_value));
+            $tetel->addChild('nettoErtek',$BT->order_shipment);
+            $afaertek = $this->kerekit($this->kerekit($BT->order_shipment) * ($calc->calc_value / 100));
+            $tetel->addChild('afaErtek',$afaertek);
+            $tetel->addChild('bruttoErtek',$this->kerekit($this->kerekit($BT->order_shipment) *  (1 + ($calc->calc_value / 100))));
+            $tetel->addChild('megjegyzes','');
+        }
+        
+        
+        //fizetési mód
+        if ($BT->order_payment != 0) {//csak akkor kell a számlára rakni ha nem ingyenes volt a szállmód
+            $tetel = $tetelek->addChild('tetel');
+            $tetel->addChild('megnevezes',$this->getPaymentMethodName($BT->virtuemart_paymentmethod_id));
+            $tetel->addChild('mennyiseg',1);
+            $tetel->addChild('mennyisegiEgyseg','db');
+            $tetel->addChild('nettoEgysegar',$BT->order_payment);
+            $calc = $this->getNonProductCalcNameAndValue($order['calc_rules'],$BT->virtuemart_order_id,'payment');
+            $tetel->addChild('afakulcs',intval($calc->calc_value));
+            $tetel->addChild('nettoErtek',$BT->order_payment);
+            $afaertek = $this->kerekit($this->kerekit($BT->order_payment) * ($calc->calc_value / 100));
+            $tetel->addChild('afaErtek',$afaertek);
+            $tetel->addChild('bruttoErtek',$this->kerekit($this->kerekit($BT->order_payment) *  (1 + ($calc->calc_value / 100))));
+            $tetel->addChild('megjegyzes','');
+        }
+        //fizmod vége
+        
+        //kupon
+        if ($BT->coupon_discount != 0) {//csak akkor kell a számlára rakni ha volt kupon
+            $tetel = $tetelek->addChild('tetel');
+            $tetel->addChild('megnevezes','Kupon kedvezmény. Kuponkód: '.$BT->coupon_code);
+            $tetel->addChild('mennyiseg',1);
+            $tetel->addChild('mennyisegiEgyseg','');
+            $afaertek = $this->kerekit($this->kerekit($BT->coupon_discount) * 0.2126);
+            $nettoertek = $this->kerekit($this->kerekit($BT->coupon_discount) - $afaertek);    
+            $tetel->addChild('nettoEgysegar',$nettoertek);         
+            $tetel->addChild('afakulcs',27);
+            $tetel->addChild('nettoErtek',$nettoertek);
+            $tetel->addChild('afaErtek',$afaertek);
+            $tetel->addChild('bruttoErtek',$BT->coupon_discount);
+            $tetel->addChild('megjegyzes', '');
+        }
+        //kupon vége
+
+        
+        $xml = $szamla->asXML();
+
+
+        $path = getcwd();
+        
+        // * Local versions
+        $xmlPath = $path . "\\myInvoices\\XMLs\\";
+
+        // * masolat1 version
+        // $xmlPath = $path . "/myInvoices/XMLs/";
+        
+        $xmlFullFileName = $xmlPath . $order_id . "_create.xml";
+
+        file_put_contents($xmlFullFileName, $xml);
+
+        return $xmlFullFileName;
+
+    }
+
+    public function getProductDiscountName($calc_array, $virtuemart_order_item_id){
+        $retval = '';
+        $tmp = array();
+        
+        foreach($calc_array as $key => $calc){
+            if($calc->virtuemart_order_item_id == $virtuemart_order_item_id && ($calc->calc_kind == 'DBTax' || $calc->calc_kind == 'DATax')  ) {
+                $tmp[] = $calc->calc_rule_name;
+            }
+        }
+        
+        return implode(',', $tmp);
+    }   
+       
+    
+    function getCurrencyName($currency_id){
+        $db = JFactory::getDbo();
+        $query = 'select t.currency_code_3 from #__virtuemart_currencies t where t.virtuemart_currency_id = '.$currency_id;
+        $db->setQuery($query);
+        $res = $db->loadObject();
+        
+        if ($res->currency_code_3 == ''){
+            return "HUF";
+        }else{
+            return $res->currency_code_3;
+        }
+        
+    }
+    
+    function getCountryName($country_id){
+        $db = JFactory::getDbo();
+        $query = 'select t.country_name from #__virtuemart_countries t where t.virtuemart_country_id = '.$country_id;
+        $db->setQuery($query);
+        $res = $db->loadObject();
+        
+        return $res->country_name;
+    }
+    
+    function getShipmentMethodName($shipmentmethod_id){
+        $db = JFactory::getDbo();
+        $query = 'select t.shipment_name from #__virtuemart_shipmentmethods_hu_hu t where t.virtuemart_shipmentmethod_id = '.$shipmentmethod_id;
+        $db->setQuery($query);
+        $res = $db->loadObject();
+        
+        return $res->shipment_name;
+        
+    }
+    
+    function getPaymentMethodName($paymentmethod_id){
+        $db = JFactory::getDbo();
+        $query = 'select t.payment_name from #__virtuemart_paymentmethods_hu_hu t where t.virtuemart_paymentmethod_id = '.$paymentmethod_id;
+        $db->setQuery($query);
+        $res = $db->loadObject();
+        
+        return $res->payment_name;
+     }
+    
+    public function getHistoryConfirmedDate($historyarray){
+        
+        foreach($historyarray as $historyitem){
+            if($historyitem->order_status_code == 'C'){
+                return $historyitem->created_on;
+            }
+        }
+        
+        return false;
+    }
+    
+    public function getProductCalcNameAndValue($calcarray,$order_item_id,$calckind){
+        $retval = new stdClass();
+        
+        foreach($calcarray as $calc){
+            //echo $calc->virtuemart_order_item_id.'-'.$order_item_id.'-'.strtolower($calc->calc_kind).' '. strtolower($calckind).'###';
+            if($calc->virtuemart_order_item_id == $order_item_id && strtolower($calc->calc_kind) == strtolower($calckind)){
+                $retval->calc_rule_name = $calc->calc_rule_name;
+                $retval->calc_value = $calc->calc_value;
+                
+                return $retval;
+            }
+        }
+        
+        throw new Exception('A számítási szabályok között nem található '.$calckind);
+    }
+    /**
+     * 
+     * @param type $calcarray - virtuemart ordermodel calc array
+     * @param type $order_id - virtuemart_order_id
+     * @param type $itemKind - "payment" vagy "shipment"
+     * @return \stdClass
+     * @throws Exception
+     */
+    public function getNonProductCalcNameAndValue($calcarray,$order_id,$itemKind){
+        $retval = new stdClass();
+        
+        foreach($calcarray as $calc){
+            //echo $calc->virtuemart_order_item_id.'-'.$order_item_id.'-'.strtolower($calc->calc_kind).' '. strtolower($calckind);
+            if($calc->virtuemart_order_id == $order_id && strtolower($calc->calc_kind) == strtolower($itemKind)){
+                $retval->calc_rule_name = $calc->calc_rule_name;
+                $retval->calc_value = $calc->calc_value;
+                return $retval;
+            }
+        }
+        
+        throw new Exception('A számítási szabályok között nem található '.$itemKind);
+    }
+    
+    
+    
+    public function kerekit($ertek){
+        VmConfig::loadConfig();
+        $kerekites_pontossag = VmConfig::get('salesPriceRounding');
+ 
+        if ($kerekites_pontossag < 0) {
+            // return $ertek;
+            return number_format(round($ertek, 2), 4, ".", "");
+        }else {
+            return number_format(round($ertek, 2), $kerekites_pontossag, ".", "");
+        }
+        // return number_format(round($ertek, 2), 2, ".", "");
+    }    
+
 }

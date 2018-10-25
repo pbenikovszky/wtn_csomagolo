@@ -59,6 +59,9 @@ class VirtuemartViewCsomagolo extends VmViewAdmin
         // vieworder layout
         $this->orderToView = $csomagoloModel->getOrderById($this->viewOrderID);
 
+        // create invoice layout
+        $this->msg = "Hello, I'm the create invoice layout";
+
         // Set the toolbar
         JToolbarHelper::title(JText::_('COM_VIRTUEMART_TITLE'), 'csomagolo');
 

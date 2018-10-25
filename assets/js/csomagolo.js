@@ -77,7 +77,8 @@ window.addEventListener('load', function () {
 
     // TODO implement 
     btnIssueInvoice.addEventListener('click', function (e) {
-        alert(e.srcElement.id);
+        let url = 'index.php?option=com_virtuemart&view=csomagolo&task=createinvoice&invoiceorderid=1';
+        window.open(url, '_blank');
     }); // btnIssueInvoice.click
 
     // * implementing
