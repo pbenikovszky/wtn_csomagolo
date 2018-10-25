@@ -687,7 +687,7 @@ class VirtueMartModelCsomagolo extends VmModel
         // $responsePath = $path . "\\myInvoices\\responses\\";
 
         // * masolat1 version
-        $pdfPath = $path . "/myInvoices/responses/";
+        $responsePath = $path . "/myInvoices/responses/";
 
         $responseFullFileName = $responsePath . $order_id . "_response.xml";        
 

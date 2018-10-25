@@ -75,7 +75,7 @@ window.addEventListener('load', function () {
 
     }); // btnPrintAll.click
 
-    // TODO implement 
+
     btnIssueInvoice.addEventListener('click', function (e) {
         let oids = [];
         let rows = document.querySelector(".orderTable").rows;

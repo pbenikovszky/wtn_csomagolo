@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmlszamla xmlns="http://www.szamlazz.hu/xmlszamla" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.szamlazz.hu/xmlszamla xmlszamla.xsd">
+    <beallitasok>
+        <felhasznalo>fzs@wtn.hu</felhasznalo>
+        <jelszo>Wtn-Proba</jelszo>
+        <eszamla>false</eszamla>
+        <kulcstartojelszo/>
+        <szamlaLetoltes>false</szamlaLetoltes>
+        <valaszVerzio>2</valaszVerzio>
+    </beallitasok>
+    <fejlec>
+        <keltDatum>2018-10-25</keltDatum>
+        <teljesitesDatum>2018-10-24</teljesitesDatum>
+        <fizetesiHataridoDatum>2018-11-02</fizetesiHataridoDatum>
+        <fizmod>Utánvétes fizetés</fizmod>
+        <penznem>HUF</penznem>
+        <szamlaNyelve>hu</szamlaNyelve>
+        <megjegyzes>A csomagolás termékdíj-kötelezettség az eladót terheli.</megjegyzes>
+        <rendelesSzam>L78J03</rendelesSzam>
+        <elolegszamla>false</elolegszamla>
+        <vegszamla>false</vegszamla>
+    </fejlec>
+    <elado>
+        <bank/>
+        <bankszamlaszam/>
+        <emailReplyto/>
+        <emailTargy/>
+        <emailSzoveg/>
+    </elado>
+    <vevo>
+        <nev>kamu@kamu.hu kamu@kamu.hu</nev>
+        <irsz>Hungary-kamu@kamu.hu</irsz>
+        <telepules>kamu@kamu.hu</telepules>
+        <cim>kamu@kamu.hu </cim>
+        <email>kamu@kamu.hu</email>
+        <adoszam/>
+    </vevo>
+    <tetelek>
+        <tetel>
+            <megnevezes>gyakorlo termek specialis krem</megnevezes>
+            <mennyiseg>1</mennyiseg>
+            <mennyisegiEgyseg>db</mennyisegiEgyseg>
+            <nettoEgysegar>8.00000</nettoEgysegar>
+            <afakulcs>27</afakulcs>
+            <nettoErtek>8</nettoErtek>
+            <afaErtek>2.1600</afaErtek>
+            <bruttoErtek>10.1600</bruttoErtek>
+            <megjegyzes/>
+        </tetel>
+        <tetel>
+            <megnevezes>Futárszolgálat (GLS) utánvét, 1 napos kiszállítás</megnevezes>
+            <mennyiseg>1</mennyiseg>
+            <mennyisegiEgyseg>db</mennyisegiEgyseg>
+            <nettoEgysegar>787.41000</nettoEgysegar>
+            <afakulcs>27</afakulcs>
+            <nettoErtek>787.41000</nettoErtek>
+            <afaErtek>212.6000</afaErtek>
+            <bruttoErtek>1000.0100</bruttoErtek>
+            <megjegyzes/>
+        </tetel>
+    </tetelek>
+</xmlszamla>
