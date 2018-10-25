@@ -9,6 +9,19 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+// * FOR TESTS *
+
+define("XML_PATH", "\\myInvoices\\XMLs\\");
+define("INVOICE_PATH", "\\myInvoices\\");
+define("RESPONSE_PATH", "\\myInvoices\\responses\\");
+
+// * FOR PROD *
+
+// define("XML_PATH", "/myInvoices/XMLs/");
+// define("INVOICE_PATH", "/myInvoices/");
+// define("RESPONSE_PATH", "/myInvoices/responses/");
+
+
 /**
  * HelloWorldList Model
  *
@@ -27,7 +40,7 @@ class VirtueMartModelCsomagolo extends VmModel
      */
     public function getOrderstates()
     {
-        return array("Megerősített" => "C", "GLS futárra vár" => "L", "Várakoztatva" => "V");
+        return array("Megerősített" => "C", "GLS futárra vár" => "L", "Várakoztatva" => "V", "Kiszállítva" => "S");
     }
 
     /**
@@ -628,15 +641,12 @@ class VirtueMartModelCsomagolo extends VmModel
 
     // * Print invoice
 
-    // Working directory: /web/drbiroszabo/masolat1/administrator
-
     public function getInvoicePDF($invoiceNumber, $order_id)
     {
         $xmlPath = $this->getInvoiceXML($invoiceNumber, $order_id);
 
         $path = getcwd();
-        // $pdfPath = $path . "\\myInvoices\\";
-        $pdfPath = $path . "/myInvoices/";
+        $pdfPath = $path . INVOICE_PATH;
         $pdfFullFileName = $pdfPath . $order_id . ".pdf";
 
         $ch = curl_init("https://www.szamlazz.hu/szamla/");
@@ -683,12 +693,7 @@ class VirtueMartModelCsomagolo extends VmModel
         $xmlPath = $this->createInvoiceXML($order_id, $eszamla);
 
         $path = getcwd();
-        // * Local versions
-        // $responsePath = $path . "\\myInvoices\\responses\\";
-
-        // * masolat1 version
-        $responsePath = $path . "/myInvoices/responses/";
-
+        $responsePath = $path . RESPONSE_PATH;
         $responseFullFileName = $responsePath . $order_id . "_response.xml";        
 
         $ch = curl_init("https://www.szamlazz.hu/szamla/");
@@ -755,8 +760,7 @@ class VirtueMartModelCsomagolo extends VmModel
         $xml = $szamla->asXML();
 
         $path = getcwd();
-        // $xmlPath = $path . "\\myInvoices\\XMLs\\";
-        $xmlPath = $path . "/myInvoices/XMLs/";
+        $xmlPath = $path . XML_PATH;
         $xmlFullFileName = $xmlPath . $order_id . ".xml";
 
         file_put_contents($xmlFullFileName, $xml);
@@ -958,12 +962,7 @@ class VirtueMartModelCsomagolo extends VmModel
 
 
         $path = getcwd();
-        
-        // * Local versions
-        // $xmlPath = $path . "\\myInvoices\\XMLs\\";
-
-        // * masolat1 version
-        $xmlPath = $path . "/myInvoices/XMLs/";
+        $xmlPath = $path . XML_PATH;
         
         $xmlFullFileName = $xmlPath . $order_id . "_create.xml";
 

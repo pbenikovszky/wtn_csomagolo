@@ -40,6 +40,7 @@ class VirtuemartViewCsomagolo extends VmViewAdmin
 
         // get the data from our model
         $this->orders = $csomagoloModel->getOrders();
+        uasort($this->orders, array('VirtuemartViewCsomagolo', 'sortByName'));
         $this->orderstates = $csomagoloModel->getOrderstates();
 
         // get the parameters passed in the URL
@@ -65,6 +66,13 @@ class VirtuemartViewCsomagolo extends VmViewAdmin
         JToolbarHelper::title(JText::_('COM_VIRTUEMART_TITLE'), 'csomagolo');
 
         parent::display($tpl);
+    }
+
+    private static function sortByName($a, $b)
+    {
+        $name1 = strtolower($a->user_name);
+        $name2 = strtolower($b->user_name);
+        return strcmp($name1, $name2);
     }
 
 }
