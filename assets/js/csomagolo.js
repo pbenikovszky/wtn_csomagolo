@@ -8,8 +8,10 @@ window.addEventListener('load', function () {
     var btnIssueInvoice = document.getElementById('btnIssueInvoice');
     var btnPrintInvoice = document.getElementById('btnPrintInvoice');
     var btnStateToGLS = document.getElementById('btnStateToGLS');
-    var btnStateToDelivered = document.getElementById('btnStateToDelivered');
+    var btnStateToShipped = document.getElementById('btnStateToShipped');
     var btnGLSExport = document.getElementById('btnGLSExport');
+
+    var lastSelectedStates = [];
 
     addDropdownEventListeners();
 
@@ -63,7 +65,7 @@ window.addEventListener('load', function () {
             let cb = rows[i].getElementsByTagName('td')[0].firstElementChild;
             if (cb.checked) {
                 if (!cb.parentElement.parentElement.classList.contains('tss-hidden')) {
-                    let oid = rows[i].getElementsByTagName('td')[1].firstElementChild.innerText;
+                    let oid = rows[i].getElementsByTagName('td')[4].firstElementChild.innerText;
                     oids.push(oid);
                 }
             } // if cb.checked
@@ -84,7 +86,7 @@ window.addEventListener('load', function () {
             if (!cb.checked) {
                 if (!cb.parentElement.parentElement.classList.contains('tss-hidden')) {
                     if (rows[i].getElementsByTagName('td')[0].firstElementChild.checked) {
-                        let oid = rows[i].getElementsByTagName('td')[1].firstElementChild.innerText;
+                        let oid = rows[i].getElementsByTagName('td')[4].firstElementChild.innerText;
                         oids.push(oid);
                     } // if value == "L"
                 } // if classList contains tss-hidden
@@ -107,15 +109,12 @@ window.addEventListener('load', function () {
         let oids = [];
         let rows = document.querySelector(".orderTable").rows;
         for (let i = 2; i < rows.length; i++) {
-            let cb = rows[i].getElementsByTagName('td')[8].firstElementChild;
-            if (cb.checked) {
-                if (!cb.parentElement.parentElement.classList.contains('tss-hidden')) {
-                    if (rows[i].getElementsByTagName('td')[9].firstElementChild.value == "C") {
-                        let oid = rows[i].getElementsByTagName('td')[1].firstElementChild.innerText;
-                        oids.push(oid);
-                    } // if value == "C"
-                } // if classList contains tss-hidden
-            } // if cb.checked
+            if (!rows[i].classList.contains('tss-hidden')) {
+                if (rows[i].getElementsByTagName('td')[9].firstElementChild.value == "C") {
+                    let oid = rows[i].getElementsByTagName('td')[4].firstElementChild.innerText;
+                    oids.push(oid);
+                } // if value == "C"
+            } // if classList contains tss-hidden
         } // for   
 
         if (oids.length > 0) {
@@ -124,26 +123,25 @@ window.addEventListener('load', function () {
     }); // btnStateToGLS.click
 
     // Change the status of the selected orders to 'Kiszállítva' (S)
-    // ! Currrently it is changes the state back to "Megerősített" (C)
-    // TODO once finished change the state here to 'Kiszállítva' (S)
-    btnStateToDelivered.addEventListener('click', function (e) {
+    btnStateToShipped.addEventListener('click', function (e) {
+
         let oids = [];
         let rows = document.querySelector(".orderTable").rows;
         for (let i = 2; i < rows.length; i++) {
-            let cb = rows[i].getElementsByTagName('td')[8].firstElementChild;
-            if (cb.checked) {
-                if (!cb.parentElement.parentElement.classList.contains('tss-hidden')) {
-                    if (rows[i].getElementsByTagName('td')[9].firstElementChild.value == "L") {
-                        let oid = rows[i].getElementsByTagName('td')[1].firstElementChild.innerText;
-                        oids.push(oid);
-                    } // if value == "L"
-                } // if classList contains tss-hidden
-            } // if cb.checked
+            if (!rows[i].classList.contains('tss-hidden')) {
+                if (rows[i].getElementsByTagName('td')[9].firstElementChild.value == "L") {
+                    let oid = rows[i].getElementsByTagName('td')[4].firstElementChild.innerText;
+                    oids.push(oid);
+                } // if value == "L"
+            } // if classList contains tss-hidden
         } // for   
 
         if (oids.length > 0) {
-            changeState(oids.join(','), "C");
-        } // if
+            // Ask the user to confirm the state change request
+            if (confirm("Biztosan Kiszállítottra állítod a kijelölt megrendeléseket?")) {
+                changeState(oids.join(','), "S");
+            } // if confirm
+        } // if length > 0
     }); // btnStateToDelivered.click
 
 
@@ -200,8 +198,11 @@ window.addEventListener('load', function () {
     // handling Dropdown box change event
     function addDropdownEventListeners() {
         let rows = document.querySelector(".orderTable").rows;
+
         for (let i = 2; i < rows.length; i++) {
             let dbox = rows[i].getElementsByTagName('td')[9].firstElementChild;
+            // store the selected elements in an array
+            lastSelectedStates[i - 2] = dbox.selectedIndex;
             dbox.addEventListener('change', function (e) {
                 onDropdownChange(e, i);
             });
@@ -210,9 +211,21 @@ window.addEventListener('load', function () {
 
     function onDropdownChange(event, rowIndex) {
         let rows = document.querySelector(".orderTable").rows;
-        let oNumber = rows[rowIndex].getElementsByTagName('td')[1].firstElementChild.innerText;
+        let oNumber = rows[rowIndex].getElementsByTagName('td')[4].firstElementChild.innerText;
         let newState = event.target.value;
 
+        // Need user confirmation if new state is Shipped
+        if (newState == "S") {
+            if (!confirm("Biztosan Kiszállítottra állítod a kijelölt megrendeléseket?")) {
+                event.stopPropagation();
+                // set the selected index back to the previous one
+                event.target.selectedIndex = lastSelectedStates[rowIndex - 2];
+                return false;
+            } // if confirm
+        } // if newSate == "S"
+
+        // store the new selected index
+        lastSelectedStates[rowIndex - 2] = event.target.selectedIndex;
         changeState(oNumber, newState, true);
     }
 

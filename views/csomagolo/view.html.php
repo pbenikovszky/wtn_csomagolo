@@ -40,7 +40,33 @@ class VirtuemartViewCsomagolo extends VmViewAdmin
 
         // get the data from our model
         $this->orders = $csomagoloModel->getOrders();
-        uasort($this->orders, array('VirtuemartViewCsomagolo', 'sortByName'));
+
+        // setup the links for the column headers to order by column
+        // switch ($this->orderFunction) {
+        //     case 'sortByNameAsc':
+        //         $this->nameOrderFunction = 'sortByNameDesc';
+        //         $this->dateOrderFunction = 'sortByDateDesc';
+        //         break;
+        //     case 'sortByNameDesc':
+        //         $this->nameOrderFunction = 'sortByNameAsc';
+        //         $this->dateOrderFunction = 'sortByDateDesc';
+        //         break;
+        //     case 'sortByDateAsc':
+        //         $this->nameOrderFunction = 'sortByNameAsc';
+        //         $this->dateOrderFunction = 'sortByDateDesc';
+        //         break;
+        //     case 'sortByDateDesc':
+        //         $this->nameOrderFunction = 'sortByNameAsc';
+        //         $this->dateOrderFunction = 'sortByDateAsc';
+        //         break;
+        // };
+
+        // sort the list of orders
+        if ($this->orderFunction != 'sortByDateDesc') {
+            uasort($this->orders, array('VirtuemartViewCsomagolo', 'sortByNameAsc'));
+        }
+
+        // get the orderstates
         $this->orderstates = $csomagoloModel->getOrderstates();
 
         // get the parameters passed in the URL
@@ -68,11 +94,20 @@ class VirtuemartViewCsomagolo extends VmViewAdmin
         parent::display($tpl);
     }
 
-    private static function sortByName($a, $b)
+    // Sorting functions
+
+    private static function sortByNameAsc($a, $b)
     {
         $name1 = strtolower($a->user_name);
         $name2 = strtolower($b->user_name);
         return strcmp($name1, $name2);
+    }
+
+    private static function sortByNameDesc($a, $b)
+    {
+        $name1 = strtolower($a->user_name);
+        $name2 = strtolower($b->user_name);
+        return strcmp($name2, $name1);
     }
 
 }

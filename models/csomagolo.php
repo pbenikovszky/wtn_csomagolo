@@ -11,15 +11,15 @@ defined('_JEXEC') or die('Restricted access');
 
 // * FOR TESTS *
 
-define("XML_PATH", "\\myInvoices\\XMLs\\");
-define("INVOICE_PATH", "\\myInvoices\\");
-define("RESPONSE_PATH", "\\myInvoices\\responses\\");
+// define("XML_PATH", "\\myInvoices\\XMLs\\");
+// define("INVOICE_PATH", "\\myInvoices\\");
+// define("RESPONSE_PATH", "\\myInvoices\\responses\\");
 
 // * FOR PROD *
 
-// define("XML_PATH", "/myInvoices/XMLs/");
-// define("INVOICE_PATH", "/myInvoices/");
-// define("RESPONSE_PATH", "/myInvoices/responses/");
+define("XML_PATH", "/myInvoices/XMLs/");
+define("INVOICE_PATH", "/myInvoices/");
+define("RESPONSE_PATH", "/myInvoices/responses/");
 
 
 /**
@@ -585,7 +585,8 @@ class VirtueMartModelCsomagolo extends VmModel
         $query = $db->getQuery(true);
         $query->select('*')
             ->from($db->quoteName('#__virtuemart_orders'))
-            ->where("order_status IN (\"C\", \"L\", \"V\")");
+            ->where("order_status IN (\"C\", \"L\", \"V\", \"S\")")
+            ->order("created_on DESC");
         $db->setQuery($query);
         $result = $db->loadObjectList();
 

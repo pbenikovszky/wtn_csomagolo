@@ -39,7 +39,17 @@ class VirtuemartControllerCsomagolo extends VmController
     public function __constuct()
     {
         parent::__construct();
+    }
 
+    public function display()
+    {
+        $view = $this->getView('csomagolo', 'html');
+        $view->setLayout('default');
+        $view->orderFunction = JRequest::getVar('orderfunction');
+        if ($view->orderFunction == '') {
+            $view->orderFunction = 'sortByDateDesc';
+        }
+        $view->display();
     }
 
     // print one order

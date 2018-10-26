@@ -72,6 +72,26 @@ defined('_JEXEC') or die('Restricted access');
         display: none;
     }
 
+    /* Style for the sorting links */
+    .sort-link {
+        text-decoration: none;
+        color: #000;
+    }
+
+    .sort-link:visited {
+        text-decoration: none;
+        color: #000;
+    }
+
+    .sort-link:hover {
+        text-decoration: underline;
+        color: #000076;
+    }
+
+    .sort-link.active {
+        text-decoration: underline;
+    }
+
     /* Style for the loader */
 
     .loader {
@@ -132,9 +152,6 @@ defined('_JEXEC') or die('Restricted access');
     </div>
 </div>
 
-<!-- <h1><?php // echo JText::_('COM_VIRTUEMART_TITLE'); ?></h1>
-<h3 style="margin-bottom: 20px;"><?php // echo JText::_('COM_VIRTUEMART_SUBTITLE'); ?></h3> -->
-
 <table class="orderTable">
     <thead valign="top">
         <!-- Buttons -->
@@ -145,6 +162,29 @@ defined('_JEXEC') or die('Restricted access');
                     <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER1'); ?></span></div>
                     <div id="btnSelectAll" class="btn tssBtn"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_SELECTALL'); ?></div>
                     <div id="btnDeselect" class="btn tssBtn"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_DESELECT'); ?></div>
+                </div>
+            </th>
+
+            <!-- Megrendelő neve -->
+            <th>
+                <div class="header-container">
+                    <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER6'); ?></span></div>
+                </div>
+            </th>
+
+            <!-- Megrendelő emailcíme -->
+            <th>
+                <div class="header-container">
+                    <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER6'); ?></span></div>
+                </div>
+            </th>
+
+            <!-- Kisker checkbox -->
+            <th>
+                <div class="header-container">
+                    <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER4'); ?></span></div>
+                    <div id="btnShowRetail" class="btn tssBtn btnList"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_SHOWRETAILONLY'); ?></div>
+                    <div id="btnShowAll" class="btn tssBtn btnList"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_SHOWALL'); ?></div>
                 </div>
             </th>
 
@@ -162,30 +202,7 @@ defined('_JEXEC') or die('Restricted access');
                 </div>
             </th>
 
-            <!-- Kisker checkbox -->
-            <th>
-                <div class="header-container">
-                    <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER4'); ?></span></div>
-                    <div id="btnShowRetail" class="btn tssBtn btnList"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_SHOWRETAILONLY'); ?></div>
-                    <div id="btnShowAll" class="btn tssBtn btnList"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_SHOWALL'); ?></div>
-                </div>
-            </th>
-
-            <!-- Megrendelő neve -->
-            <th>
-                <div class="header-container">
-                    <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER5'); ?></span></div>
-                </div>
-            </th>
-
-            <!-- Megrendelő emailcíme -->
-            <th>
-                <div class="header-container">
-                    <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER6'); ?></span></div>
-                </div>
-            </th>
-
-            <!-- Számla / nyomtatás  -->
+            <!-- Számlanyomtás / Megrendelésnyomtatás  -->
            <th colspan="2" style="width: 125px;">
                 <div class="header-container">
                     <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER7'); ?></span></div>
@@ -207,7 +224,7 @@ defined('_JEXEC') or die('Restricted access');
                 <div class="header-container">
                     <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER10'); ?></span></div>
                     <div id="btnStateToGLS" class="btn tssBtn"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_STATETOGLS'); ?></div>
-                    <div id="btnStateToDelivered" class="btn tssBtn"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_STATETODELIVERED'); ?></div>
+                    <div id="btnStateToShipped" class="btn tssBtn"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_STATETOSHIPPED'); ?></div>
                 </div>
             </th>
 
@@ -231,11 +248,25 @@ defined('_JEXEC') or die('Restricted access');
         <!-- Header labels -->
         <tr>
             <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH1'); ?></div></th>
-            <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH2'); ?></div></th>
-            <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH3'); ?></div></th>
-            <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH4'); ?></div></th>
-            <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH5'); ?></div></th>
+
+            <!-- Name column header set to link to sort by this column -->
+            <?php if ($this->orderFunction == 'sortByNameAsc') {?>
+                <th><div><a class="sort-link active" href="index.php?option=com_virtuemart&view=csomagolo&orderfunction=sortByNameAsc"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH5'); ?></a></div></th>
+            <?php } else {?>
+                <th><div><a class="sort-link" href="index.php?option=com_virtuemart&view=csomagolo&orderfunction=sortByNameAsc"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH5'); ?></a></div></th>
+            <?php }?>
+
             <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH6'); ?></div></th>
+            <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH4'); ?></div></th>
+            <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH2'); ?></div></th>
+
+            <!-- Name column header set to link to sort by this column -->
+            <?php if ($this->orderFunction == 'sortByDateDesc') {?>
+                <th><div><a class="sort-link active" href="index.php?option=com_virtuemart&view=csomagolo&orderfunction=sortByDateDesc"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH3'); ?></a></div></th>
+            <?php } else {?>
+                <th><div><a class="sort-link" href="index.php?option=com_virtuemart&view=csomagolo&orderfunction=sortByDateDesc"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH3'); ?></a></div></th>
+            <?php }?>
+
             <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH7'); ?></div></th>
             <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH8'); ?></div></th>
             <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH9'); ?></div></th>
@@ -248,22 +279,13 @@ defined('_JEXEC') or die('Restricted access');
         <?php
 $cnt = 0;
 foreach ($this->orders as $order) {
+
     $cnt += 1;
-    //echo "<tr class=\"tss-table-row\" data-invoicenumber=\"$order->invoiceNumber\" data-invoiceurl=\"$order->invoiceURL\">";
+
     echo "<tr class=\"tss-table-row\">";
+
     // Kijelölés
     echo "<td align=\"center\"><input type=\"checkbox\" name=\"cbSelect\" value=\"$order->order_number\"></td>";
-
-    // Megrendelésszám
-    echo "<td align=\"center\"><a href=\"index.php?option=com_virtuemart&view=csomagolo&task=vieworder&order_id=$order->virtuemart_order_id\">$order->order_number</a></td>";
-
-    // Megrendelés dátuma
-    echo "<td align=\"center\">$order->dateFormatted</td>";
-    // echo "<td align=\"center\">$order->created_on</td>";
-
-    // Kisker-e checkbox
-    echo "<td align=\"center\"><input type=\"checkbox\" name=\"cbKisker$cnt\" disabled=\"disabled\" value=\"$order->order_number\"";
-    echo ($order->isKisker == true) ? " checked></td>" : "></td>";
 
     // Megrendelő neve
     echo "<td align=\"center\">$order->user_name</td>";
@@ -271,11 +293,25 @@ foreach ($this->orders as $order) {
     // Megrendelő emailcíme
     echo "<td align=\"center\">$order->user_email</td>";
 
-    // Előnézet
-    echo "<td style=\"width:60px\" align=\"center\">
+    // Kisker-e checkbox
+    echo "<td align=\"center\"><input type=\"checkbox\" name=\"cbKisker$cnt\" disabled=\"disabled\" value=\"$order->order_number\"";
+    echo ($order->isKisker == true) ? " checked></td>" : "></td>";
+
+    // Megrendelésszám
+    echo "<td align=\"center\"><a href=\"index.php?option=com_virtuemart&view=csomagolo&task=vieworder&order_id=$order->virtuemart_order_id\">$order->order_number</a></td>";
+
+    // Megrendelés dátuma
+    echo "<td align=\"center\">$order->dateFormatted</td>";
+
+    // Számla nyomtatás
+    if ($order->hasInvoice) {
+        echo "<td style=\"width:60px\" align=\"center\">
                         <a href=\"javascript:void window.open('index.php?option=com_virtuemart&view=csomagolo&task=printinvoice&invoicenumber=$order->invoiceNumber&invoiceorderid=$order->virtuemart_order_id', '_blank');\">
                             <img src=\"./components/com_virtuemart/assets/images/icon_32/invoicenew.png\" alt=\"Smiley face\" height=\"32\" width=\"32\">
                         </a></td>";
+    } else {
+        echo "<td style=\"width:60px\" align=\"center\"></td>";
+    }
 
     // Nyomtatás
     echo "<td style=\"width:60px\" align=\"center\">
@@ -283,12 +319,7 @@ foreach ($this->orders as $order) {
                             <img src=\"./components/com_virtuemart/assets/images/icon_32/printer.png\" alt=\"Smiley face\" height=\"32\" width=\"32\">
                         </a></td>";
 
-    // echo "<td align=\"center\" colspan=\"2\">
-    // <a href=\"javascript:void window.open('index.php?option=com_virtuemart&view=csomagolo&task=printorder&orderid=$order->virtuemart_order_id', 'win2', 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no');\">
-    //     <img src=\"./components/com_virtuemart/assets/images/icon_32/printer.png\" alt=\"Smiley face\" height=\"32\" width=\"32\">
-    // </a></td>";
-
-    // Számla kiállítva
+    // Manuális számlázás
     echo "<td align=\"center\"><input type=\"checkbox\" name=\"cbInvoice$cnt\" disabled=\"disabled\" value=\"$order->order_number\"";
     echo ($order->hasInvoice) ? " checked></td>" : "></td>";
 
