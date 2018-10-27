@@ -632,8 +632,9 @@ class VirtueMartModelCsomagolo extends VmModel
 						WHERE order_id=' . $line->virtuemart_order_id;
             $db->setQuery($query);
             $line->invoiceNumber = $db->loadResult();
-            // $line->invoiceNumber = "E-2017-2215"; // test id : 5997;
             $line->hasInvoice = ($line->invoiceNumber != "");
+
+            $line->isCouponUsed = (abs($line->coupon_discount) > 0);
 
         }
 

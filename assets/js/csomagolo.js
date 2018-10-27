@@ -13,7 +13,9 @@ window.addEventListener('load', function () {
 
     var lastSelectedStates = [];
 
-    addDropdownEventListeners();
+    addStateChangeEventListeners();
+
+    addManualInvoiceEventListeners();
 
     // Select every checkbox in first column
     btnSelectAll.addEventListener('click', function (e) {
@@ -196,7 +198,7 @@ window.addEventListener('load', function () {
 
 
     // handling Dropdown box change event
-    function addDropdownEventListeners() {
+    function addStateChangeEventListeners() {
         let rows = document.querySelector(".orderTable").rows;
 
         for (let i = 2; i < rows.length; i++) {
@@ -206,6 +208,23 @@ window.addEventListener('load', function () {
             dbox.addEventListener('change', function (e) {
                 onDropdownChange(e, i);
             });
+        }
+    }
+
+    function addManualInvoiceEventListeners() {
+        let cboxes = document.getElementsByName('cbManualInvoice');
+        for (let i = 0; i < cboxes.length; i++) {
+            cboxes[i].addEventListener('change', function (e) {
+                onCheckBoxChange(e, i + 2);
+            });
+        }
+    }
+
+    function onCheckBoxChange(event, rowIndex) {
+        if (event.target.checked) {
+            let rows = document.querySelector(".orderTable").rows;
+            let oNumber = rows[rowIndex].getElementsByTagName('td')[4].firstElementChild.innerText;
+            // TODO Implement the logic
         }
     }
 

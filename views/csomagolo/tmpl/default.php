@@ -73,6 +73,7 @@ defined('_JEXEC') or die('Restricted access');
     }
 
     /* Style for the sorting links */
+
     .sort-link {
         text-decoration: none;
         color: #000;
@@ -90,6 +91,23 @@ defined('_JEXEC') or die('Restricted access');
 
     .sort-link.active {
         text-decoration: underline;
+    }
+
+    /* Backround color for the rows */
+    .kisker {
+        background-color: #FEF7BE;
+    }
+
+    .ajanlott {
+        background-color: #BCE7B2;
+    }
+
+    .kupon {
+        background-color: #E2B3FD;
+    }
+
+    .bottom-border {
+        border-bottom: 1px solid #ddd;
     }
 
     /* Style for the loader */
@@ -246,7 +264,7 @@ defined('_JEXEC') or die('Restricted access');
         </tr>
 
         <!-- Header labels -->
-        <tr>
+        <tr class="bottom-border">
             <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH1'); ?></div></th>
 
             <!-- Name column header set to link to sort by this column -->
@@ -282,7 +300,17 @@ foreach ($this->orders as $order) {
 
     $cnt += 1;
 
-    echo "<tr class=\"tss-table-row\">";
+    echo "<tr class=\"tss-table-row bottom-border";
+    $styleClass = "";
+    if ($order->isKisker) {
+        $styleClass = " kisker";
+    }
+
+    if ($order->isCouponUsed) {
+        $styleClass = " kupon";
+    }
+
+    echo $styleClass . "\">";
 
     // Kijelölés
     echo "<td align=\"center\"><input type=\"checkbox\" name=\"cbSelect\" value=\"$order->order_number\"></td>";
@@ -320,8 +348,9 @@ foreach ($this->orders as $order) {
                         </a></td>";
 
     // Manuális számlázás
-    echo "<td align=\"center\"><input type=\"checkbox\" name=\"cbInvoice$cnt\" disabled=\"disabled\" value=\"$order->order_number\"";
-    echo ($order->hasInvoice) ? " checked></td>" : "></td>";
+    echo "<td align=\"center\"><input type=\"checkbox\" name=\"cbManualInvoice\" value=\"$order->order_number\"></td>";
+    // echo "<td align=\"center\"><input type=\"checkbox\" name=\"cbInvoice$cnt\" disabled=\"disabled\" value=\"$order->order_number\"";
+    // echo ($order->hasInvoice) ? " checked></td>" : "></td>";
 
     // Megrendelés állapota
     echo "<td><select align=\"center\" class=\"db-state\">";
