@@ -1,0 +1,66 @@
+.tss-table {
+    width: 95%;
+}
+
+td {
+    padding: 9px 0;
+}
+
+.orderdets-history {
+    empty-cells: hide;
+}
+
+.headerText {
+    width: 30%;
+    font-weight: bold;
+}
+
+.contentText {
+    width: 35%;
+}
+
+.top-border {
+    border-top: 1px solid #ddd;
+}
+
+.top-border-double {
+    border-top: 3px double #ddd;
+}
+
+.bottom-border {
+    border-bottom: 1px solid #ddd;
+}
+
+.top-margin {
+    margin-top: 30px;
+}
+
+/* History table */
+
+.history thead tr th {
+    text-align: left;
+}
+
+/* Billing and payment addresses */
+.billing-address-header {
+    width: 70%;
+    vertical-align: top;
+}
+
+.billing-address-content {
+    width: 30%;
+    vertical-align: top;
+}
+
+.shipping-address-header {
+    width: 50%;
+}
+
+.shipping-address-content {
+    width: 50%;
+}
+
+/* Order items */
+.orderitem-table thead tr th {
+    text-align: left;
+}

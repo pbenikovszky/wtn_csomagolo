@@ -76,6 +76,8 @@ class VirtuemartControllerCsomagolo extends VmController
         $view->setLayout('statechange');
         $view->orderNumbers = JRequest::getVar('ordernumbers');
         $view->newState = JRequest::getVar('newstate');
+        $view->job = JRequest::getVar('job');
+        $view->flagValue = JRequest::getVar('flagvalue');
         $view->display();
     }
 

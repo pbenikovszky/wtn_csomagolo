@@ -17,152 +17,8 @@
  */
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
-
+vmJsApi::css('csomagolo.default', '/administrator/components/com_virtuemart/assets/css/');
 ?>
-
-
-<style>
-
-    .header-buttonTitle {
-        min-height: 15px;
-    }
-
-    .header-container {
-        min-height: 110px;
-    }
-
-    .tssBtn {
-        min-width: 100px;
-        margin-top: 8px;
-    }
-
-    /* Button width */
-
-    .btnList {
-        min-width: 80px !important;
-    }
-
-    .btnInvoice {
-        min-width: 115px;
-    }
-
-    /* Table rowheight */
-
-    .orderTable {
-
-        width: 1850px;
-        table-layout: fixed;
-
-    }
-
-    td {
-        height: 40px;
-    }
-
-    .note-field {
-        text-overflow: ellipse;
-    }
-
-    .db-state {
-        width: 90%;
-        margin: 0 auto;
-    }
-
-    .tss-hidden {
-        display: none;
-    }
-
-    /* Style for the sorting links */
-
-    .sort-link {
-        text-decoration: none;
-        color: #000;
-    }
-
-    .sort-link:visited {
-        text-decoration: none;
-        color: #000;
-    }
-
-    .sort-link:hover {
-        text-decoration: underline;
-        color: #000076;
-    }
-
-    .sort-link.active {
-        text-decoration: underline;
-    }
-
-    /* Backround color for the rows */
-    .kisker {
-        background-color: #FEF7BE;
-    }
-
-    .ajanlott {
-        background-color: #BCE7B2;
-    }
-
-    .kupon {
-        background-color: #E2B3FD;
-    }
-
-    .bottom-border {
-        border-bottom: 1px solid #ddd;
-    }
-
-    /* Style for the loader */
-
-    .loader {
-        position: absolute;
-        width: 100vw;
-        height: 100vh;
-        background-color: rgba(0,0,0,0.8);
-        text-align: center;
-    }
-
-    .loader-wrapper {
-        position: absolute;
-        top: 30%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-
-    .lds-ripple {
-        display: inline-block;
-        position: relative;
-        width: 64px;
-        height: 64px;
-    }
-
-    .lds-ripple div {
-        position: absolute;
-        border: 4px solid #fff;
-        opacity: 1;
-        border-radius: 50%;
-        animation: lds-ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
-    }
-
-    .lds-ripple div:nth-child(2) {
-        animation-delay: -0.5s;
-    }
-
-    @keyframes lds-ripple {
-        0% {
-            top: 28px;
-            left: 28px;
-            width: 0;
-            height: 0;
-            opacity: 1;
-        }
-        100% {
-            top: -1px;
-            left: -1px;
-            width: 58px;
-            height: 58px;
-            opacity: 0;
-        }
-    }
-</style>
 
 <div id="loader" class="loader tss-hidden">
     <div class="loader-wrapper">
@@ -303,14 +159,19 @@ foreach ($this->orders as $order) {
     echo "<tr class=\"tss-table-row bottom-border";
     $styleClass = "";
     if ($order->isKisker) {
-        $styleClass = " kisker";
+        $styleClass = " retail";
     }
 
     if ($order->isCouponUsed) {
-        $styleClass = " kupon";
+        $styleClass = " coupon";
     }
 
-    echo $styleClass . "\">";
+    if ($order->isRecommended) {
+        $styleClass = " recommended";
+    }
+
+    echo $styleClass . "\" data-orderid=\"$order->virtuemart_order_id\" data-invoice=";
+    echo ($order->hasInvoice) ? "\"1\">" : "\"0\">";
 
     // Kijelölés
     echo "<td align=\"center\"><input type=\"checkbox\" name=\"cbSelect\" value=\"$order->order_number\"></td>";
@@ -348,7 +209,8 @@ foreach ($this->orders as $order) {
                         </a></td>";
 
     // Manuális számlázás
-    echo "<td align=\"center\"><input type=\"checkbox\" name=\"cbManualInvoice\" value=\"$order->order_number\"></td>";
+    echo "<td align=\"center\"><input type=\"checkbox\" name=\"cbManualInvoice\" value=\"$order->order_number\"";
+    echo ($order->manualInvoice == true) ? " checked></td>" : "></td>";
     // echo "<td align=\"center\"><input type=\"checkbox\" name=\"cbInvoice$cnt\" disabled=\"disabled\" value=\"$order->order_number\"";
     // echo ($order->hasInvoice) ? " checked></td>" : "></td>";
 
@@ -376,6 +238,7 @@ foreach ($this->orders as $order) {
 </table>
 
 <?php
+
 vmJsApi::addJScript('/administrator/components/com_virtuemart/assets/js/csomagolo.js', false, false);
 ?>
 

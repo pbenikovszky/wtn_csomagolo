@@ -22,77 +22,9 @@ $order = $this->orderToView;
 
 JToolbarHelper::title("Megrendelés (Megrendelés száma: $order->order_number)", 'csomagolo');
 JToolBarHelper::back();
+vmJsApi::css('csomagolo.vieworder', '/administrator/components/com_virtuemart/assets/css/');
 
 ?>
-
-<style>
-    .tss-table {
-        width: 95%;
-    }
-
-    td {
-        padding: 9px 0;
-    }
-
-    .orderdets-history {
-        empty-cells: hide;
-    }
-
-    .headerText {
-        width: 30%;
-        font-weight: bold;
-    }
-
-    .contentText {
-        width: 35%;
-    }
-
-    .top-border {
-        border-top: 1px solid #ddd;
-    }
-
-    .top-border-double {
-        border-top: 3px double #ddd;
-    }
-
-    .bottom-border {
-        border-bottom: 1px solid #ddd;
-    }
-
-    .top-margin {
-        margin-top: 30px;
-    }
-
-    /* History table */
-
-    .history thead tr th {
-        text-align: left;
-    }
-
-    /* Billing and payment addresses */
-    .billing-address-header {
-        width: 70%;
-        vertical-align: top;
-    }
-
-    .billing-address-content {
-        width: 30%;
-        vertical-align: top;
-    }
-
-    .shipping-address-header {
-        width: 50%;
-    }
-
-    .shipping-address-content {
-        width: 50%;
-    }
-
-    /* Order items */
-    .orderitem-table thead tr th {
-        text-align: left;
-    }
-</style>
 
 <!-- Order details and order history  -->
 <table class="tss-table orderdets-history top-border">
@@ -115,6 +47,18 @@ JToolBarHelper::back();
                     </td>
                 </tr>
                 <tr class="orderdets-row top-border">
+                    <td class="headerText">Kisker megrendelés</td>
+                    <td class="contentText" class="contentText">
+                        <?php echo ($order->isKisker) ? "Igen" : "Nem"; ?>
+                    </td>
+                </tr>
+                <tr class="orderdets-row top-border">
+                    <td class="headerText">Megrendelés azonosíto</td>
+                    <td class="contentText" class="contentText">
+                        <?php echo $order->virtuemart_order_id; ?>
+                    </td>
+                </tr>
+                <tr class="orderdets-row top-border">
                     <td class="headerText">Megrendelés dátuma</td>
                     <td class="contentText">
                         <?php echo $order->dateFormatted; ?>
@@ -129,7 +73,7 @@ JToolBarHelper::back();
                 <tr class="orderdets-row top-border">
                     <td class="headerText">Név</td>
                     <td class="contentText">
-                        <?php echo $order->order_number; ?>
+                        <?php echo $order->BT->firstName . ' ' . $order->BT->lastName; ?>
                     </td>
                 </tr>
                 <tr class="orderdets-row top-border">

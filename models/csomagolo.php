@@ -11,15 +11,15 @@ defined('_JEXEC') or die('Restricted access');
 
 // * FOR TESTS *
 
-// define("XML_PATH", "\\myInvoices\\XMLs\\");
-// define("INVOICE_PATH", "\\myInvoices\\");
-// define("RESPONSE_PATH", "\\myInvoices\\responses\\");
+define("XML_PATH", "\\myInvoices\\XMLs\\");
+define("INVOICE_PATH", "\\myInvoices\\");
+define("RESPONSE_PATH", "\\myInvoices\\responses\\");
 
 // * FOR PROD *
 
-define("XML_PATH", "/myInvoices/XMLs/");
-define("INVOICE_PATH", "/myInvoices/");
-define("RESPONSE_PATH", "/myInvoices/responses/");
+// define("XML_PATH", "/myInvoices/XMLs/");
+// define("INVOICE_PATH", "/myInvoices/");
+// define("RESPONSE_PATH", "/myInvoices/responses/");
 
 
 /**
@@ -70,6 +70,13 @@ class VirtueMartModelCsomagolo extends VmModel
 				  WHERE order_status_code=' . $db->quote($result->order_status);
         $db->setQuery($query);
         $result->statusName = $db->loadResult();
+
+        // get the user's shoppergroup id from the #__virtuemart_vmuser_shoppergroups table
+        $query = 'SELECT virtuemart_shoppergroup_id FROM #__virtuemart_vmuser_shoppergroups s
+                    WHERE s.virtuemart_user_id = ' . $db->quote($result->virtuemart_user_id);
+        $db->setQuery($query);
+        $isKisker = $db->loadResult();
+        $result->isKisker = ($isKisker == 6);        
 
         // payment method
         $query = 'SELECT payment_name, payment_desc FROM #__virtuemart_paymentmethods_hu_hu
@@ -558,6 +565,35 @@ class VirtueMartModelCsomagolo extends VmModel
         return 1;
     }
 
+    public function setManualInvoiceFlag($orderNumber, $flagValue) {
+
+        $orderID = $this->getIdFromNumber($orderNumber);
+        
+        $db = JFactory::getDBO();
+        $query = $db->getQuery(true);
+
+        $query = 'SELECT COUNT(*) FROM #__virtuemart_manualinvoices
+                    WHERE virtuemart_order_id=' . $db->quote($orderID);
+        $db->setQuery($query);
+        $isInList = $db->loadResult();
+
+        if ($isInList == 0) {
+            // Insert a new row into the table
+            $query = 'INSERT INTO #__virtuemart_manualinvoices
+                    VALUES (' . $db->quote($orderID) . ', ' . $db->quote($flagValue) . ')';
+        } else {
+            // update the existing row in the table
+            $query = 'UPDATE #__virtuemart_manualinvoices
+                    SET manual_invoice=' . $db->quote($flagValue) . ' WHERE virtuemart_order_id=' . $db->quote($orderID);
+        }
+
+        $db->setQuery($query);
+        $db->execute();
+
+        return 1;
+
+    }
+
     /**
      * Get the orders from DB for the main view
      */
@@ -636,6 +672,24 @@ class VirtueMartModelCsomagolo extends VmModel
 
             $line->isCouponUsed = (abs($line->coupon_discount) > 0);
 
+            // get the manual invoice flag
+            $query = 'SELECT manual_invoice FROM #__virtuemart_manualinvoices
+                        WHERE virtuemart_order_id=' . $line->virtuemart_order_id;
+            $db->setQuery($query);
+            $line->manualInvoice = ($db->loadResult() == 1) ? true : false;
+
+            // check if the order has recommendation
+            $query = 'SELECT au.name FROM #__affiliate_tracker_conversions AS ac
+                        LEFT JOIN #__affiliate_tracker_accounts AS au ON ac.atid = au.id 
+                        WHERE reference_id=' . $db->quote($line->virtuemart_order_id);
+            $db->setQuery($query);
+            $db->query();
+            if ($db->getNumRows() == 1) {
+                $line->isRecommended = true;
+                $line->recommender = $db->loadResult();
+            } else {
+                $line->isRecommended = false;
+            };
         }
 
         return $result;

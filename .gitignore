@@ -499,3 +499,6 @@ views/virtuemart/tmpl/feed.php
 views/virtuemart/tmpl/index.html
 test.pdf
 assets/js/1_create.xml
+assets/js/bootbox.min.js
+assets/js/notify.js
+views/csomagolo/index.html

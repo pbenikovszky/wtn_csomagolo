@@ -23,30 +23,21 @@ JToolbarHelper::title("Számla létrehozása", 'csomagolo');
 $csModel = VmModel::getModel('csomagolo');
 
 $orderNumbers = explode(",", $this->invoiceOrderIDs);
-
+$responseData = '';
 foreach ($orderNumbers as $orderNumber) {
     $oid = $csModel->getIdFromNumber($orderNumber);
     $response = $csModel->createInvoice($oid, false);
     if ($response->result == "SUCCESS") {
-        echo "Számla sikeresen elkészítve a(z) $oid számú rendeléshez. Számlaszám: $response->invoiceNumber\n";
+        $responseData = $responseData . "Számla sikeresen elkészítve a(z) $oid számú rendeléshez. Számlaszám: $response->invoiceNumber\n";
     } else {
-        echo "$oid számú megrendeléshez a számlakészítés sikertelen!\n";
+        $responseData = $responseData . "$oid számú megrendeléshez a számlakészítés sikertelen!\n";
     }
 }
 
-// $response = $csModel->createInvoice($this->invoiceOrderID, false);
+$response = json_encode(
+    array("result" => "SUCCESS",
+        "data" => $responseData,
+        "code" => 200)
+);
 
-// if ($response->result == "SUCCESS") {
-//     echo "<h1>Számla sikeresen létrehozva</h1>";
-//     echo "<ul>";
-//     echo "<li>Számla száma: " . $response->invoiceNumber . "</li>";
-//     echo "<li>Számla nettó értéke: " . $response->totalWithoutTax . "</li>";
-//     echo "<li>Számla bruttó értéke: " . $response->total . "</li>";
-//     echo "<li>A szamlazz.hu oldal válasza sikeresen rögzítve: " . $response->responseFileName . "</li>";
-//     echo "</ul>";
-// } else if ($response->result == "FAILXML") {
-//     echo "<h1>Számla létrehozása sikertelen</h1>";
-//     echo "<p><strong>Hibakód $response->errorCode:</strong> <span>$response->error</span></p>";
-// } else {
-//     echo "Számlakészítés sikertelen!";
-// }
+echo $response;
