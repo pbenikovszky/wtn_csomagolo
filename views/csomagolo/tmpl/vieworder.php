@@ -22,7 +22,7 @@ $order = $this->orderToView;
 
 JToolbarHelper::title("Megrendelés (Megrendelés száma: $order->order_number)", 'csomagolo');
 JToolBarHelper::back();
-vmJsApi::css('csomagolo.vieworder', '/administrator/components/com_virtuemart/assets/css/');
+vmJsApi::css('csomagolo.vieworder', 'administrator/components/com_virtuemart/assets/css/');
 
 ?>
 
@@ -82,6 +82,15 @@ vmJsApi::css('csomagolo.vieworder', '/administrator/components/com_virtuemart/as
                         <?php echo $order->ip_address; ?>
                     </td>
                 </tr>
+                <?php
+if ($order->isCouponUsed) {?>
+                    <tr class="orderdets-row top-border">
+                        <td class="headerText">Kuponkód</td>
+                        <td class="contentText">
+                            <?php echo $order->coupon_code; ?>
+                        </td>
+                    </tr>
+                <?php }?>
             </table>
         </td>
         <td style="width: 20%;"></td>
@@ -343,8 +352,21 @@ foreach ($order->orderItems as $orderItem) {
             <td></td>
             <td><?php echo number_format(round($order->order_tax), 0, ',', ' '); ?> Ft</td>
             <td><?php echo number_format(round($order->order_discount), 0, ',', ' '); ?> Ft</td>
-            <td><?php echo number_format(round($order->salesPrice), 0, ',', ' '); ?> Ft</td>
+            <td><?php echo number_format(round($order->order_salesPrice), 0, ',', ' '); ?> Ft</td>
         </tr>
+<?php
+if ($order->isCouponUsed) {?>
+        <tr class="top-border">
+            <td colspan="4"></td>
+            <td style="text-align: right; padding-right: 10px;"><strong>Kuponkedvezmény:</strong></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        <td><?php echo number_format(round($order->coupon_discount), 0, ',', ' '); ?> Ft</td>
+            </tr>
+<?php }?>
         <tr class="top-border">
             <td colspan="4"></td>
             <td style="text-align: right; padding-right: 10px;"><strong>Szállítási és kezelési költség:</strong></td>

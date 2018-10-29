@@ -11,15 +11,15 @@ defined('_JEXEC') or die('Restricted access');
 
 // * FOR TESTS *
 
-define("XML_PATH", "\\myInvoices\\XMLs\\");
-define("INVOICE_PATH", "\\myInvoices\\");
-define("RESPONSE_PATH", "\\myInvoices\\responses\\");
+// define("XML_PATH", "\\myInvoices\\XMLs\\");
+// define("INVOICE_PATH", "\\myInvoices\\");
+// define("RESPONSE_PATH", "\\myInvoices\\responses\\");
 
 // * FOR PROD *
 
-// define("XML_PATH", "/myInvoices/XMLs/");
-// define("INVOICE_PATH", "/myInvoices/");
-// define("RESPONSE_PATH", "/myInvoices/responses/");
+define("XML_PATH", "/myInvoices/XMLs/");
+define("INVOICE_PATH", "/myInvoices/");
+define("RESPONSE_PATH", "/myInvoices/responses/");
 
 
 /**
@@ -51,7 +51,6 @@ class VirtueMartModelCsomagolo extends VmModel
     {
         $db = JFactory::getDBO();
         $query = $db->getQuery(true);
-        // $query = 'SELECT * FROM #__virtuemart_orders WHERE virtuemart_order_id=1';
         $query->select('*')
             ->from($db->quoteName('#__virtuemart_orders'))
             ->where($db->quoteName('virtuemart_order_id') . ' LIKE ' . $db->quote($orderID));
@@ -208,6 +207,22 @@ class VirtueMartModelCsomagolo extends VmModel
                     WHERE virtuemart_paymentmethod_id=' . $db->quote($result->paymentDetails->virtuemart_paymentmethod_id);
         $db->setQuery($query);
         $result->paymentDetails->name = $db->loadResult();
+
+        // is coupon used
+        $result->isCouponUsed = (abs($result->coupon_discount) > 0);
+
+        // check if the order has recommendation
+        $query = 'SELECT au.name FROM #__affiliate_tracker_conversions AS ac
+                    LEFT JOIN #__affiliate_tracker_accounts AS au ON ac.atid = au.id 
+                    WHERE reference_id=' . $db->quote($result->virtuemart_order_id);
+        $db->setQuery($query);
+        $db->query();
+        if ($db->getNumRows() == 1) {
+            $result->isRecommended = true;
+            $result->recommender = $db->loadResult();
+        } else {
+            $result->isRecommended = false;
+        };
 
         // return the object
         return $result;

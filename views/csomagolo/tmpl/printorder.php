@@ -92,6 +92,22 @@ defined('_JEXEC') or die('Restricted access');
 
         <tr>
             <td><strong>
+                    <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_ORDER_ID'); ?></strong></td>
+            <td>
+            <?php echo $this->orderDetails->virtuemart_order_id; ?>
+            </td>
+        </tr>
+
+        <tr>
+            <td><strong>
+                    <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_ORDER_RETAIL'); ?></strong></td>
+            <td>
+            <?php echo ($this->orderDetails->isKisker) ? "Igen" : "Nem"; ?>
+            </td>
+        </tr>
+
+        <tr>
+            <td><strong>
                     <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_ORDER_DATE'); ?></strong></td>
             <td>
                 <?php echo $this->orderDetails->dateFormatted; ?>
@@ -117,7 +133,7 @@ defined('_JEXEC') or die('Restricted access');
         <tr>
             <td><strong>
                     <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_VENDOR'); ?></strong></td>
-            <td>XY</td>
+            <td><?php echo $this->orderDetails->recommender; ?></td>
         </tr>
 
         <tr>
@@ -130,8 +146,10 @@ defined('_JEXEC') or die('Restricted access');
 
         <tr>
             <td><strong>
-                    <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_COUPON_DISCOUNT'); ?></strong></td>
-            <td>……. Ft</td>
+                <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_COUPON_DISCOUNT'); ?></strong></td>
+            <td>
+                <?php echo number_format(round($this->orderDetails->coupon_discount), 0, ',', ' '); ?> Ft
+            </td>
         </tr>
 
         <tr>

@@ -17,7 +17,7 @@
  */
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
-vmJsApi::css('csomagolo.default', '/administrator/components/com_virtuemart/assets/css/');
+vmJsApi::css('csomagolo.default', 'administrator/components/com_virtuemart/assets/css/');
 ?>
 
 <div id="loader" class="loader tss-hidden">
@@ -31,7 +31,7 @@ vmJsApi::css('csomagolo.default', '/administrator/components/com_virtuemart/asse
         <!-- Buttons -->
         <tr>
             <!-- Kijelölés -->
-            <th>
+            <th style="width: 126px;">
                 <div class="header-container">
                     <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER1'); ?></span></div>
                     <div id="btnSelectAll" class="btn tssBtn"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_SELECTALL'); ?></div>
@@ -54,7 +54,7 @@ vmJsApi::css('csomagolo.default', '/administrator/components/com_virtuemart/asse
             </th>
 
             <!-- Kisker checkbox -->
-            <th>
+            <th style="width: 107px;">
                 <div class="header-container">
                     <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER4'); ?></span></div>
                     <div id="btnShowRetail" class="btn tssBtn btnList"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_SHOWRETAILONLY'); ?></div>
@@ -63,21 +63,21 @@ vmJsApi::css('csomagolo.default', '/administrator/components/com_virtuemart/asse
             </th>
 
             <!-- Megrendelés száma -->
-            <th>
+            <th style="width: 112px;">
                 <div class="header-container">
                     <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER2'); ?></span></div>
                 </div>
             </th>
 
             <!-- Megrendelés dátuma -->
-            <th>
+            <th style="width: 120px;">
                 <div class="header-container">
                     <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER3'); ?></span></div>
                 </div>
             </th>
 
             <!-- Számlanyomtás / Megrendelésnyomtatás  -->
-           <th colspan="2" style="width: 125px;">
+           <th colspan="2" style="width: 130px;">
                 <div class="header-container">
                     <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER7'); ?></span></div>
                     <div id="btnPrintAll" class="btn tssBtn"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_PRINTALL'); ?></div>
@@ -85,7 +85,7 @@ vmJsApi::css('csomagolo.default', '/administrator/components/com_virtuemart/asse
             </th>
 
             <!-- Számla kiállítva -->
-            <th>
+            <th style="width: 141px;">
                 <div class="header-container">
                     <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER9'); ?></span></div>
                     <div id="btnIssueInvoice" class="btn tssBtn btnInvoice"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_ISSUEINVOICE'); ?></div>
@@ -94,7 +94,7 @@ vmJsApi::css('csomagolo.default', '/administrator/components/com_virtuemart/asse
             </th>
 
             <!-- Megrendelés állapota -->
-            <th>
+            <th style="width: 126px;">
                 <div class="header-container">
                     <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER10'); ?></span></div>
                     <div id="btnStateToGLS" class="btn tssBtn"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_STATETOGLS'); ?></div>
@@ -125,9 +125,23 @@ vmJsApi::css('csomagolo.default', '/administrator/components/com_virtuemart/asse
 
             <!-- Name column header set to link to sort by this column -->
             <?php if ($this->orderFunction == 'sortByNameAsc') {?>
-                <th><div><a class="sort-link active" href="index.php?option=com_virtuemart&view=csomagolo&orderfunction=sortByNameAsc"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH5'); ?></a></div></th>
+                <th>
+                    <div>
+                        <a class="sort-link active" href="index.php?option=com_virtuemart&view=csomagolo&orderfunction=sortByNameAsc">
+                            <img src="./components/com_virtuemart/assets/images/icon-arrow-up-b-128.png" alt="Print invoice" height="16" width="16">
+                            <?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH5'); ?>
+                        </a>
+                    </div>
+                </th>
             <?php } else {?>
-                <th><div><a class="sort-link" href="index.php?option=com_virtuemart&view=csomagolo&orderfunction=sortByNameAsc"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH5'); ?></a></div></th>
+                <th>
+                    <div>
+                        <a class="sort-link" href="index.php?option=com_virtuemart&view=csomagolo&orderfunction=sortByNameAsc">
+                            <img src="./components/com_virtuemart/assets/images/icon-arrow-up-b-128.png" alt="Print invoice" height="16" width="16">
+                            <?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH5'); ?>
+                        </a>
+                    </div>
+                </th>
             <?php }?>
 
             <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH6'); ?></div></th>
@@ -136,9 +150,23 @@ vmJsApi::css('csomagolo.default', '/administrator/components/com_virtuemart/asse
 
             <!-- Name column header set to link to sort by this column -->
             <?php if ($this->orderFunction == 'sortByDateDesc') {?>
-                <th><div><a class="sort-link active" href="index.php?option=com_virtuemart&view=csomagolo&orderfunction=sortByDateDesc"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH3'); ?></a></div></th>
+                <th>
+                    <div>
+                        <a class="sort-link active" href="index.php?option=com_virtuemart&view=csomagolo&orderfunction=sortByDateDesc">
+                            <img src="./components/com_virtuemart/assets/images/icon-arrow-down-b-128.png" alt="Print invoice" height="16" width="16">
+                            <?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH3'); ?>
+                        </a>
+                    </div>
+                </th>
             <?php } else {?>
-                <th><div><a class="sort-link" href="index.php?option=com_virtuemart&view=csomagolo&orderfunction=sortByDateDesc"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH3'); ?></a></div></th>
+                <th>
+                    <div>
+                        <a class="sort-link" href="index.php?option=com_virtuemart&view=csomagolo&orderfunction=sortByDateDesc">
+                            <img src="./components/com_virtuemart/assets/images/icon-arrow-down-b-128.png" alt="Print invoice" height="16" width="16">
+                            <?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH3'); ?>
+                        </a>
+                    </div>
+                </th>
             <?php }?>
 
             <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH7'); ?></div></th>
@@ -162,12 +190,12 @@ foreach ($this->orders as $order) {
         $styleClass = " retail";
     }
 
-    if ($order->isCouponUsed) {
-        $styleClass = " coupon";
-    }
-
     if ($order->isRecommended) {
         $styleClass = " recommended";
+    }
+
+    if ($order->isCouponUsed) {
+        $styleClass = " coupon";
     }
 
     echo $styleClass . "\" data-orderid=\"$order->virtuemart_order_id\" data-invoice=";
@@ -196,7 +224,7 @@ foreach ($this->orders as $order) {
     if ($order->hasInvoice) {
         echo "<td style=\"width:60px\" align=\"center\">
                         <a href=\"javascript:void window.open('index.php?option=com_virtuemart&view=csomagolo&task=printinvoice&invoicenumber=$order->invoiceNumber&invoiceorderid=$order->virtuemart_order_id', '_blank');\">
-                            <img src=\"./components/com_virtuemart/assets/images/icon_32/invoicenew.png\" alt=\"Smiley face\" height=\"32\" width=\"32\">
+                            <img src=\"./components/com_virtuemart/assets/images/icon_32/invoicenew.png\" alt=\"Print invoice\" height=\"32\" width=\"32\">
                         </a></td>";
     } else {
         echo "<td style=\"width:60px\" align=\"center\"></td>";

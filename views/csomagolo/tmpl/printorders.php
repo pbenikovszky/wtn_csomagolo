@@ -16,14 +16,14 @@
  * @version $Id: orders.php 9522 2017-05-02 14:23:52Z StefanSTS $
  */
 // Check to ensure this file is included in Joomla!
-defined ('_JEXEC') or die('Restricted access');
+defined('_JEXEC') or die('Restricted access');
 
 ?>
 
 <style>
 
-    header, nav, .subhead-collapse { 
-        display: none !important;  
+    header, nav, .subhead-collapse {
+        display: none !important;
     }
 
     table {
@@ -77,23 +77,39 @@ defined ('_JEXEC') or die('Restricted access');
 
 </style>
 
-<?php 
-    $orderCount = count($this->ordersToPrint);
-    $cnt = 1;
-    foreach ($this->ordersToPrint as $order) { ?>
+<?php
+$orderCount = count($this->ordersToPrint);
+$cnt = 1;
+foreach ($this->ordersToPrint as $order) {?>
 
         <div class="order-print-area">
 
             <!-- Rendelés adatai -->
             <table class="order-details-table">
                 <col width="35%">
-                <col width="65%">            
+                <col width="65%">
 
                 <tr>
                     <td><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_ORDER_NUMBER'); ?></strong></td>
                     <td><?php echo $order->order_number; ?></td>
                 </tr>
-                
+
+                <tr>
+                    <td><strong>
+                            <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_ORDER_ID'); ?></strong></td>
+                    <td>
+                    <?php echo $order->virtuemart_order_id; ?>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td><strong>
+                            <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_ORDER_RETAIL'); ?></strong></td>
+                    <td>
+                    <?php echo ($order->isKisker) ? "Igen" : "Nem"; ?>
+                    </td>
+                </tr>
+
                 <tr>
                     <td><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_ORDER_DATE'); ?></strong></td>
                     <td><?php echo $order->dateFormatted; ?></td>
@@ -103,7 +119,7 @@ defined ('_JEXEC') or die('Restricted access');
                     <td><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_ORDER_STATE'); ?></strong></td>
                     <td><?php echo $order->statusName; ?></td>
                 </tr>
-                    
+
                 <tr>
                     <td><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_SHIPMENT_METHOD'); ?></strong></td>
                     <td><?php echo $order->shipmentMethod; ?></td>
@@ -111,9 +127,9 @@ defined ('_JEXEC') or die('Restricted access');
 
                 <tr>
                     <td><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_VENDOR'); ?></strong></td>
-                    <td>XY</td>
+                    <td><?php echo $order->recommender; ?></td>
                 </tr>
-                    
+
                 <tr>
                     <td><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_COUPON_CODE'); ?></strong></td>
                     <td><?php echo $order->coupon_code; ?></td>
@@ -121,17 +137,17 @@ defined ('_JEXEC') or die('Restricted access');
 
                 <tr>
                     <td><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_COUPON_DISCOUNT'); ?></strong></td>
-                    <td>……. Ft</td>
+                    <td><?php echo number_format(round($order->coupon_discount), 0, ',', ' '); ?> Ft</td>
                 </tr>
-                    
+
                 <tr>
                     <td><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_BANKACCOUNT'); ?></strong></td>
                     <td>
                         <?php
-                            if ($order->virtuemart_paymentmethod_id == 6) {
-                                echo $order->paymentDesc;
-                            }
-                        ?>
+if ($order->virtuemart_paymentmethod_id == 6) {
+    echo $order->paymentDesc;
+}
+    ?>
                     </td>
                 </tr>
 
@@ -139,7 +155,7 @@ defined ('_JEXEC') or die('Restricted access');
                     <td><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_PAYMENT_METHOD'); ?></strong></td>
                     <td><?php echo $order->paymentMethod; ?></td>
                 </tr>
-                    
+
                 <tr>
                     <td><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_TOTALSUM'); ?></strong></td>
                     <td><?php echo number_format(round($order->order_total), 0, ',', ' '); ?> Ft</td>
@@ -150,7 +166,7 @@ defined ('_JEXEC') or die('Restricted access');
                 <!-- Megjegyzések -->
                 <table class="notes-table">
                     <col width="50%">
-                    <col width="50%">            
+                    <col width="50%">
                     <thead>
                         <tr>
                             <th><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_CUSTOMER_NOTE'); ?></strong></th>
@@ -161,15 +177,15 @@ defined ('_JEXEC') or die('Restricted access');
                         <tr>
                             <td><div class="note"><?php echo $order->customerNote; ?></div></td>
                             <td><div class="note"><?php echo $order->glsNote; ?></div></td>
-                        </tr>            
-                    </tbody>            
+                        </tr>
+                    </tbody>
                 </table>
 
                     <!-- Számlázási és szállítási cím -->
                 <table class="address-table">
                     <col width="20%">
-                    <col width="40%">        
-                    <col width="40%">        
+                    <col width="40%">
+                    <col width="40%">
 
                     <thead>
                         <tr>
@@ -193,12 +209,12 @@ defined ('_JEXEC') or die('Restricted access');
                             <td><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_FIRSTNAME'); ?></strong></td>
                             <td><?php echo $order->BT->firstName; ?></td>
                             <td><?php echo $order->ST->firstName; ?></td>
-                        </tr>                
+                        </tr>
                         <tr>
                             <td><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_ADDRESS'); ?></strong></td>
                             <td><?php echo $order->BT->address; ?></td>
                             <td><?php echo $order->ST->address; ?></td>
-                        </tr>                
+                        </tr>
                         <tr>
                             <td><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_ZIPCODE'); ?></strong></td>
                             <td><?php echo $order->BT->zip; ?></td>
@@ -213,19 +229,19 @@ defined ('_JEXEC') or die('Restricted access');
                             <td><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_COUNTRY'); ?></strong></td>
                             <td><?php echo $order->BT->country; ?></td>
                             <td><?php echo $order->ST->country; ?></td>
-                        </tr>                
+                        </tr>
                         <tr>
                             <td><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_PHONE'); ?></strong></td>
                             <td><?php echo $order->BT->phone; ?></td>
                             <td><?php echo $order->ST->phone; ?></td>
-                        </tr>                
+                        </tr>
                     </tbody>
                 </table>
 
                 <!-- Termékek tábla  -->
                 <table class="products-table">
                     <col width="80%">
-                    <col width="20%"> 
+                    <col width="20%">
                     <thead>
                         <tr>
                             <th><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_PRODUCT_NAME'); ?></strong></th>
@@ -234,26 +250,26 @@ defined ('_JEXEC') or die('Restricted access');
                     </thead>
                     <tbody>
                         <?php
-                            foreach ($order->orderItems as $orderItem) { 
-                                echo "<tr>";
-                                echo "<td align=\"center\">$orderItem->order_item_name</td>";
-                                echo "<td align=\"center\">$orderItem->product_quantity db</td>";
-                                echo "</tr>";
-                            }
-                        ?>
+foreach ($order->orderItems as $orderItem) {
+        echo "<tr>";
+        echo "<td align=\"center\">$orderItem->order_item_name</td>";
+        echo "<td align=\"center\">$orderItem->product_quantity db</td>";
+        echo "</tr>";
+    }
+    ?>
                     </tbody>
                 </table>
-                
-                <?php 
-                    if ($cnt != $orderCount) {
-                        echo "<div class=\"page-break-tag\"></div>";
-                    } 
-                    $cnt = $cnt + 1;
-                ?>
+
+                <?php
+if ($cnt != $orderCount) {
+        echo "<div class=\"page-break-tag\"></div>";
+    }
+    $cnt = $cnt + 1;
+    ?>
 
         </div>
 
-    <?php } // foreach ($this->ordersToPrint as $order) ?>    
+    <?php } // foreach ($this->ordersToPrint as $order) ?>
 
 <script>
     window.print();

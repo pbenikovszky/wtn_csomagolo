@@ -38,7 +38,7 @@ if ($pdf->result == "SUCCESS") {
         let urlLocal = 'http://localhost/joomla/administrator/myInvoices/' + pdfName;
         let url = 'http://masolat1.drbiroszabolcs.com/administrator/myInvoices/' + pdfName;
         printJS({
-            printable: urlLocal,
+            printable: url,
             type: 'pdf',
             showModal: true
         });
