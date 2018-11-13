@@ -173,12 +173,12 @@ foreach ($order->orderHistory as $historyEntry) {
                             <?php echo $order->customerNote; ?>
                         </td>
                     </tr>
-                    <tr class="top-border">
+                    <!-- <tr class="top-border">
                         <td class="billing-address-header">Megjegyzés a GLS futárnak</td>
                         <td class="billing-address-content">
-                            <?php echo $order->glsNote; ?>
+                            <?php // echo $order->glsNote; ?>
                         </td>
-                    </tr>
+                    </tr> -->
                     <tr class="top-border">
                         <td class="billing-address-header">Email</td>
                         <td class="billing-address-content">

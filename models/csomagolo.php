@@ -40,7 +40,7 @@ class VirtueMartModelCsomagolo extends VmModel
      */
     public function getOrderstates()
     {
-        return array("Megerősített" => "C", "GLS futárra vár" => "L", "Várakoztatva" => "V", "Kiszállítva" => "S");
+        return array("Megerősített" => "C", "GLS csomagfeladásra vár" => "G", "Várakoztatva" => "V", "Kiszállítva" => "S");
     }
 
     /**
@@ -58,8 +58,7 @@ class VirtueMartModelCsomagolo extends VmModel
         $result = $db->loadObject();
 
         // date of the order
-        $d = strtotime($result->created_on);
-        $result->dateFormatted = strftime("%Y. %B %d, %A. %R", $d);
+        $result->dateFormatted= vmJsApi::date($result->created_on,'LC2',true);
 
         // total sum of order, formatted
         $result->order_totalSum = number_format(round($result->order_total), 0, ',', ' ');
@@ -107,7 +106,7 @@ class VirtueMartModelCsomagolo extends VmModel
 
         // Customer notes
         $result->customerNote = $userinfo[0]->customer_note;
-        $result->glsNote = $userinfo[0]->gls_note;
+        //$result->glsNote = $userinfo[0]->gls_note;
         $result->adatkezeles = ($userinfo[0]->adatkezeles == 1) ? "Igen" : "Nem";
         $result->hirlevel = ($userinfo[0]->marketing == 1) ? "Igen" : "Nem";
 
@@ -254,7 +253,9 @@ class VirtueMartModelCsomagolo extends VmModel
 
         date_default_timezone_set('Europe/Paris');
         $datum = date("Y-m-d");
-
+        $replace_rule = array('&amp;'=>'&',';'=>',',chr(10)=>" ",chr(13)=>" ");
+        $prefix = "#__";
+        
         // Create instances of Joomla's DB Object
         $db = JFactory::getDBO();
         $db2 = JFactory::getDBO();
@@ -262,7 +263,7 @@ class VirtueMartModelCsomagolo extends VmModel
         $db5 = JFactory::getDBO();
         $db6 = JFactory::getDBO();
 
-        $prefix = "#__";
+
 
         $query = "SELECT a.*,b.virtuemart_order_userinfo_id, b.virtuemart_user_id, b.address_type, b.address_type_name, b.company, b.title, b.last_name, b.first_name, b.middle_name, b.phone_1, b.phone_2, b.fax, b.address_1, b.address_2, b.city, b.virtuemart_country_id, b.zip, b.email
         FROM
@@ -270,14 +271,14 @@ class VirtueMartModelCsomagolo extends VmModel
           LEFT JOIN " . $prefix . "virtuemart_order_userinfos b on b.virtuemart_order_id = a.virtuemart_order_id
           LEFT JOIN " . $prefix . "virtuemart_order_histories h on h.virtuemart_order_id = a.virtuemart_order_id
         WHERE
-          b.address_type = 'BT' AND a.order_status='L' GROUP BY a.virtuemart_order_id ORDER BY h.created_on DESC";
+          b.address_type = 'BT' AND a.order_status='G' GROUP BY a.virtuemart_order_id ORDER BY h.created_on DESC";
 
         $db->setQuery($query);
         $db->query() or die();
         $num_rows = $db->getNumRows();
 
         if ($num_rows == 0) {
-            return "Nincs listázásra váró rendelés! Statusza: GLS futárra vár!";
+            return "NA";
             exit();
         } else {
             $lista = 'Utánvét összege;cimzett;ország;irszam;város;cím;telefon;email;sms;cegnev;Utánvét hivatkozás;Ügyfél hivatkozás;Szolgáltatások;Megjegyzés';
@@ -408,9 +409,12 @@ class VirtueMartModelCsomagolo extends VmModel
                     $num_rows3 = $db3->getNumRows();
                     if ($num_rows3 > 0) {
                         $sor4 = $db3->loadAssocList();
-                        if ($sor4[0]['virtuemart_paymentmethod_id'] == 6 or $sor4[0]['virtuemart_paymentmethod_id'] == 10) {
+                        if ($sor4[0]['virtuemart_paymentmethod_id'] != 4) {
                             $sor3[0]['osszeg'] = '0';
                         }
+                        // if ($sor4[0]['virtuemart_paymentmethod_id'] == 6 or $sor4[0]['virtuemart_paymentmethod_id'] == 10) {
+                        //     $sor3[0]['osszeg'] = '0';
+                        // }
                     }
                 } else {
                     $sor3[0]['order_id'] = 'IMSERETLEN!!!';
@@ -506,10 +510,10 @@ class VirtueMartModelCsomagolo extends VmModel
 
         }
 
-        if ($_SESSION['vik_csinal'] == 1) {
-            return $list2a;
-        } else {
+        if ($_SESSION['tss_vik_csinal'] == 1) {
             return $lista;
+        } else {
+            return $list2a;
         }
 
     }
@@ -531,8 +535,7 @@ class VirtueMartModelCsomagolo extends VmModel
         $result = $db->loadObject();
 
         // date of the order
-        $d = strtotime($result->created_on);
-        $result->dateFormatted = strftime("%Y. %B %d, %A. %R", $d);
+        $result->dateFormatted= vmJsApi::date($result->created_on,'LC2',true);
 
         // total sum of order, formatted
         $result->order_totalSum = number_format(round($result->order_total), 0, ',', ' ');
@@ -550,6 +553,13 @@ class VirtueMartModelCsomagolo extends VmModel
         $db = JFactory::getDBO();
         $query = $db->getQuery(true);
 
+        $orderID = $this->getIdFromNumber($orderNumber);
+        $order = $this->getOrderById($orderID);
+
+        if ($order->isKisker && $order->virtuemart_paymentmethod_id != "11" && $newState === "S") {
+            $newState = "W";
+        }
+        $result = $order->isKisker . ", payment method: " .$order->virtuemart_paymentmethod_id . ", newState: " . $newState;
         // change the status of the order
         $query = 'UPDATE #__virtuemart_orders
 				  SET order_status=' . $db->quote($newState) . ' WHERE order_number=' . $db->quote($orderNumber);
@@ -557,7 +567,6 @@ class VirtueMartModelCsomagolo extends VmModel
         $db->execute();
 
         // change the status of the order items
-        $orderID = $this->getIdFromNumber($orderNumber);
         $query = 'UPDATE #__virtuemart_order_items
 				  SET order_status=' . $db->quote($newState) . ' WHERE virtuemart_order_id=' . $db->quote($orderID);
         $db->setQuery($query);
@@ -577,7 +586,7 @@ class VirtueMartModelCsomagolo extends VmModel
         $db->setQuery($query);
         $db->execute();
 
-        return 1;
+        return $result;
     }
 
     public function setManualInvoiceFlag($orderNumber, $flagValue) {
@@ -610,6 +619,27 @@ class VirtueMartModelCsomagolo extends VmModel
     }
 
     /**
+     * Get the number of orders for each order status
+     */
+    function getStatusCounters() {
+        $db = JFactory::getDBO();
+        $query = $db->getQuery(true);
+        $query = 'SELECT COUNT(*) FROM #__virtuemart_orders 
+                    WHERE order_status="C"';
+        $db->setQuery($query);
+        $result->countConfirmed = $db->loadResult();
+        $query = 'SELECT COUNT(*) FROM #__virtuemart_orders 
+                    WHERE order_status="G"';
+        $db->setQuery($query);
+        $result->countGLS = $db->loadResult();
+        $query = 'SELECT COUNT(*) FROM #__virtuemart_orders 
+                    WHERE order_status="V"';
+        $db->setQuery($query);
+        $result->countPending = $db->loadResult();
+
+        return $result;
+    }
+    /**
      * Get the orders from DB for the main view
      */
     public function getOrders()
@@ -636,7 +666,7 @@ class VirtueMartModelCsomagolo extends VmModel
         $query = $db->getQuery(true);
         $query->select('*')
             ->from($db->quoteName('#__virtuemart_orders'))
-            ->where("order_status IN (\"C\", \"L\", \"V\", \"S\")")
+            ->where("order_status IN (\"C\", \"G\", \"V\")")
             ->order("created_on DESC");
         $db->setQuery($query);
         $result = $db->loadObjectList();
@@ -644,7 +674,7 @@ class VirtueMartModelCsomagolo extends VmModel
         foreach ($result as $line) {
 
             // get the user's name and email address from the #__virtuemart_order_userinfos table
-            $query = 'SELECT first_name, last_name, middle_name, email, customer_note, virtuemart_user_id, gls_note from #__virtuemart_order_userinfos u
+            $query = 'SELECT first_name, last_name, middle_name, email, customer_note, virtuemart_user_id from #__virtuemart_order_userinfos u
 						WHERE u.virtuemart_order_id=' . $line->virtuemart_order_id;
             $db->setQuery($query);
             $userinfo = $db->loadObject();
@@ -656,7 +686,7 @@ class VirtueMartModelCsomagolo extends VmModel
             // set the customer's comment
             $line->comment = $userinfo->customer_note;
             // set the GLS comment
-            $line->gls_note = $userinfo->gls_note;
+            //$line->gls_note = $userinfo->gls_note;
 
             // get the user's shoppergroup id from the #__virtuemart_vmuser_shoppergroups table
             $query = 'SELECT virtuemart_shoppergroup_id FROM #__virtuemart_vmuser_shoppergroups s
@@ -668,8 +698,8 @@ class VirtueMartModelCsomagolo extends VmModel
             // set a formatted date
             // set the locale to hungarian
             setlocale(LC_ALL, 'hu_HU.utf8');
-            $d = strtotime($line->created_on);
-            $line->dateFormatted = strftime("%Y. %B %d, %A. %R", $d);
+            $line->dateFormatted= vmJsApi::date($line->created_on,'LC2',true);
+            
 
             // get the order state from the #__virtuemart_orderstates table
             $query = 'SELECT order_status_name from #__virtuemart_orderstates o
@@ -706,6 +736,8 @@ class VirtueMartModelCsomagolo extends VmModel
                 $line->isRecommended = false;
             };
         }
+
+        
 
         return $result;
     }
@@ -817,8 +849,8 @@ class VirtueMartModelCsomagolo extends VmModel
     {
 
         $componentParams = JComponentHelper::getParams('com_cloudszamlazzhu');
-        // $szamlazzhu_user = $componentParams->get('szamlazzhu_user', '');
-        // $szamlazzhu_pass = $componentParams->get('szamlazzhu_pass', '');
+        $szamlazzhu_user = $componentParams->get('szamlazzhu_user', '');
+        $szamlazzhu_pass = $componentParams->get('szamlazzhu_pass', '');
         $szamlazzhu_user = "fzs@wtn.hu";
         $szamlazzhu_pass = "Wtn-Proba";
 
@@ -854,8 +886,8 @@ class VirtueMartModelCsomagolo extends VmModel
         }
 
         $componentParams = JComponentHelper::getParams('com_cloudszamlazzhu');
-        // $szamlazzhu_user = $componentParams->get('szamlazzhu_user', '');
-        // $szamlazzhu_pass = $componentParams->get('szamlazzhu_pass', '');
+        $szamlazzhu_user = $componentParams->get('szamlazzhu_user', '');
+        $szamlazzhu_pass = $componentParams->get('szamlazzhu_pass', '');
 
         $szamlazzhu_user = "fzs@wtn.hu";
         $szamlazzhu_pass = "Wtn-Proba";

@@ -17,65 +17,9 @@
  */
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
-
+vmJsApi::css('csomagolo.printview', 'administrator/components/com_virtuemart/assets/css/');
 ?>
 
-<style>
-
-    header, nav, .subhead-collapse {
-        display: none !important;
-    }
-
-    table {
-        font-family: 'Calibri', Arial, Helvetica, sans-serif;
-        font-size: 12px;
-        margin: 0 auto;
-        width: 95%;
-        border-collapse: collapse;
-    }
-
-    table, td, th {
-        border: 1px solid black;
-    }
-
-    td, th {
-        /* padding: 5px 0 5px 10px; */
-    }
-
-
-    /* Notes table */
-    .notes-table {
-        margin-top: 15px;
-    }
-
-    .note {
-        min-height: 120px;
-    }
-
-    /* Address table */
-    .address-table {
-        margin-top: 15px;
-    }
-
-    .address-table > tbody {
-        text-align: left;
-    }
-
-    /* Products table */
-    .products-table {
-        margin-top: 15px;
-    }
-
-    .products-table tbody tr :first-child {
-        text-align: left;
-    }
-
-    .page-break-tag {
-        page-break-after: always;
-    }
-
-
-</style>
 
 <?php
 $orderCount = count($this->ordersToPrint);
@@ -85,98 +29,137 @@ foreach ($this->ordersToPrint as $order) {?>
         <div class="order-print-area">
 
             <!-- Rendelés adatai -->
-            <table class="order-details-table">
-                <col width="35%">
-                <col width="65%">
+        <table class="order-details-table">
+            <col width="34%">
+            <col width="22%">
+            <col width="22%">
+            <col width="22%">
 
-                <tr>
-                    <td><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_ORDER_NUMBER'); ?></strong></td>
-                    <td><?php echo $order->order_number; ?></td>
-                </tr>
+            <tr>
+                <td><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_ORDER_NUMBER'); ?></strong></td>
+                <td><?php echo $order->order_number; ?></td>
+                <td><?php echo ($order->isKisker) ? "<strong>KISKER</strong>" : ""; ?></td>
+                <td><?php echo $order->virtuemart_order_id; ?></td>
+            </tr>
 
-                <tr>
-                    <td><strong>
-                            <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_ORDER_ID'); ?></strong></td>
-                    <td>
-                    <?php echo $order->virtuemart_order_id; ?>
-                    </td>
-                </tr>
+            <tr>
+                <td><strong>
+                        <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_ORDER_DATE'); ?></strong></td>
+                <td colspan="3"><?php echo $order->dateFormatted; ?></td>
+            </tr>
 
-                <tr>
-                    <td><strong>
-                            <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_ORDER_RETAIL'); ?></strong></td>
-                    <td>
-                    <?php echo ($order->isKisker) ? "Igen" : "Nem"; ?>
-                    </td>
-                </tr>
+            <tr>
+                <td><strong>
+                        <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_ORDER_STATE'); ?></strong></td>
+                <td colspan="3">
+                    <?php echo JText::_($order->statusName); ?>
+                </td>
+            </tr>
 
-                <tr>
-                    <td><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_ORDER_DATE'); ?></strong></td>
-                    <td><?php echo $order->dateFormatted; ?></td>
-                </tr>
+            <tr>
+                <td><strong>
+                        <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_SHIPMENT_METHOD'); ?></strong></td>
+                <td colspan="3">
+                    <?php echo $order->shipmentMethod; ?>
+                </td>
+            </tr>
 
-                <tr>
-                    <td><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_ORDER_STATE'); ?></strong></td>
-                    <td><?php echo $order->statusName; ?></td>
-                </tr>
+            <tr>
+                <td><strong>
+                        <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_VENDOR'); ?></strong></td>
+                <td colspan="3"><?php echo $order->recommender; ?></td>
+            </tr>
 
-                <tr>
-                    <td><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_SHIPMENT_METHOD'); ?></strong></td>
-                    <td><?php echo $order->shipmentMethod; ?></td>
-                </tr>
+            <tr>
+                <td><strong>
+                        <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_COUPON_CODE'); ?></strong></td>
+                <td colspan="3">
+                    <?php echo $order->coupon_code; ?>
+                </td>
+            </tr>
 
-                <tr>
-                    <td><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_VENDOR'); ?></strong></td>
-                    <td><?php echo $order->recommender; ?></td>
-                </tr>
+            <tr>
+                <td><strong>
+                    <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_COUPON_DISCOUNT'); ?></strong></td>
+                <td colspan="3">
+                    <?php echo number_format(round($order->coupon_discount), 0, ',', ' '); ?> Ft
+                </td>
+            </tr>
 
-                <tr>
-                    <td><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_COUPON_CODE'); ?></strong></td>
-                    <td><?php echo $order->coupon_code; ?></td>
-                </tr>
-
-                <tr>
-                    <td><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_COUPON_DISCOUNT'); ?></strong></td>
-                    <td><?php echo number_format(round($order->coupon_discount), 0, ',', ' '); ?> Ft</td>
-                </tr>
-
-                <tr>
-                    <td><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_BANKACCOUNT'); ?></strong></td>
-                    <td>
-                        <?php
+            <tr>
+                <td><strong>
+                        <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_BANKACCOUNT'); ?></strong></td>
+                <td colspan="3">
+                    <?php
 if ($order->virtuemart_paymentmethod_id == 6) {
     echo $order->paymentDesc;
 }
     ?>
-                    </td>
-                </tr>
+                </td>
+            </tr>
 
-                <tr>
-                    <td><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_PAYMENT_METHOD'); ?></strong></td>
-                    <td><?php echo $order->paymentMethod; ?></td>
-                </tr>
+            <tr>
+                <td><strong>
+                        <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_PAYMENT_METHOD'); ?></strong></td>
+                <td colspan="3">
+                    <?php echo $order->paymentMethod; ?>
+                </td>
+            </tr>
 
-                <tr>
-                    <td><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_TOTALSUM'); ?></strong></td>
-                    <td><?php echo number_format(round($order->order_total), 0, ',', ' '); ?> Ft</td>
-                </tr>
+            <tr>
+                <td><strong>
+                        <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_TOTALSUM'); ?></strong></td>
+                <td colspan="3">
+                    <?php echo number_format(round($order->order_total), 0, ',', ' '); ?> Ft</td>
+            </tr>
 
-                </table>
+    </table>
+
+            </table>
+
+<!-- Kupon, ajánló, partner adatai -->
+<table class="vendor-coupon-table">
+        <col width="34%">
+        <col width="66%">
+
+        <tr>
+            <td><strong>
+                    <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_VENDOR'); ?></strong></td>
+            <td colspan="3"><?php echo $this->orderDetails->recommender; ?></td>
+        </tr>
+
+        <tr>
+            <td><strong>
+                    <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_COUPON_CODE'); ?></strong></td>
+            <td colspan="3">
+                <?php echo $this->orderDetails->coupon_code; ?>
+            </td>
+        </tr>
+
+        <tr>
+            <td><strong>
+                <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_COUPON_DISCOUNT'); ?></strong></td>
+            <td colspan="3">
+                <?php echo number_format(round($this->orderDetails->coupon_discount), 0, ',', ' '); ?> Ft
+            </td>
+        </tr>
+
+    </table>
 
                 <!-- Megjegyzések -->
                 <table class="notes-table">
                     <col width="50%">
-                    <col width="50%">
+                    <!-- <col width="50%"> -->
                     <thead>
                         <tr>
                             <th><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_CUSTOMER_NOTE'); ?></strong></th>
-                            <th><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_GLS_NOTE'); ?></strong></th>
+                            <!-- <th><strong><?php // echo JText::_('COM_VIRTUEMART_PRINTVIEW_GLS_NOTE'); ?></strong></th> -->
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td><div class="note"><?php echo $order->customerNote; ?></div></td>
-                            <td><div class="note"><?php echo $order->glsNote; ?></div></td>
+                            <!-- <td><div class="note"><?php // echo $order->glsNote; ?></div></td> -->
                         </tr>
                     </tbody>
                 </table>
@@ -240,25 +223,35 @@ if ($order->virtuemart_paymentmethod_id == 6) {
 
                 <!-- Termékek tábla  -->
                 <table class="products-table">
-                    <col width="80%">
-                    <col width="20%">
-                    <thead>
-                        <tr>
-                            <th><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_PRODUCT_NAME'); ?></strong></th>
-                            <th><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_QUANTITY'); ?></strong></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
+        <col width="25%">
+        <col width="25%">
+        <col width="25%">
+        <col width="25%">
+        <thead>
+            <tr>
+                <th colspan="3"><strong>
+                        <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_PRODUCT_NAME'); ?></strong></th>
+                <th><strong>
+                        <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_QUANTITY'); ?></strong></th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
 foreach ($order->orderItems as $orderItem) {
         echo "<tr>";
-        echo "<td align=\"center\">$orderItem->order_item_name</td>";
+        echo "<td colspan=\"3\" align=\"center\">$orderItem->order_item_name</td>";
         echo "<td align=\"center\">$orderItem->product_quantity db</td>";
         echo "</tr>";
     }
     ?>
-                    </tbody>
-                </table>
+            <tr class="payment-total">
+                <td><strong>Részösszeg:</strong> <?php echo number_format(round($order->order_salesPrice), 0, ',', ' '); ?> Ft</td>
+                <td><strong>Szállítási költség:</strong> <?php echo number_format(round($order->shipmentTotal), 0, ',', ' '); ?> Ft</td>
+                <td><strong>Kuponjóváírás:</strong> <?php echo number_format(round($order->coupon_discount), 0, ',', ' '); ?> Ft</td>
+                <td><strong>Összesen:</strong> <?php echo number_format(round($order->order_total), 0, ',', ' '); ?> Ft</td>
+            </tr>
+        </tbody>
+    </table>
 
                 <?php
 if ($cnt != $orderCount) {

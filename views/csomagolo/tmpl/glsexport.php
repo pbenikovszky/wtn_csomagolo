@@ -16,19 +16,25 @@
  * @version $Id: orders.php 9522 2017-05-02 14:23:52Z StefanSTS $
  */
 // Check to ensure this file is included in Joomla!
-defined ('_JEXEC') or die('Restricted access');
+defined('_JEXEC') or die('Restricted access');
 
-if ((!isset($_SESSION['vik_csinal']))) $_SESSION['vik_csinal']=0;
-$_SESSION['vik_csinal'] = 1 - $_SESSION['vik_csinal'];
+if ($this->exportCSV === "NA") {
+    echo "Nincs listázásra váró rendelés! Statusza: GLS csomagfeladásra vár!";
+} else {
 
-$fnev[0]="fj";
-$fnev[1]="excel";
+    if ((!isset($_SESSION['tss_vik_csinal']))) {
+        $_SESSION['tss_vik_csinal'] = 0;
+    }
 
-$fileName = $fnev[$_SESSION['vik_csinal']] . date('Y-m-d') . ".csv";
+    $_SESSION['tss_vik_csinal'] = 1 - $_SESSION['tss_vik_csinal'];
 
-header('Content-Type: application/csv');
-header('Content-Disposition: attachment; filename="'.$fileName.'"');
+    $fnev[0] = "fj";
+    $fnev[1] = "excel";
 
-echo $this->exportCSV;
+    $fileName = $fnev[$_SESSION['tss_vik_csinal']] . date('Y-m-d') . ".csv";
 
+    header('Content-Type: application/csv');
+    header('Content-Disposition: attachment; filename="' . $fileName . '"');
 
+    echo $this->exportCSV;
+}

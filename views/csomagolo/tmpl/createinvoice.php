@@ -26,7 +26,7 @@ $orderNumbers = explode(",", $this->invoiceOrderIDs);
 $responseData = '';
 foreach ($orderNumbers as $orderNumber) {
     $oid = $csModel->getIdFromNumber($orderNumber);
-    $response = $csModel->createInvoice($oid, false);
+    $response = $csModel->createInvoice($oid, true);
     if ($response->result == "SUCCESS") {
         $responseData = $responseData . "Számla sikeresen elkészítve a(z) $oid számú rendeléshez. Számlaszám: $response->invoiceNumber\n";
     } else {

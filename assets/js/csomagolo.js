@@ -1,4 +1,4 @@
-window.addEventListener("load", function() {
+window.addEventListener("load", function () {
   var btnSelectAll = document.getElementById("btnSelectAll");
   var btnDeselect = document.getElementById("btnDeselect");
   var btnShowRetail = document.getElementById("btnShowRetail");
@@ -17,7 +17,7 @@ window.addEventListener("load", function() {
   addManualInvoiceEventListeners();
 
   // Select every checkbox in first column
-  btnSelectAll.addEventListener("click", function(e) {
+  btnSelectAll.addEventListener("click", function (e) {
     document.getElementsByName("cbSelect").forEach(cb => {
       if (!cb.parentElement.parentElement.classList.contains("tss-hidden")) {
         cb.checked = true;
@@ -26,12 +26,12 @@ window.addEventListener("load", function() {
   }); // btnSelectAll.click
 
   // Deselect every checkbox in first column
-  btnDeselect.addEventListener("click", function(e) {
+  btnDeselect.addEventListener("click", function (e) {
     DeselectAll();
   }); // btnDeselect.click
 
   // Filter the list to show only retail customers
-  btnShowRetail.addEventListener("click", function(e) {
+  btnShowRetail.addEventListener("click", function (e) {
     let rows = document.querySelector(".orderTable").rows;
     for (let i = 2; i < rows.length; i++) {
       let cb = rows[i].getElementsByTagName("td")[3].firstElementChild;
@@ -44,14 +44,14 @@ window.addEventListener("load", function() {
   }); // btnShowRetail.click
 
   // Remove retail filtering
-  btnShowAll.addEventListener("click", function(e) {
+  btnShowAll.addEventListener("click", function (e) {
     let rows = document.querySelector(".orderTable").rows;
     for (let i = 1; i < rows.length; i++) {
       rows[i].classList.remove("tss-hidden");
     } // for
   }); // btnShowAll.click
 
-  btnPrintAll.addEventListener("click", function(e) {
+  btnPrintAll.addEventListener("click", function (e) {
     let oids = [];
     let rows = document.querySelector(".orderTable").rows;
     for (let i = 2; i < rows.length; i++) {
@@ -68,16 +68,15 @@ window.addEventListener("load", function() {
     if (oids.length > 0) {
       window.open(
         "index.php?option=com_virtuemart&view=csomagolo&task=printorders&ordernumbers=" +
-          oids.join(","),
+        oids.join(","),
         "win2",
         "status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no"
       );
+      DeselectAll();
     } // if
-
-    DeselectAll();
   }); // btnPrintAll.click
 
-  btnIssueInvoice.addEventListener("click", function(e) {
+  btnIssueInvoice.addEventListener("click", function (e) {
     let oids = [];
     let rows = document.querySelector(".orderTable").rows;
     for (let i = 2; i < rows.length; i++) {
@@ -87,34 +86,33 @@ window.addEventListener("load", function() {
           if (
             rows[i].getElementsByTagName("td")[0].firstElementChild.checked &&
             !rows[i].getElementsByTagName("td")[8].firstElementChild.checked &&
+            rows[i].getElementsByTagName("td")[9].firstElementChild.value !=
+            "V" &&
             rows[i].dataset.invoice == 0
           ) {
             let oid = rows[i].getElementsByTagName("td")[4].firstElementChild
               .innerText;
             oids.push(oid);
-          } // if value == "L"
+          } // ifs
         } // if classList contains tss-hidden
       } // if cb.checked
     } // for
     if (oids.length > 0) {
+      DeselectAll();
       issueInvoices(oids.join(","));
     }
-    DeselectAll();
   }); // btnIssueInvoice.click
 
-  // * implementing
-  btnPrintInvoice.addEventListener("click", function(e) {
-    alert("Button is just a placeholder until further action");
-  }); // btnPrintInvoice.click
-
   // Change the status of the selected orders to 'GLS futárra vár' (L)
-  btnStateToGLS.addEventListener("click", function(e) {
+  btnStateToGLS.addEventListener("click", function (e) {
     let oids = [];
     let rows = document.querySelector(".orderTable").rows;
     for (let i = 2; i < rows.length; i++) {
       if (!rows[i].classList.contains("tss-hidden")) {
         if (
-          rows[i].getElementsByTagName("td")[9].firstElementChild.value == "C"
+          rows[i].getElementsByTagName("td")[9].firstElementChild.value == "C" &&
+          rows[i].getElementsByTagName("td")[0].firstElementChild.checked &&
+          rows[i].dataset.invoice == '1'
         ) {
           let oid = rows[i].getElementsByTagName("td")[4].firstElementChild
             .innerText;
@@ -124,23 +122,23 @@ window.addEventListener("load", function() {
     } // for
 
     if (oids.length > 0) {
-      changeState(oids.join(","), "L");
+      changeState(oids.join(","), "G");
     } // if
   }); // btnStateToGLS.click
 
   // Change the status of the selected orders to 'Kiszállítva' (S)
-  btnStateToShipped.addEventListener("click", function(e) {
+  btnStateToShipped.addEventListener("click", function (e) {
     let oids = [];
     let rows = document.querySelector(".orderTable").rows;
     for (let i = 2; i < rows.length; i++) {
       if (!rows[i].classList.contains("tss-hidden")) {
         if (
-          rows[i].getElementsByTagName("td")[9].firstElementChild.value == "L"
+          rows[i].getElementsByTagName("td")[9].firstElementChild.value == "G"
         ) {
           let oid = rows[i].getElementsByTagName("td")[4].firstElementChild
             .innerText;
           oids.push(oid);
-        } // if value == "L"
+        } // if value == "G"
       } // if classList contains tss-hidden
     } // for
 
@@ -154,7 +152,7 @@ window.addEventListener("load", function() {
     } // if length > 0
   }); // btnStateToDelivered.click
 
-  btnGLSExport.addEventListener("click", function(e) {
+  btnGLSExport.addEventListener("click", function (e) {
     let url =
       "index.php?option=com_virtuemart&view=csomagolo&task=glsexport&format=json";
     window.open(url, "_blank");
@@ -170,7 +168,7 @@ window.addEventListener("load", function() {
     xhr.open(method, url, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
-    xhr.onload = function() {
+    xhr.onload = function () {
       // display error message and exit function
       // in case of any error
       if (xhr.status != 200) {
@@ -208,7 +206,7 @@ window.addEventListener("load", function() {
     xhr.open(method, url, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
-    xhr.onload = function() {
+    xhr.onload = function () {
       // display error message and exit function
       // in case of any error
       if (xhr.status != 200) {
@@ -223,10 +221,12 @@ window.addEventListener("load", function() {
       // Reload the page after the successful change
       if (result.result === "SUCCESS") {
         if (isFromDropDown) {
-          loader.classList.add("tss-hidden");
+          location.reload();
+          //loader.classList.add("tss-hidden");
         } else {
           location.reload();
         }
+        console.log(result.resultState);
       } else {
         loader.classList.add("tss-hidden");
         alert("Something went wrong");
@@ -248,7 +248,7 @@ window.addEventListener("load", function() {
     xhr.open(method, url, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
-    xhr.onload = function() {
+    xhr.onload = function () {
       // display error message and exit function
       // in case of any error
       if (xhr.status != 200) {
@@ -282,7 +282,7 @@ window.addEventListener("load", function() {
       let dbox = rows[i].getElementsByTagName("td")[9].firstElementChild;
       // store the selected elements in an array
       lastSelectedStates[i - 2] = dbox.selectedIndex;
-      dbox.addEventListener("change", function(e) {
+      dbox.addEventListener("change", function (e) {
         onDropdownChange(e, i);
       });
     }
@@ -291,7 +291,7 @@ window.addEventListener("load", function() {
   function addManualInvoiceEventListeners() {
     let cboxes = document.getElementsByName("cbManualInvoice");
     for (let i = 0; i < cboxes.length; i++) {
-      cboxes[i].addEventListener("change", function(e) {
+      cboxes[i].addEventListener("change", function (e) {
         onCheckBoxChange(e, i + 2);
       });
     }

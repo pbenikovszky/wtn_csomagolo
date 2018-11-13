@@ -15,8 +15,10 @@
  * other free or open source software licenses.
  * @version $Id: orders.php 9522 2017-05-02 14:23:52Z StefanSTS $
  */
+
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die('Restricted access');
+
 vmJsApi::css('csomagolo.default', 'administrator/components/com_virtuemart/assets/css/');
 ?>
 
@@ -24,6 +26,14 @@ vmJsApi::css('csomagolo.default', 'administrator/components/com_virtuemart/asset
     <div class="loader-wrapper">
         <div class="lds-ripple"><div></div><div></div></div>
     </div>
+</div>
+
+<div class="counters">
+
+    <span>Megerősített rendelések: <?php echo $this->counters->countConfirmed; ?> db. </span>
+    <span>GLS csomagfeladásra váró rendelések: <?php echo $this->counters->countGLS; ?> db. </span>
+    <span>Várakoztatott rendelések: <?php echo $this->counters->countPending; ?> db.</span>
+
 </div>
 
 <table class="orderTable">
@@ -41,7 +51,7 @@ vmJsApi::css('csomagolo.default', 'administrator/components/com_virtuemart/asset
 
             <!-- Megrendelő neve -->
             <th>
-                <div class="header-container">
+                <div class="header-container fontsize-130">
                     <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER6'); ?></span></div>
                 </div>
             </th>
@@ -89,7 +99,7 @@ vmJsApi::css('csomagolo.default', 'administrator/components/com_virtuemart/asset
                 <div class="header-container">
                     <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER9'); ?></span></div>
                     <div id="btnIssueInvoice" class="btn tssBtn btnInvoice"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_ISSUEINVOICE'); ?></div>
-                    <div id="btnPrintInvoice" class="btn tssBtn btnInvoice"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_PRINTINVOICE'); ?></div>
+                    <!-- <div id="btnPrintInvoice" class="btn tssBtn btnInvoice"><?php //echo JText::_('COM_VIRTUEMART_PACKAGE_PRINTINVOICE'); ?></div> -->
                 </div>
             </th>
 
@@ -103,18 +113,18 @@ vmJsApi::css('csomagolo.default', 'administrator/components/com_virtuemart/asset
             </th>
 
             <!-- Megjegyzés -->
-            <th>
+            <th style="width: 160px;">
                 <div class="header-container">
-                    <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER11'); ?></span></div>
+                    <!-- <div class="header-buttonTitle"><span><?php // echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER11'); ?></span></div> -->
+                    <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER12'); ?></span></div>
+                        <div id="btnGLSExport" class="btn tssBtn"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_GLSEXPORT'); ?></div>
+                    </div>
                 </div>
             </th>
 
             <!-- GLS megjegyzés -->
             <th>
                 <div class="header-container">
-                    <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER12'); ?></span></div>
-                        <div id="btnGLSExport" class="btn tssBtn"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_GLSEXPORT'); ?></div>
-                    </div>
             </th>
 
         </tr>
@@ -127,7 +137,7 @@ vmJsApi::css('csomagolo.default', 'administrator/components/com_virtuemart/asset
             <?php if ($this->orderFunction == 'sortByNameAsc') {?>
                 <th>
                     <div>
-                        <a class="sort-link active" href="index.php?option=com_virtuemart&view=csomagolo&orderfunction=sortByNameAsc">
+                        <a class="sort-link fontsize-130 active" href="index.php?option=com_virtuemart&view=csomagolo&orderfunction=sortByNameAsc">
                             <img src="./components/com_virtuemart/assets/images/icon-arrow-up-b-128.png" alt="Print invoice" height="16" width="16">
                             <?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH5'); ?>
                         </a>
@@ -136,7 +146,7 @@ vmJsApi::css('csomagolo.default', 'administrator/components/com_virtuemart/asset
             <?php } else {?>
                 <th>
                     <div>
-                        <a class="sort-link" href="index.php?option=com_virtuemart&view=csomagolo&orderfunction=sortByNameAsc">
+                        <a class="sort-link fontsize-130" href="index.php?option=com_virtuemart&view=csomagolo&orderfunction=sortByNameAsc">
                             <img src="./components/com_virtuemart/assets/images/icon-arrow-up-b-128.png" alt="Print invoice" height="16" width="16">
                             <?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH5'); ?>
                         </a>
@@ -173,8 +183,7 @@ vmJsApi::css('csomagolo.default', 'administrator/components/com_virtuemart/asset
             <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH8'); ?></div></th>
             <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH9'); ?></div></th>
             <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH10'); ?></div></th>
-            <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH11'); ?></div></th>
-            <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH12'); ?></div></th>
+            <th align="left" colspan="2"><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH11'); ?></div></th>
         </tr>
     </thead>
     <tbody>
@@ -186,6 +195,7 @@ foreach ($this->orders as $order) {
 
     echo "<tr class=\"tss-table-row bottom-border";
     $styleClass = "";
+
     if ($order->isKisker) {
         $styleClass = " retail";
     }
@@ -198,6 +208,10 @@ foreach ($this->orders as $order) {
         $styleClass = " coupon";
     }
 
+    if ($order->order_status === "V") {
+        $styleClass = " pending";
+    }
+
     echo $styleClass . "\" data-orderid=\"$order->virtuemart_order_id\" data-invoice=";
     echo ($order->hasInvoice) ? "\"1\">" : "\"0\">";
 
@@ -205,10 +219,23 @@ foreach ($this->orders as $order) {
     echo "<td align=\"center\"><input type=\"checkbox\" name=\"cbSelect\" value=\"$order->order_number\"></td>";
 
     // Megrendelő neve
-    echo "<td align=\"center\">$order->user_name</td>";
+    echo "<td class=\"fontsize-130\" align=\"center\">";
+    echo $order->user_name;
+    if ($order->isRecommended) {
+        echo "<br>";
+        echo "Partner: " . $order->recommender;
+    }
+
+    echo "</td>";
 
     // Megrendelő emailcíme
-    echo "<td align=\"center\">$order->user_email</td>";
+    echo "<td align=\"center\">";
+    echo $order->user_email;
+    if ($order->isCouponUsed) {
+        echo "<br>";
+        echo "Kuponkód: " . $order->coupon_code;
+    }
+    echo "</td>";
 
     // Kisker-e checkbox
     echo "<td align=\"center\"><input type=\"checkbox\" name=\"cbKisker$cnt\" disabled=\"disabled\" value=\"$order->order_number\"";
@@ -239,8 +266,6 @@ foreach ($this->orders as $order) {
     // Manuális számlázás
     echo "<td align=\"center\"><input type=\"checkbox\" name=\"cbManualInvoice\" value=\"$order->order_number\"";
     echo ($order->manualInvoice == true) ? " checked></td>" : "></td>";
-    // echo "<td align=\"center\"><input type=\"checkbox\" name=\"cbInvoice$cnt\" disabled=\"disabled\" value=\"$order->order_number\"";
-    // echo ($order->hasInvoice) ? " checked></td>" : "></td>";
 
     // Megrendelés állapota
     echo "<td><select align=\"center\" class=\"db-state\">";
@@ -254,10 +279,7 @@ foreach ($this->orders as $order) {
     echo "</select></td>";
 
     // Megjegyzés
-    echo "<td class=\"note-field\" align=\"center\">$order->comment</td>";
-
-    // GLS megjegyzés
-    echo "<td class=\"note-field\" align=\"center\">$order->gls_note</td>";
+    echo "<td colspan=\"2\" class=\"note-field\" align=\"left\">$order->comment</td>";
 
     echo "</tr>";
 }

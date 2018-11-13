@@ -35,10 +35,13 @@ if ($pdf->result == "SUCCESS") {
 
     <script>
         let pdfName = '<?php echo $pdf->pdfFileName; ?>';
+
         let urlLocal = 'http://localhost/joomla/administrator/myInvoices/' + pdfName;
-        let url = 'http://masolat1.drbiroszabolcs.com/administrator/myInvoices/' + pdfName;
+        let urlMasolat1 = 'https://masolat1.drbiroszabolcs.com/administrator/myInvoices/' + pdfName;
+        let urlEles = 'https://wisetreenaturals.hu/administrator/myInvoices/' + pdfName;
+
         printJS({
-            printable: url,
+            printable: urlMasolat1,
             type: 'pdf',
             showModal: true
         });

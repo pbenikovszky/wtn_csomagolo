@@ -40,26 +40,7 @@ class VirtuemartViewCsomagolo extends VmViewAdmin
 
         // get the data from our model
         $this->orders = $csomagoloModel->getOrders();
-
-        // setup the links for the column headers to order by column
-        // switch ($this->orderFunction) {
-        //     case 'sortByNameAsc':
-        //         $this->nameOrderFunction = 'sortByNameDesc';
-        //         $this->dateOrderFunction = 'sortByDateDesc';
-        //         break;
-        //     case 'sortByNameDesc':
-        //         $this->nameOrderFunction = 'sortByNameAsc';
-        //         $this->dateOrderFunction = 'sortByDateDesc';
-        //         break;
-        //     case 'sortByDateAsc':
-        //         $this->nameOrderFunction = 'sortByNameAsc';
-        //         $this->dateOrderFunction = 'sortByDateDesc';
-        //         break;
-        //     case 'sortByDateDesc':
-        //         $this->nameOrderFunction = 'sortByNameAsc';
-        //         $this->dateOrderFunction = 'sortByDateAsc';
-        //         break;
-        // };
+        $this->counters = $csomagoloModel->getStatusCounters();
 
         // sort the list of orders
         if ($this->orderFunction != 'sortByDateDesc') {

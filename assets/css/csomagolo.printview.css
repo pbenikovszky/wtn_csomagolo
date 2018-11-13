@@ -1,0 +1,70 @@
+header,
+nav,
+.subhead-collapse {
+    display: none !important;
+}
+
+table {
+    font-family: 'Calibri', Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    margin: 0 auto;
+    width: 95%;
+    border-collapse: collapse;
+    font-size: 110%;
+}
+
+table,
+td,
+th {
+    border: 1px solid black;
+}
+
+td,
+th {
+    /* padding: 5px 0 5px 10px; */
+}
+
+
+.vendor-coupon-table {
+    font-size: 130%;
+    margin-top: 15px;
+}
+
+.vendor-coupon-table td {
+    padding: 4px 0;
+}
+
+/* Notes table */
+.notes-table {
+    margin-top: 15px;
+}
+
+.note {
+    min-height: 120px;
+}
+
+/* Address table */
+.address-table {
+    margin-top: 15px;
+}
+
+.address-table>tbody {
+    text-align: left;
+}
+
+/* Products table */
+.products-table {
+    margin-top: 15px;
+}
+
+.products-table tbody tr :first-child {
+    text-align: left;
+}
+
+.page-break-tag {
+    page-break-after: always;
+}
+
+.payment-total {
+    border-top-style: double;
+}

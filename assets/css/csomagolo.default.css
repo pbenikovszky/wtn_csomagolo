@@ -47,6 +47,11 @@ td {
     display: none;
 }
 
+/* Font size classes */
+.fontsize-130 {
+    font-size: 130%;
+}
+
 /* Style for the sorting links */
 
 .sort-link {
@@ -69,6 +74,11 @@ td {
 }
 
 /* Backround color for the rows */
+
+.pending {
+    background-color: #E6E6E6;
+}
+
 .retail {
     background-color: #FEF7BE;
 }
