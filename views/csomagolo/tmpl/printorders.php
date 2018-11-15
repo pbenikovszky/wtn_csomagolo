@@ -148,18 +148,14 @@ if ($order->virtuemart_paymentmethod_id == 6) {
 
                 <!-- Megjegyzések -->
                 <table class="notes-table">
-                    <col width="50%">
-                    <!-- <col width="50%"> -->
                     <thead>
                         <tr>
                             <th><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_CUSTOMER_NOTE'); ?></strong></th>
-                            <!-- <th><strong><?php // echo JText::_('COM_VIRTUEMART_PRINTVIEW_GLS_NOTE'); ?></strong></th> -->
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td><div class="note"><?php echo $order->customerNote; ?></div></td>
-                            <!-- <td><div class="note"><?php // echo $order->glsNote; ?></div></td> -->
                         </tr>
                     </tbody>
                 </table>
@@ -185,13 +181,13 @@ if ($order->virtuemart_paymentmethod_id == 6) {
                         </tr>
                         <tr>
                             <td><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_LASTNAME'); ?></strong></td>
-                            <td><?php echo $order->BT->lastName; ?></td>
-                            <td><?php echo $order->ST->lastName; ?></td>
+                            <td><?php echo $order->BT->firstName; ?></td>
+                            <td><?php echo $order->ST->firstName; ?></td>
                         </tr>
                         <tr>
                             <td><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_FIRSTNAME'); ?></strong></td>
-                            <td><?php echo $order->BT->firstName; ?></td>
-                            <td><?php echo $order->ST->firstName; ?></td>
+                            <td><?php echo $order->BT->lastName; ?></td>
+                            <td><?php echo $order->ST->lastName; ?></td>
                         </tr>
                         <tr>
                             <td><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_ADDRESS'); ?></strong></td>

@@ -11,6 +11,21 @@
     margin-top: 8px;
 }
 
+/* Counter spans */
+
+.counter {
+    padding: 10px 5px;
+    margin: 0;
+}
+
+.counter:nth-child(even) {
+    background: #d1d1d1;
+}
+
+.counter:nth-child(odd) {
+    background: #f1f1f1;
+}
+
 /* Button width */
 
 .btnList {
@@ -24,10 +39,9 @@
 /* Table rowheight */
 
 .orderTable {
-
     width: 1850px;
     table-layout: fixed;
-
+    margin-top: 15px;
 }
 
 td {
@@ -50,6 +64,11 @@ td {
 /* Font size classes */
 .fontsize-130 {
     font-size: 130%;
+}
+
+/* Duplicated name - color : red */
+.duplicated {
+    color: red;
 }
 
 /* Style for the sorting links */

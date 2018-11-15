@@ -40,8 +40,7 @@ class VirtueMartModelCsomagolo extends VmModel
      */
     public function getOrderstates()
     {
-        return array("Megerősített" => "C", "GLS csomagfeladásra vár" => "G", 
-                        "Várakoztatva" => "V", "Kiszállítva" => "S", "Csomagolás" => "B");
+        return array("Megerősített" => "C", "GLS csomagfeladásra vár" => "G", "Várakoztatva" => "V", "Kiszállítva" => "S");
     }
 
     /**
@@ -422,6 +421,7 @@ class VirtueMartModelCsomagolo extends VmModel
                         $sor3[0]['osszeg'] = $sor4[0]['order_total'];
                     }
                 }
+            
 
                 if (strlen($szall_sms) > 0) {
                     $telefon = $szall_sms;
@@ -434,8 +434,6 @@ class VirtueMartModelCsomagolo extends VmModel
                 } else {
                     $email = $szla_email;
                 }
-
-                $sor3[0]['osszeg'] = number_format(round($sor3[0]['osszeg']), 0, ',', ' ') . " Ft";
 
                 if (strlen($szall_cimzett) > 0) {
                     $lista .= '' . $sor3[0]['osszeg'] . ';' . $szall_cimzett . ';' . $szall_orszag . ';' . $szall_irszam . ';' . $szall_varos . ';' . $szall_cim . ';' . $telefon . ';' . $email . ';' . $telefon . ';' . $szall_cegnev . ';' . $sor3[0]['szamlaszam'] . ';' . $sor3[0]['szamlaszam'] . ';sm2();';
@@ -631,18 +629,10 @@ class VirtueMartModelCsomagolo extends VmModel
                     WHERE order_status="C"';
         $db->setQuery($query);
         $result->countConfirmed = $db->loadResult();
-
-        $query = 'SELECT COUNT(*) FROM #__virtuemart_orders 
-                    WHERE order_status="B"';
-        $db->setQuery($query);
-        $result->countPackage = $db->loadResult();
-
-
         $query = 'SELECT COUNT(*) FROM #__virtuemart_orders 
                     WHERE order_status="G"';
         $db->setQuery($query);
         $result->countGLS = $db->loadResult();
-
         $query = 'SELECT COUNT(*) FROM #__virtuemart_orders 
                     WHERE order_status="V"';
         $db->setQuery($query);
@@ -677,7 +667,7 @@ class VirtueMartModelCsomagolo extends VmModel
         $query = $db->getQuery(true);
         $query->select('*')
             ->from($db->quoteName('#__virtuemart_orders'))
-            ->where("order_status IN (\"C\", \"G\", \"V\", \"B\")")
+            ->where("order_status IN (\"C\", \"G\", \"V\")")
             ->order("created_on DESC");
         $db->setQuery($query);
         $result = $db->loadObjectList();
@@ -691,8 +681,6 @@ class VirtueMartModelCsomagolo extends VmModel
             $userinfo = $db->loadObject();
 
             // set the user_name (concat the first-middle-last name)
-            $line->first_name = $userinfo->first_name;
-            $line->last_name = $userinfo->last_name;
             $line->user_name = $userinfo->first_name . ' ' . $userinfo->middle_name . ' ' . $userinfo->last_name;
             // set the email address of the user
             $line->user_email = $userinfo->email;
@@ -748,24 +736,9 @@ class VirtueMartModelCsomagolo extends VmModel
             } else {
                 $line->isRecommended = false;
             };
-
-            // check if the name is duplicate or not
-            if ($line->virtuemart_user_id != "0") {
-                $query = 'SELECT COUNT(*) FROM #__virtuemart_orders 
-                            WHERE virtuemart_user_id=' . $db->quote($line->virtuemart_user_id) . 
-                            ' AND order_status IN ("C", "G", "V", "B")';
-            } else {
-                $query = 'SELECT COUNT(u.virtuemart_order_id) FROM #__virtuemart_order_userinfos u
-                            LEFT JOIN #__virtuemart_orders o ON u.virtuemart_order_id=o.virtuemart_order_id
-                            WHERE email=' . $db->quote($userinfo->email) .
-                            ' AND o.order_status IN ("C", "G", "V", "B")' .
-                            ' AND address_type="BT"';
-            }
-            $db->setQuery($query);        
-            $orderCount = $db->loadResult();
-            $line->isDuplicated = ($orderCount > 1);
-    
         }
+
+        
 
         return $result;
     }
@@ -877,8 +850,8 @@ class VirtueMartModelCsomagolo extends VmModel
     {
 
         $componentParams = JComponentHelper::getParams('com_cloudszamlazzhu');
-        // $szamlazzhu_user = $componentParams->get('szamlazzhu_user', '');
-        // $szamlazzhu_pass = $componentParams->get('szamlazzhu_pass', '');
+        $szamlazzhu_user = $componentParams->get('szamlazzhu_user', '');
+        $szamlazzhu_pass = $componentParams->get('szamlazzhu_pass', '');
         $szamlazzhu_user = "fzs@wtn.hu";
         $szamlazzhu_pass = "Wtn-Proba";
 
@@ -914,8 +887,8 @@ class VirtueMartModelCsomagolo extends VmModel
         }
 
         $componentParams = JComponentHelper::getParams('com_cloudszamlazzhu');
-        // $szamlazzhu_user = $componentParams->get('szamlazzhu_user', '');
-        // $szamlazzhu_pass = $componentParams->get('szamlazzhu_pass', '');
+        $szamlazzhu_user = $componentParams->get('szamlazzhu_user', '');
+        $szamlazzhu_pass = $componentParams->get('szamlazzhu_pass', '');
 
         $szamlazzhu_user = "fzs@wtn.hu";
         $szamlazzhu_pass = "Wtn-Proba";
@@ -968,11 +941,8 @@ class VirtueMartModelCsomagolo extends VmModel
         
         $beallitasok = $szamla->addChild('beallitasok');
 
-        // $beallitasok->addChild('felhasznalo', $szamlazzhu_user);
-        // $beallitasok->addChild('jelszo', $szamlazzhu_pass);
-
-        $beallitasok->addChild('felhasznalo', 'fzs@wtn.hu');
-        $beallitasok->addChild('jelszo', 'Wtn-Proba');        
+        $beallitasok->addChild('felhasznalo', $szamlazzhu_user);
+        $beallitasok->addChild('jelszo', $szamlazzhu_pass);
 
         $beallitasok->addChild('eszamla', $eszamla ? "true" : "false");
 

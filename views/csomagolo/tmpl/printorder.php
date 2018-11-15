@@ -140,14 +140,9 @@ if ($this->orderDetails->virtuemart_paymentmethod_id == 6) {
 
     <!-- Megjegyzések -->
     <table class="notes-table">
-        <col width="50%">
-        <col width="50%">
         <thead>
             <tr>
-                <th><strong>
-                        <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_CUSTOMER_NOTE'); ?></strong></th>
-                <!-- <th><strong>
-                        <?php // echo JText::_('COM_VIRTUEMART_PRINTVIEW_GLS_NOTE'); ?></strong></th> -->
+                <th><strong><?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_CUSTOMER_NOTE'); ?></strong></th>
             </tr>
         </thead>
         <tbody>
@@ -157,11 +152,6 @@ if ($this->orderDetails->virtuemart_paymentmethod_id == 6) {
                         <?php echo $this->orderDetails->customerNote; ?>
                     </div>
                 </td>
-                <!-- <td>
-                    <div class="note">
-                        <?php // echo $this->orderDetails->glsNote; ?>
-                    </div>
-                </td> -->
             </tr>
         </tbody>
     </table>
@@ -196,20 +186,20 @@ if ($this->orderDetails->virtuemart_paymentmethod_id == 6) {
                 <td><strong>
                         <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_LASTNAME'); ?></strong></td>
                 <td>
-                    <?php echo $this->orderDetails->BT->lastName; ?>
+                    <?php echo $this->orderDetails->BT->firstName; ?>
                 </td>
                 <td>
-                    <?php echo $this->orderDetails->ST->lastName; ?>
+                    <?php echo $this->orderDetails->ST->firstName; ?>
                 </td>
             </tr>
             <tr>
                 <td><strong>
                         <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_FIRSTNAME'); ?></strong></td>
                 <td>
-                    <?php echo $this->orderDetails->BT->firstName; ?>
+                    <?php echo $this->orderDetails->BT->lastName; ?>
                 </td>
                 <td>
-                    <?php echo $this->orderDetails->ST->firstName; ?>
+                    <?php echo $this->orderDetails->ST->lastName; ?>
                 </td>
             </tr>
             <tr>

@@ -1,11 +1,11 @@
 window.addEventListener("load", function () {
   var btnSelectAll = document.getElementById("btnSelectAll");
   var btnDeselect = document.getElementById("btnDeselect");
+  var btnStateToPackage = document.getElementById("btnStateToPackage");
   var btnShowRetail = document.getElementById("btnShowRetail");
   var btnShowAll = document.getElementById("btnShowAll");
   var btnPrintAll = document.getElementById("btnPrintAll");
   var btnIssueInvoice = document.getElementById("btnIssueInvoice");
-  var btnPrintInvoice = document.getElementById("btnPrintInvoice");
   var btnStateToGLS = document.getElementById("btnStateToGLS");
   var btnStateToShipped = document.getElementById("btnStateToShipped");
   var btnGLSExport = document.getElementById("btnGLSExport");
@@ -50,6 +50,29 @@ window.addEventListener("load", function () {
       rows[i].classList.remove("tss-hidden");
     } // for
   }); // btnShowAll.click
+
+
+  // Change the status of the selected orders to 'GLS futárra vár' (L)
+  btnStateToPackage.addEventListener("click", function (e) {
+    let oids = [];
+    let rows = document.querySelector(".orderTable").rows;
+    for (let i = 2; i < rows.length; i++) {
+      if (!rows[i].classList.contains("tss-hidden")) {
+        if (
+          rows[i].getElementsByTagName("td")[9].firstElementChild.value == "C" &&
+          rows[i].getElementsByTagName("td")[0].firstElementChild.checked
+        ) {
+          let oid = rows[i].getElementsByTagName("td")[4].firstElementChild
+            .innerText;
+          oids.push(oid);
+        } // if value == "C"
+      } // if classList contains tss-hidden
+    } // for
+
+    if (oids.length > 0) {
+      changeState(oids.join(","), "B");
+    } // if
+  }); // btnStateToGLS.click  
 
   btnPrintAll.addEventListener("click", function (e) {
     let oids = [];
@@ -110,14 +133,13 @@ window.addEventListener("load", function () {
     for (let i = 2; i < rows.length; i++) {
       if (!rows[i].classList.contains("tss-hidden")) {
         if (
-          rows[i].getElementsByTagName("td")[9].firstElementChild.value == "C" &&
-          rows[i].getElementsByTagName("td")[0].firstElementChild.checked &&
-          rows[i].dataset.invoice == '1'
+          rows[i].getElementsByTagName("td")[9].firstElementChild.value == "B" &&
+          rows[i].getElementsByTagName("td")[0].firstElementChild.checked
         ) {
           let oid = rows[i].getElementsByTagName("td")[4].firstElementChild
             .innerText;
           oids.push(oid);
-        } // if value == "C"
+        } // if value == "B"
       } // if classList contains tss-hidden
     } // for
 

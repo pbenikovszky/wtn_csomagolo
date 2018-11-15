@@ -30,9 +30,10 @@ vmJsApi::css('csomagolo.default', 'administrator/components/com_virtuemart/asset
 
 <div class="counters">
 
-    <span>Megerősített rendelések: <?php echo $this->counters->countConfirmed; ?> db. </span>
-    <span>GLS csomagfeladásra váró rendelések: <?php echo $this->counters->countGLS; ?> db. </span>
-    <span>Várakoztatott rendelések: <?php echo $this->counters->countPending; ?> db.</span>
+    <span class="counter">Megerősített rendelések: <?php echo $this->counters->countConfirmed; ?> db.</span>
+    <span class="counter">Csomagolás rendelések: <?php echo $this->counters->countPackage; ?> db.</span>
+    <span class="counter">GLS csomagfeladásra váró rendelések: <?php echo $this->counters->countGLS; ?> db.</span>
+    <span class="counter">Várakoztatott rendelések: <?php echo $this->counters->countPending; ?> db.</span>
 
 </div>
 
@@ -51,15 +52,16 @@ vmJsApi::css('csomagolo.default', 'administrator/components/com_virtuemart/asset
 
             <!-- Megrendelő neve -->
             <th>
-                <div class="header-container fontsize-130">
+                <div class="header-container">
                     <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER6'); ?></span></div>
+                    <div id="btnStateToPackage" class="btn tssBtn btnList"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_STATETOPACKAGE'); ?></div>
                 </div>
             </th>
 
             <!-- Megrendelő emailcíme -->
             <th>
                 <div class="header-container">
-                    <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER6'); ?></span></div>
+                    <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER5'); ?></span></div>
                 </div>
             </th>
 
@@ -219,7 +221,11 @@ foreach ($this->orders as $order) {
     echo "<td align=\"center\"><input type=\"checkbox\" name=\"cbSelect\" value=\"$order->order_number\"></td>";
 
     // Megrendelő neve
-    echo "<td class=\"fontsize-130\" align=\"center\">";
+    echo "<td class=\"fontsize-130";
+    if ($order->isDuplicated) {
+        echo " duplicated";
+    }
+    echo "\" align=\"center\">";
     echo $order->user_name;
     if ($order->isRecommended) {
         echo "<br>";
