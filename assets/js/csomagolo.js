@@ -1,20 +1,24 @@
 window.addEventListener("load", function () {
-  var btnSelectAll = document.getElementById("btnSelectAll");
-  var btnDeselect = document.getElementById("btnDeselect");
-  var btnStateToPackage = document.getElementById("btnStateToPackage");
-  var btnShowRetail = document.getElementById("btnShowRetail");
-  var btnShowAll = document.getElementById("btnShowAll");
-  var btnPrintAll = document.getElementById("btnPrintAll");
-  var btnIssueInvoice = document.getElementById("btnIssueInvoice");
-  var btnStateToGLS = document.getElementById("btnStateToGLS");
-  var btnStateToShipped = document.getElementById("btnStateToShipped");
-  var btnGLSExport = document.getElementById("btnGLSExport");
+  const btnSelectAll = document.getElementById("btnSelectAll");
+  const btnDeselect = document.getElementById("btnDeselect");
+  const btnStateToPackage = document.getElementById("btnStateToPackage");
+  const btnShowRetail = document.getElementById("btnShowRetail");
+  const btnShowAll = document.getElementById("btnShowAll");
+  const btnPrintAll = document.getElementById("btnPrintAll");
+  const btnDuplicated = document.getElementById("btnDuplicated");
+  const btnIssueInvoice = document.getElementById("btnIssueInvoice");
+  const btnStateToGLS = document.getElementById("btnStateToGLS");
+  const btnStateToShipped = document.getElementById("btnStateToShipped");
+  const btnGLSExport = document.getElementById("btnGLSExport");
+  let isDuplicated;
 
-  var lastSelectedStates = [];
+  let lastSelectedStates = [];
 
   addStateChangeEventListeners();
 
   addManualInvoiceEventListeners();
+
+  setIsDuplicated();
 
   // Select every checkbox in first column
   btnSelectAll.addEventListener("click", function (e) {
@@ -98,6 +102,15 @@ window.addEventListener("load", function () {
       DeselectAll();
     } // if
   }); // btnPrintAll.click
+
+  // Deselect every checkbox in first column
+  btnDuplicated.addEventListener("click", function (e) {
+    let urlDuplicated =
+      "index.php?option=com_virtuemart&view=csomagolo&duplicated=yes&orderfunction=sortByNameAsc";
+    let urlAll =
+      "index.php?option=com_virtuemart&view=csomagolo";
+    window.location.href = (isDuplicated == "1") ? urlAll : urlDuplicated;
+  }); // btnDuplicated.click
 
   btnIssueInvoice.addEventListener("click", function (e) {
     let oids = [];
@@ -194,8 +207,7 @@ window.addEventListener("load", function () {
       // display error message and exit function
       // in case of any error
       if (xhr.status != 200) {
-        alert("Ajjaj, hiba történt");
-        loader.classList.add("tss-hidden");
+        alertError(xhr.status, xhr.statusText);
         return;
       } // if
 
@@ -204,7 +216,6 @@ window.addEventListener("load", function () {
 
       // Reload the page after the successful change
       if (result.result === "SUCCESS") {
-        console.log(result.data);
         location.reload();
       } else {
         loader.classList.add("tss-hidden");
@@ -232,19 +243,19 @@ window.addEventListener("load", function () {
       // display error message and exit function
       // in case of any error
       if (xhr.status != 200) {
-        alert("Ajjaj, hiba történt");
-        loader.classList.add("tss-hidden");
+        alertError(xhr.status, xhr.statusText);
         return;
       } // if
 
       // create a result object by parsing the returned JSON data
-      let result = JSON.parse(xhr.response);
+      let endPos = xhr.responseText.indexOf("}") + 1;
+      let jsonResponse = xhr.responseText.substr(0, endPos);
+      let result = JSON.parse(jsonResponse);
 
       // Reload the page after the successful change
       if (result.result === "SUCCESS") {
         if (isFromDropDown) {
           location.reload();
-          //loader.classList.add("tss-hidden");
         } else {
           location.reload();
         }
@@ -266,7 +277,6 @@ window.addEventListener("load", function () {
     let method = "POST";
     let url =
       "index.php?option=com_virtuemart&view=csomagolo&task=statechange&job=manualinvoice&format=json";
-
     xhr.open(method, url, true);
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
@@ -274,8 +284,10 @@ window.addEventListener("load", function () {
       // display error message and exit function
       // in case of any error
       if (xhr.status != 200) {
-        alert("Ajjaj, hiba történt");
+
+        alertError(xhr.status, xhr.statusText);
         return;
+
       } // if
 
       // create a result object by parsing the returned JSON data
@@ -319,6 +331,11 @@ window.addEventListener("load", function () {
     }
   }
 
+  function setIsDuplicated() {
+    let orderTable = document.getElementById("order-table");
+    isDuplicated = orderTable.dataset.duplicated;
+  }
+
   function onCheckBoxChange(event, rowIndex) {
     let rows = document.querySelector(".orderTable").rows;
     let oNumber = rows[rowIndex].getElementsByTagName("td")[4].firstElementChild
@@ -358,4 +375,13 @@ function DeselectAll() {
       cb.checked = false;
     } // if
   }); // getElementsByNAme
+}
+
+function alertError(errorCode, errorMessage) {
+  let loader = document.getElementById("loader");
+  loader.classList.add("tss-hidden");
+  let errMsg = "Ajjaj, hiba történt!\n";
+  errMsg += "Kód: " + errorCode + "\nÜzenet: " + errorMessage + "\n";
+  errMsg += "Kérlek juttasd el ezt a hibaüzenetet az adminisztrátornak!";
+  alert(errMsg);
 }

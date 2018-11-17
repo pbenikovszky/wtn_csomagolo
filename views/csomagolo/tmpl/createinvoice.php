@@ -24,13 +24,19 @@ $csModel = VmModel::getModel('csomagolo');
 
 $orderNumbers = explode(",", $this->invoiceOrderIDs);
 $responseData = '';
+$counter = 0;
 foreach ($orderNumbers as $orderNumber) {
     $oid = $csModel->getIdFromNumber($orderNumber);
-    $response = $csModel->createInvoice($oid, true);
+    $response = $csModel->createInvoice($oid, false);
     if ($response->result == "SUCCESS") {
         $responseData = $responseData . "Számla sikeresen elkészítve a(z) $oid számú rendeléshez. Számlaszám: $response->invoiceNumber\n";
     } else {
         $responseData = $responseData . "$oid számú megrendeléshez a számlakészítés sikertelen!\n";
+    }
+    $counter++;
+    if ($counter % 20 == 0) {
+        $responseData = $responseData . "Várakoztatva: 1s\n";
+        sleep(1);
     }
 }
 

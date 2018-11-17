@@ -20,6 +20,17 @@
 defined('_JEXEC') or die('Restricted access');
 
 vmJsApi::css('csomagolo.default', 'administrator/components/com_virtuemart/assets/css/');
+
+$sortByNameURL = "index.php?option=com_virtuemart&view=csomagolo&orderfunction=sortByNameAsc";
+$sortByDateURL = "index.php?option=com_virtuemart&view=csomagolo&orderfunction=sortByDateDesc";
+$sortByTotalURL = "index.php?option=com_virtuemart&view=csomagolo&orderfunction=sortByTotalDesc";
+
+if ($this->duplicated) {
+    $sortByNameURL .= "&duplicated=yes";
+    $sortByDateURL .= "&duplicated=yes";
+    $sortByTotalURL .= "&duplicated=yes";
+}
+
 ?>
 
 <div id="loader" class="loader tss-hidden">
@@ -37,7 +48,8 @@ vmJsApi::css('csomagolo.default', 'administrator/components/com_virtuemart/asset
 
 </div>
 
-<table class="orderTable">
+<table id="order-table" class="orderTable" data-duplicated="<?php echo ($this->duplicated) ? '1' : '0'; ?>" >
+
     <thead valign="top">
         <!-- Buttons -->
         <tr>
@@ -100,8 +112,14 @@ vmJsApi::css('csomagolo.default', 'administrator/components/com_virtuemart/asset
             <th style="width: 141px;">
                 <div class="header-container">
                     <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER9'); ?></span></div>
+                    <div id="btnDuplicated" class="btn tssBtn btnInvoice"><?php
+if ($this->duplicated) {
+    echo JText::_('COM_VIRTUEMART_PACKAGE_DUPLICATED_SHOWALL');
+} else {
+    echo JText::_('COM_VIRTUEMART_PACKAGE_DUPLICATED');
+}
+?></div>
                     <div id="btnIssueInvoice" class="btn tssBtn btnInvoice"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_ISSUEINVOICE'); ?></div>
-                    <!-- <div id="btnPrintInvoice" class="btn tssBtn btnInvoice"><?php //echo JText::_('COM_VIRTUEMART_PACKAGE_PRINTINVOICE'); ?></div> -->
                 </div>
             </th>
 
@@ -115,7 +133,7 @@ vmJsApi::css('csomagolo.default', 'administrator/components/com_virtuemart/asset
             </th>
 
             <!-- Megjegyzés -->
-            <th style="width: 160px;">
+            <th align="left" style="width: 350px;">
                 <div class="header-container">
                     <!-- <div class="header-buttonTitle"><span><?php // echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER11'); ?></span></div> -->
                     <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER12'); ?></span></div>
@@ -124,9 +142,10 @@ vmJsApi::css('csomagolo.default', 'administrator/components/com_virtuemart/asset
                 </div>
             </th>
 
-            <!-- GLS megjegyzés -->
-            <th>
+            <!-- Rendelés összege -->
+            <th style="width: 95px;">
                 <div class="header-container">
+                </div>
             </th>
 
         </tr>
@@ -139,7 +158,7 @@ vmJsApi::css('csomagolo.default', 'administrator/components/com_virtuemart/asset
             <?php if ($this->orderFunction == 'sortByNameAsc') {?>
                 <th>
                     <div>
-                        <a class="sort-link fontsize-130 active" href="index.php?option=com_virtuemart&view=csomagolo&orderfunction=sortByNameAsc">
+                        <a class="sort-link fontsize-130 active" href="<?php echo $sortByNameURL; ?>">
                             <img src="./components/com_virtuemart/assets/images/icon-arrow-up-b-128.png" alt="Print invoice" height="16" width="16">
                             <?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH5'); ?>
                         </a>
@@ -148,7 +167,7 @@ vmJsApi::css('csomagolo.default', 'administrator/components/com_virtuemart/asset
             <?php } else {?>
                 <th>
                     <div>
-                        <a class="sort-link fontsize-130" href="index.php?option=com_virtuemart&view=csomagolo&orderfunction=sortByNameAsc">
+                        <a class="sort-link fontsize-130" href="<?php echo $sortByNameURL; ?>">
                             <img src="./components/com_virtuemart/assets/images/icon-arrow-up-b-128.png" alt="Print invoice" height="16" width="16">
                             <?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH5'); ?>
                         </a>
@@ -164,7 +183,7 @@ vmJsApi::css('csomagolo.default', 'administrator/components/com_virtuemart/asset
             <?php if ($this->orderFunction == 'sortByDateDesc') {?>
                 <th>
                     <div>
-                        <a class="sort-link active" href="index.php?option=com_virtuemart&view=csomagolo&orderfunction=sortByDateDesc">
+                        <a class="sort-link active" href="<?php echo $sortByDateURL; ?>">
                             <img src="./components/com_virtuemart/assets/images/icon-arrow-down-b-128.png" alt="Print invoice" height="16" width="16">
                             <?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH3'); ?>
                         </a>
@@ -173,7 +192,7 @@ vmJsApi::css('csomagolo.default', 'administrator/components/com_virtuemart/asset
             <?php } else {?>
                 <th>
                     <div>
-                        <a class="sort-link" href="index.php?option=com_virtuemart&view=csomagolo&orderfunction=sortByDateDesc">
+                        <a class="sort-link" href="<?php echo $sortByDateURL; ?>">
                             <img src="./components/com_virtuemart/assets/images/icon-arrow-down-b-128.png" alt="Print invoice" height="16" width="16">
                             <?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH3'); ?>
                         </a>
@@ -185,7 +204,27 @@ vmJsApi::css('csomagolo.default', 'administrator/components/com_virtuemart/asset
             <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH8'); ?></div></th>
             <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH9'); ?></div></th>
             <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH10'); ?></div></th>
-            <th align="left" colspan="2"><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH11'); ?></div></th>
+            <th align="left"><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH11'); ?></div></th>
+            <?php if ($this->orderFunction == 'sortByTotalDesc') {?>
+                <th align="right">
+                    <div>
+                        <a class="sort-link active" href="<?php echo $sortByTotalURL; ?>">
+                            <img src="./components/com_virtuemart/assets/images/icon-arrow-down-b-128.png" alt="Print invoice" height="16" width="16">
+                            <?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH12'); ?>
+                        </a>
+                    </div>
+                </th>
+            <?php } else {?>
+                <th align="right">
+                    <div>
+                        <a class="sort-link" href="<?php echo $sortByTotalURL; ?>">
+                            <img src="./components/com_virtuemart/assets/images/icon-arrow-down-b-128.png" alt="Print invoice" height="16" width="16">
+                            <?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH12'); ?>
+                        </a>
+                    </div>
+                </th>
+            <?php }?>
+            <!-- <th align="right"><div><?php //echo JText::_('COM_VIRTUEMART_PACKAGE_TH12'); ?></div></th> -->
         </tr>
     </thead>
     <tbody>
@@ -193,9 +232,12 @@ vmJsApi::css('csomagolo.default', 'administrator/components/com_virtuemart/asset
 $cnt = 0;
 foreach ($this->orders as $order) {
 
-    $cnt += 1;
+    if ($this->duplicated == true && $order->isDuplicated == false) {
+        continue;
+    }
 
-    echo "<tr class=\"tss-table-row bottom-border";
+    $cnt += 1;
+    echo "<tr class=\"tss-table-row bottom-border side-border";
     $styleClass = "";
 
     if ($order->isKisker) {
@@ -285,7 +327,10 @@ foreach ($this->orders as $order) {
     echo "</select></td>";
 
     // Megjegyzés
-    echo "<td colspan=\"2\" class=\"note-field\" align=\"left\">$order->comment</td>";
+    echo "<td class=\"note-field\" align=\"left\">$order->comment</td>";
+
+    // Végösszeg
+    echo "<td class=\"note-field\" align=\"right\">$order->orderTotal</td>";
 
     echo "</tr>";
 }

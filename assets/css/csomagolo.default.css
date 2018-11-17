@@ -95,7 +95,7 @@ td {
 /* Backround color for the rows */
 
 .pending {
-    background-color: #E6E6E6;
+    background-color: #D1D1D1;
 }
 
 .retail {
@@ -112,6 +112,11 @@ td {
 
 .bottom-border {
     border-bottom: 1px solid #bbb;
+}
+
+.side-border {
+    border-left: 1px solid #bbb;
+    border-right: 1px solid #bbb;
 }
 
 /* Style for the loader */

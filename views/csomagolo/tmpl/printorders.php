@@ -225,18 +225,22 @@ if ($order->virtuemart_paymentmethod_id == 6) {
         <col width="25%">
         <thead>
             <tr>
-                <th colspan="3"><strong>
+                <th colspan="2"><strong>
                         <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_PRODUCT_NAME'); ?></strong></th>
                 <th><strong>
                         <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_QUANTITY'); ?></strong></th>
+                <th><strong>
+                        <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_UNITPRICE'); ?></strong></th>
+
             </tr>
         </thead>
         <tbody>
             <?php
 foreach ($order->orderItems as $orderItem) {
         echo "<tr>";
-        echo "<td colspan=\"3\" align=\"center\">$orderItem->order_item_name</td>";
+        echo "<td colspan=\"2\" align=\"center\">$orderItem->order_item_name</td>";
         echo "<td align=\"center\">$orderItem->product_quantity db</td>";
+        echo "<td align=\"center\">" . number_format(round($orderItem->product_item_price), 0, ',', ' ') . " Ft</td>";
         echo "</tr>";
     }
     ?>

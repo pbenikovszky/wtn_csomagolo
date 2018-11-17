@@ -49,6 +49,7 @@ class VirtuemartControllerCsomagolo extends VmController
         if ($view->orderFunction == '') {
             $view->orderFunction = 'sortByDateDesc';
         }
+        $view->duplicated = (JRequest::getVar('duplicated') == "yes");
         $view->display();
     }
 

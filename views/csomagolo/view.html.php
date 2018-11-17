@@ -43,8 +43,12 @@ class VirtuemartViewCsomagolo extends VmViewAdmin
         $this->counters = $csomagoloModel->getStatusCounters();
 
         // sort the list of orders
-        if ($this->orderFunction != 'sortByDateDesc') {
+        if ($this->orderFunction == 'sortByNameAsc') {
             uasort($this->orders, array('VirtuemartViewCsomagolo', 'sortByNameAsc'));
+        }
+
+        if ($this->orderFunction == 'sortByTotalDesc') {
+            uasort($this->orders, array('VirtuemartViewCsomagolo', 'sortByTotalDesc'));
         }
 
         // get the orderstates
@@ -89,6 +93,11 @@ class VirtuemartViewCsomagolo extends VmViewAdmin
         $name1 = strtolower($a->user_name);
         $name2 = strtolower($b->user_name);
         return strcmp($name2, $name1);
+    }
+
+    private static function sortByTotalDesc($a, $b)
+    {
+        return $b->order_total - $a->order_total;
     }
 
 }

@@ -22,8 +22,6 @@ define("INVOICE_PATH", "/myInvoices/");
 define("RESPONSE_PATH", "/myInvoices/responses/");
 
 
-if(!class_exists('VmModel')) require(VMPATH_ADMIN.DS.'helpers'.DS.'vmmodel.php');
-
 /**
  * HelloWorldList Model
  *
@@ -559,12 +557,12 @@ class VirtueMartModelCsomagolo extends VmModel
         $query = $db->getQuery(true);
 
         $orderID = $this->getIdFromNumber($orderNumber);
-        $myOrder = $this->getOrderById($orderID);
+        $order = $this->getOrderById($orderID);
 
-        if ($myOrder->isKisker && $myOrder->virtuemart_paymentmethod_id != "11" && $newState === "S") {
-
+        if ($order->isKisker && $order->virtuemart_paymentmethod_id != "11" && $newState === "S") {
             $newState = "W";
         }
+        $result = $order->isKisker . ", payment method: " .$order->virtuemart_paymentmethod_id . ", newState: " . $newState;
         // change the status of the order
         $query = 'UPDATE #__virtuemart_orders
 				  SET order_status=' . $db->quote($newState) . ' WHERE order_number=' . $db->quote($orderNumber);
@@ -581,23 +579,17 @@ class VirtueMartModelCsomagolo extends VmModel
 
         $user = JFactory::getUser();
         $comment = "Csomagoló nézetből módosítva. Username: " . $user->username;
-        
+
         $query = 'SELECT MAX(virtuemart_order_history_id)+1 FROM #__virtuemart_order_histories';
         $db->setQuery($query);
         $newID = $db->loadResult();
-        
+
         $query = "INSERT INTO #__virtuemart_order_histories (virtuemart_order_history_id, virtuemart_order_id, order_status_code, customer_notified, comments, published, created_on, created_by, modified_on, modified_by)
                    VALUES ($newID, $orderID, '$newState', 0, '$comment', 1, NOW(), $user->id, NOW(), $user->id)";
         $db->setQuery($query);
         $db->execute();
 
-        // notify the customer
-        if ($newState === "S" || $newState === "C") {
-            $orderModel = VmModel::getModel('orders');
-            $orderModel->notifyCustomer($orderID);
-        }
-        $myResult = $myOrder->isKisker . ", payment method: " .$myOrder->virtuemart_paymentmethod_id . ", newState: " . $newState;
-        return $myResult;
+        return $result;
     }
 
     public function setManualInvoiceFlag($orderNumber, $flagValue) {
@@ -1222,7 +1214,8 @@ class VirtueMartModelCsomagolo extends VmModel
         throw new Exception('A számítási szabályok között nem található '.$itemKind);
     }
     
-       
+    
+    
     public function kerekit($ertek){
         VmConfig::loadConfig();
         $kerekites_pontossag = VmConfig::get('salesPriceRounding');
