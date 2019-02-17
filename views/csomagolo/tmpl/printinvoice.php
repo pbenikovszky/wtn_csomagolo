@@ -41,7 +41,7 @@ if ($pdf->result == "SUCCESS") {
         let urlEles = 'https://wisetreenaturals.hu/administrator/myInvoices/' + pdfName;
 
         printJS({
-            printable: urlMasolat1,
+            printable: urlEles,
             type: 'pdf',
             showModal: true
         });

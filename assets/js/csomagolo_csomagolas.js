@@ -1,7 +1,10 @@
 window.addEventListener("load", function () {
+
+  document.getElementById("last-updated-time").innerText = GetFormattedDate();
+
   const btnSelectAll = document.getElementById("btnSelectAll");
   const btnDeselect = document.getElementById("btnDeselect");
-  const btnStateToPackage = document.getElementById("btnStateToPackage");
+  // const btnStateToPackage = document.getElementById("btnStateToPackage");
   const btnShowRetail = document.getElementById("btnShowRetail");
   const btnShowAll = document.getElementById("btnShowAll");
   const btnPrintAll = document.getElementById("btnPrintAll");
@@ -56,34 +59,13 @@ window.addEventListener("load", function () {
   }); // btnShowAll.click
 
 
-  // Change the status of the selected orders to 'GLS futárra vár' (L)
-  btnStateToPackage.addEventListener("click", function (e) {
-    let oids = [];
-    let rows = document.querySelector(".orderTable").rows;
-    for (let i = 2; i < rows.length; i++) {
-      if (!rows[i].classList.contains("tss-hidden")) {
-        if (
-          rows[i].getElementsByTagName("td")[9].firstElementChild.value == "C" &&
-          rows[i].getElementsByTagName("td")[0].firstElementChild.checked
-        ) {
-          let oid = rows[i].getElementsByTagName("td")[4].firstElementChild
-            .innerText;
-          oids.push(oid);
-        } // if value == "C"
-      } // if classList contains tss-hidden
-    } // for
-
-    if (oids.length > 0) {
-      changeState(oids.join(","), "B");
-    } // if
-  }); // btnStateToGLS.click  
-
   btnPrintAll.addEventListener("click", function (e) {
     let oids = [];
     let rows = document.querySelector(".orderTable").rows;
     for (let i = 2; i < rows.length; i++) {
       let cb = rows[i].getElementsByTagName("td")[0].firstElementChild;
-      if (cb.checked) {
+      let orderState = rows[i].getElementsByTagName("td")[9].firstElementChild.value
+      if (cb.checked && orderState === "B") {
         if (!cb.parentElement.parentElement.classList.contains("tss-hidden")) {
           let oid = rows[i].getElementsByTagName("td")[4].firstElementChild
             .innerText;
@@ -122,8 +104,7 @@ window.addEventListener("load", function () {
           if (
             rows[i].getElementsByTagName("td")[0].firstElementChild.checked &&
             !rows[i].getElementsByTagName("td")[8].firstElementChild.checked &&
-            rows[i].getElementsByTagName("td")[9].firstElementChild.value !=
-            "V" &&
+            rows[i].getElementsByTagName("td")[9].firstElementChild.value === "B" &&
             rows[i].dataset.invoice == 0
           ) {
             let oid = rows[i].getElementsByTagName("td")[4].firstElementChild

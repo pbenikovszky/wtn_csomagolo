@@ -459,9 +459,9 @@ if ($order->isCouponUsed) {?>
                         </td>
                     </tr>
                     <tr class="top-border">
-                        <td style="width: 35%; vertical-align: top;">Az email pénzneme</td>
+                        <td style="width: 35%; vertical-align: top;">Pénzneme</td>
                         <td style="width: 65%; vertical-align: top;">
-                            <?php echo $order->paymentDetails->email_currency; ?>
+                            <?php echo $order->paymentDetails->payment_currency; ?>
                         </td>
                     </tr>
                 </table>

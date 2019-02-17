@@ -69,35 +69,86 @@ if ($this->duplicated) {
 
             <!-- Megrendelő neve -->
             <th>
-                <div class="header-container">
-                    <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER6'); ?></span></div>
-                    <div id="btnStateToPackage" class="btn tssBtn btnList"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_STATETOPACKAGE'); ?></div>
-                </div>
+
             </th>
 
             <!-- Megrendelő emailcíme -->
-            <th></th>
+            <th>
+                <div class="header-container">
+                    <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER5'); ?></span></div>
+                </div>
+            </th>
 
             <!-- Kisker checkbox -->
-            <th style="width: 107px;"></th>
+            <th style="width: 107px;">
+                <div class="header-container">
+                    <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER4'); ?></span></div>
+                    <div id="btnShowRetail" class="btn tssBtn btnList"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_SHOWRETAILONLY'); ?></div>
+                    <div id="btnShowAll" class="btn tssBtn btnList"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_SHOWALL'); ?></div>
+                </div>
+            </th>
 
             <!-- Megrendelés száma -->
-            <th style="width: 112px;"></th>
+            <th style="width: 112px;">
+                <div class="header-container">
+                    <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER2'); ?></span></div>
+                </div>
+            </th>
 
             <!-- Megrendelés dátuma -->
-            <th style="width: 120px;"></th>
+            <th style="width: 120px;">
+                <div class="header-container">
+                    <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER3'); ?></span></div>
+                </div>
+            </th>
 
             <!-- Számlanyomtás / Megrendelésnyomtatás  -->
-           <th colspan="2" style="width: 130px;"></th>
+           <th colspan="2" style="width: 130px;">
+                <div class="header-container">
+                    <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER7'); ?></span></div>
+                    <div id="btnPrintAll" class="btn tssBtn"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_PRINTALL'); ?></div>
+                </div>
+            </th>
 
             <!-- Számla kiállítva -->
-            <th style="width: 141px;"></th>
+            <th style="width: 141px;">
+                <div class="header-container">
+                    <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER9'); ?></span></div>
+                    <div id="btnDuplicated" class="btn tssBtn btnInvoice"><?php
+if ($this->duplicated) {
+    echo JText::_('COM_VIRTUEMART_PACKAGE_DUPLICATED_SHOWALL');
+} else {
+    echo JText::_('COM_VIRTUEMART_PACKAGE_DUPLICATED');
+}
+?></div>
+                    <div id="btnIssueInvoice" class="btn tssBtn btnInvoice"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_ISSUEINVOICE'); ?></div>
+                </div>
+            </th>
+
+            <!-- Megrendelés állapota -->
+            <th style="width: 126px;">
+                <div class="header-container">
+                    <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER10'); ?></span></div>
+                    <div id="btnStateToGLS" class="btn tssBtn"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_STATETOGLS'); ?></div>
+                    <div id="btnStateToShipped" class="btn tssBtn"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_STATETOSHIPPED'); ?></div>
+                </div>
+            </th>
 
             <!-- Megjegyzés -->
-            <th align="left" style="width: 350px;"></th>
+            <th align="left" style="width: 350px;">
+                <div class="header-container">
+                    <!-- <div class="header-buttonTitle"><span><?php // echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER11'); ?></span></div> -->
+                    <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER12'); ?></span></div>
+                        <div id="btnGLSExport" class="btn tssBtn"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_GLSEXPORT'); ?></div>
+                    </div>
+                </div>
+            </th>
 
             <!-- Rendelés összege -->
-            <th style="width: 95px;"></th>
+            <th style="width: 95px;">
+                <div class="header-container">
+                </div>
+            </th>
 
         </tr>
 
@@ -183,7 +234,7 @@ if ($this->duplicated) {
 $cnt = 0;
 foreach ($this->orders as $order) {
 
-    if ($order->order_status == 'C') {
+    if ($order->order_status != 'C') {
 
         if ($this->duplicated == true && $order->isDuplicated == false) {
             continue;
@@ -210,7 +261,8 @@ foreach ($this->orders as $order) {
         }
 
         echo $styleClass . "\" data-orderid=\"$order->virtuemart_order_id\" data-invoice=";
-        echo ($order->hasInvoice) ? "\"1\">" : "\"0\">";
+        echo ($order->hasInvoice) ? "\"1\" data-manualinvoice=" : "\"0\" data-manualinvoice=";
+        echo ($order->manualInvoice) ? "\"1\">" : "\"0\">";
 
         // Kijelölés
         echo "<td align=\"center\"><input type=\"checkbox\" name=\"cbSelect\" value=\"$order->order_number\"></td>";
@@ -259,11 +311,14 @@ foreach ($this->orders as $order) {
         }
 
         // Nyomtatás
-        echo "<td style=\"width:60px\" align=\"center\">
+        if ($order->order_status == "B") {
+            echo "<td style=\"width:60px\" align=\"center\">
                         <a href=\"javascript:void window.open('index.php?option=com_virtuemart&view=csomagolo&task=printorder&orderid=$order->virtuemart_order_id', 'win2', 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no');\">
                             <img src=\"./components/com_virtuemart/assets/images/icon_32/printer.png\" alt=\"Smiley face\" height=\"32\" width=\"32\">
                         </a></td>";
-
+        } else {
+            echo "<td style=\"width:60px\" align=\"center\"></td>";
+        }
         // Manuális számlázás
         echo "<td align=\"center\"><input type=\"checkbox\" name=\"cbManualInvoice\" value=\"$order->order_number\"";
         echo ($order->manualInvoice == true) ? " checked></td>" : "></td>";
@@ -286,7 +341,6 @@ foreach ($this->orders as $order) {
         echo "<td class=\"note-field\" align=\"right\">$order->orderTotal</td>";
 
         echo "</tr>";
-
     }
 }
 ?>
@@ -296,7 +350,7 @@ foreach ($this->orders as $order) {
 <?php
 
 vmJsApi::addJScript('/administrator/components/com_virtuemart/assets/js/csomagolo_sharedsubs.js', false, false);
-vmJsApi::addJScript('/administrator/components/com_virtuemart/assets/js/csomagolo_megerositett.js', false, false);
+vmJsApi::addJScript('/administrator/components/com_virtuemart/assets/js/csomagolo_csomagolas.js', false, false);
 vmJsApi::addJScript('/administrator/components/com_virtuemart/assets/js/csomagolo_updater.js', false, false);
 ?>
 

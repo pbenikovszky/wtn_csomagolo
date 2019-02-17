@@ -197,8 +197,32 @@ class VirtueMartModelCsomagolo extends VmModel
         $result->shipmentDetails->tax = "27%";
 
         // Get payment method details
-        $query = 'SELECT * FROM #__virtuemart_payment_plg_standard
-                    WHERE virtuemart_order_id=' . $db->quote($orderID);
+        switch($result->virtuemart_paymentmethod_id) {
+            case "5":
+                $query = 'SELECT * FROM #__virtuemart_payment_plg_paypal
+                            WHERE virtuemart_order_id=' . $db->quote($orderID);
+                break;
+
+            case "10":
+                $query = 'SELECT * FROM #__virtuemart_payment_plg_otp
+                            WHERE virtuemart_order_id=' . $db->quote($orderID);
+                break;
+
+            case "12":
+                $query = 'SELECT * FROM #__virtuemart_payment_plg_simple
+                            WHERE virtuemart_order_id=' . $db->quote($orderID);
+                break;
+
+            case "13":
+                $query = 'SELECT * FROM #__virtuemart_payment_plg_paymentgateway
+                            WHERE virtuemart_order_id=' . $db->quote($orderID);
+                break;
+
+            default: 
+                $query = 'SELECT * FROM #__virtuemart_payment_plg_standard
+                            WHERE virtuemart_order_id=' . $db->quote($orderID);
+                break;
+        }
         $db->setQuery($query);
         $result->paymentDetails = $db->loadObject();
 
@@ -560,11 +584,23 @@ class VirtueMartModelCsomagolo extends VmModel
 
         $orderID = $this->getIdFromNumber($orderNumber);
         $myOrder = $this->getOrderById($orderID);
+        $orderModel = VmModel::getModel('orders');
 
-        if ($myOrder->isKisker && $myOrder->virtuemart_paymentmethod_id != "11" && $newState === "S") {
 
-            $newState = "W";
+        if ($myOrder->isKisker && $newState === "S") {
+            $query = 'UPDATE #__virtuemart_orders
+            SET order_status=' . $db->quote($newState) . ' WHERE order_number=' . $db->quote($orderNumber);
+            $db->setQuery($query);
+            $db->execute();
+            $orderModel->notifyCustomer($orderID);
+            if ($myOrder->virtuemart_paymentmethod_id === "11" || $myOrder->virtuemart_paymentmethod_id === "6") {
+                $newState = "Y";
+            } else {
+                $newState = "W";
+            }
         }
+
+
         // change the status of the order
         $query = 'UPDATE #__virtuemart_orders
 				  SET order_status=' . $db->quote($newState) . ' WHERE order_number=' . $db->quote($orderNumber);
@@ -593,7 +629,6 @@ class VirtueMartModelCsomagolo extends VmModel
 
         // notify the customer
         if ($newState === "S" || $newState === "C") {
-            $orderModel = VmModel::getModel('orders');
             $orderModel->notifyCustomer($orderID);
         }
         $myResult = $myOrder->isKisker . ", payment method: " .$myOrder->virtuemart_paymentmethod_id . ", newState: " . $newState;
@@ -658,27 +693,22 @@ class VirtueMartModelCsomagolo extends VmModel
 
         return $result;
     }
+
+    public function getConfirmedCount() {
+        $db = JFactory::getDBO();
+        $query = $db->getQuery(true);
+        $query = 'SELECT COUNT(*) FROM #__virtuemart_orders 
+                    WHERE order_status="C"';
+        $db->setQuery($query);
+        return $db->loadResult();
+    }
+    
     /**
      * Get the orders from DB for the main view
      */
     public function getOrders()
     {
         $db = JFactory::getDBO();
-
-        // Change the status of orders to "Megerősített
-        // where payment_method is "Utánvétes fizetés"
-
-        // ! LOGIC ERROR
-        // ! REMOVED, NEEDS TO BE FIXED
-        /* $query = $db->getQuery(true);
-        $query = 'UPDATE #__virtuemart_orders
-        SET order_status="C"
-        WHERE virtuemart_paymentmethod_id IN ("4", "6")';
-        $db->setQuery($query);
-        $db->execute(); */
-
-        // Change the status of orders to "Megerősített
-        // where payment_method is "Utánvétes fizetés"
 
         // get the list of orders
 
@@ -888,10 +918,8 @@ class VirtueMartModelCsomagolo extends VmModel
     {
 
         $componentParams = JComponentHelper::getParams('com_cloudszamlazzhu');
-        // $szamlazzhu_user = $componentParams->get('szamlazzhu_user', '');
-        // $szamlazzhu_pass = $componentParams->get('szamlazzhu_pass', '');
-        $szamlazzhu_user = "fzs@wtn.hu";
-        $szamlazzhu_pass = "Wtn-Proba";
+        $szamlazzhu_user = $componentParams->get('szamlazzhu_user', '');
+        $szamlazzhu_pass = $componentParams->get('szamlazzhu_pass', '');
 
         $szamla = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><xmlszamlapdf xmlns="http://www.szamlazz.hu/xmlszamlapdf" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.szamlazz.hu/xmlszamlapdf xmlszamlapdf.xsd"></xmlszamlapdf>');
         $szamla->addChild('felhasznalo', $szamlazzhu_user);
@@ -925,11 +953,13 @@ class VirtueMartModelCsomagolo extends VmModel
         }
 
         $componentParams = JComponentHelper::getParams('com_cloudszamlazzhu');
-        // $szamlazzhu_user = $componentParams->get('szamlazzhu_user', '');
-        // $szamlazzhu_pass = $componentParams->get('szamlazzhu_pass', '');
+        $szamlazzhu_user = $componentParams->get('szamlazzhu_user', '');
+        $szamlazzhu_pass = $componentParams->get('szamlazzhu_pass', '');
 
-        $szamlazzhu_user = "fzs@wtn.hu";
-        $szamlazzhu_pass = "Wtn-Proba";
+        $megjegyzes = 'A csomagolás termékdíj-kötelezettség az eladót terheli. &#xA;'
+                        . '---------------------------------------------- &#xA;'
+                        . 'OTP Főszámla: 11709002-21135853 &#xA;'
+                        . 'OTP Alszámla Viszonteladóknak: 11709002-25964008';
 
         // get the language of the invoice
         $szlanyelv = $componentParams->get('szlanyelv', 1);
@@ -979,11 +1009,8 @@ class VirtueMartModelCsomagolo extends VmModel
         
         $beallitasok = $szamla->addChild('beallitasok');
 
-        // $beallitasok->addChild('felhasznalo', $szamlazzhu_user);
-        // $beallitasok->addChild('jelszo', $szamlazzhu_pass);
-
-        $beallitasok->addChild('felhasznalo', 'fzs@wtn.hu');
-        $beallitasok->addChild('jelszo', 'Wtn-Proba');        
+        $beallitasok->addChild('felhasznalo', $szamlazzhu_user);
+        $beallitasok->addChild('jelszo', $szamlazzhu_pass);
 
         $beallitasok->addChild('eszamla', $eszamla ? "true" : "false");
 
@@ -999,7 +1026,7 @@ class VirtueMartModelCsomagolo extends VmModel
         $fejlec->addChild('fizmod', $this->getPaymentMethodName($BT->virtuemart_paymentmethod_id));
         $fejlec->addChild('penznem', $this->getCurrencyName($BT->order_currency));
         $fejlec->addChild('szamlaNyelve', $nyelv);
-        $fejlec->addChild('megjegyzes', 'A csomagolás termékdíj-kötelezettség az eladót terheli.');
+        $fejlec->addChild('megjegyzes', $megjegyzes);
         $fejlec->addChild('rendelesSzam', $BT->order_number);
         $fejlec->addChild('elolegszamla', 'false');
         $fejlec->addChild('vegszamla', 'false');

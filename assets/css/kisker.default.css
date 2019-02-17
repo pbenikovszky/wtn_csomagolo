@@ -1,0 +1,67 @@
+.kiskerTable {
+    /* width: 1850px; */
+    width: 95%;
+    table-layout: fixed;
+    margin: 15px auto 0 auto;
+}
+
+td {
+    height: 40px;
+}
+
+.kiserTable-buttonRow {
+    margin-bottom: 15px;
+}
+
+.bottom-border {
+    border-bottom: 1px solid #bbb;
+}
+
+.tss-hidden {
+    display: none;
+}
+
+/* Backround color for the rows */
+
+.retail {
+    background-color: #FEF7BE;
+}
+
+.recommended {
+    background-color: #BCE7B2;
+}
+
+.coupon {
+    background-color: #E2B3FD;
+}
+
+.overdue {
+    color: #f00;
+    font-weight: bold;
+}
+
+/* Style for the sorting links */
+
+.sort-link {
+    text-decoration: none;
+    color: #000;
+}
+
+.sort-link:visited {
+    text-decoration: none;
+    color: #000;
+}
+
+.sort-link:hover {
+    text-decoration: underline;
+    color: #000076;
+}
+
+.sort-link.active {
+    text-decoration: underline;
+}
+
+/* Font size classes */
+.fontsize-130 {
+    font-size: 130%;
+}

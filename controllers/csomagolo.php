@@ -114,6 +114,20 @@ class VirtuemartControllerCsomagolo extends VmController
         $view->display();
     }
 
+    public function getconfirmedcount()
+    {
+        $view = $this->getView('csomagolo', 'json');
+        $view->setLayout('getconfirmedcount');
+        $view->display();
+    }
+
+    public function csomagolas()
+    {
+        $view = $this->getView('csomagolo', 'html');
+        $view->setLayout('csomagolas');
+        $view->display();
+    }
+
     /**
      * Generic cancel task
      *

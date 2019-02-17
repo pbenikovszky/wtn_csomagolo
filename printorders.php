@@ -125,14 +125,14 @@ if ($order->virtuemart_paymentmethod_id == 6) {
         <tr>
             <td><strong>
                     <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_VENDOR'); ?></strong></td>
-            <td colspan="3"><?php echo $order->recommender; ?></td>
+            <td colspan="3"><?php echo $this->orderDetails->recommender; ?></td>
         </tr>
 
         <tr>
             <td><strong>
                     <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_COUPON_CODE'); ?></strong></td>
             <td colspan="3">
-                <?php echo $order->coupon_code; ?>
+                <?php echo $this->orderDetails->coupon_code; ?>
             </td>
         </tr>
 
@@ -140,7 +140,7 @@ if ($order->virtuemart_paymentmethod_id == 6) {
             <td><strong>
                 <?php echo JText::_('COM_VIRTUEMART_PRINTVIEW_COUPON_DISCOUNT'); ?></strong></td>
             <td colspan="3">
-                <?php echo number_format(round($order->coupon_discount), 0, ',', ' '); ?> Ft
+                <?php echo number_format(round($this->orderDetails->coupon_discount), 0, ',', ' '); ?> Ft
             </td>
         </tr>
 
