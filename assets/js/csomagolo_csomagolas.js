@@ -122,8 +122,16 @@ window.addEventListener("load", function () {
 
   // Change the status of the selected orders to 'GLS futárra vár' (L)
   btnStateToGLS.addEventListener("click", function (e) {
-    let oids = [];
+
     let rows = document.querySelector(".orderTable").rows;
+    for (let i = 2; i < rows.length; i++) {
+      if (rows[i].dataset.invoice == 0 && rows[i].dataset.manualinvoice == 0) {
+        alert('Ez a funkció nem elérhető amíg nem készül számla minden rendeléshez!')
+        return
+      }
+    }
+
+    let oids = [];
     for (let i = 2; i < rows.length; i++) {
       if (!rows[i].classList.contains("tss-hidden")) {
         if (
@@ -253,40 +261,41 @@ window.addEventListener("load", function () {
     loader.classList.remove("tss-hidden");
   } // changeState
 
-  function UpdateManualInvoiceFlag(data, flagValue) {
-    let xhr = new XMLHttpRequest();
-    let method = "POST";
+  function UpdateManualInvoiceFlag(data, flagValue, parentRow) {
+    let xhr = new XMLHttpRequest()
+    let method = "POST"
     let url =
-      "index.php?option=com_virtuemart&view=csomagolo&task=statechange&job=manualinvoice&format=json";
-    xhr.open(method, url, true);
-    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      "index.php?option=com_virtuemart&view=csomagolo&task=statechange&job=manualinvoice&format=json"
+    xhr.open(method, url, true)
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
 
     xhr.onload = function () {
       // display error message and exit function
       // in case of any error
       if (xhr.status != 200) {
 
-        alertError(xhr.status, xhr.statusText);
-        return;
+        alertError(xhr.status, xhr.statusText)
+        return
 
       } // if
 
       // create a result object by parsing the returned JSON data
-      let result = JSON.parse(xhr.response);
+      let result = JSON.parse(xhr.response)
 
       // Reload the page after the successful change
       if (result.result === "SUCCESS") {
-        loader.classList.add("tss-hidden");
+        loader.classList.add("tss-hidden")
+        parentRow.setAttribute('data-manualinvoice', flagValue)
       } else {
-        loader.classList.add("tss-hidden");
-        alert("Something went wrong");
+        loader.classList.add("tss-hidden")
+        alert("Something went wrong")
       } // if
     }; // onload
 
-    let params = "ordernumbers=" + data + "&flagvalue=" + flagValue;
-    let loader = document.getElementById("loader");
-    xhr.send(params);
-    loader.classList.remove("tss-hidden");
+    let params = "ordernumbers=" + data + "&flagvalue=" + flagValue
+    let loader = document.getElementById("loader")
+    xhr.send(params)
+    loader.classList.remove("tss-hidden")
   }
 
   // handling Dropdown box change event
@@ -322,8 +331,9 @@ window.addEventListener("load", function () {
     let oNumber = rows[rowIndex].getElementsByTagName("td")[4].firstElementChild
       .innerText;
     let flagValue = event.target.checked ? 1 : 0;
+    //rows[rowIndex].setAttribute('data-manualinvoice', flagValue)
 
-    UpdateManualInvoiceFlag(oNumber, flagValue);
+    UpdateManualInvoiceFlag(oNumber, flagValue, rows[rowIndex]);
   }
 
   function onDropdownChange(event, rowIndex) {

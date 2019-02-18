@@ -129,6 +129,10 @@ td {
     font-style: italic;
 }
 
+.last-updated-wrapper {
+    margin-top: 15px;
+}
+
 /* * Style for the loader */
 
 .loader {

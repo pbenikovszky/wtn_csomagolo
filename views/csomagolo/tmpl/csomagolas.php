@@ -44,13 +44,14 @@ if ($this->duplicated) {
 </div>
 
 <div class="counters">
-
     <span class="counter">Megerősített rendelések: <span id="confirmed-counter"><?php echo $this->counters->countConfirmed; ?></span> db.</span>
     <span class="counter">Csomagolás rendelések: <?php echo $this->counters->countPackage; ?> db.</span>
     <span class="counter">GLS csomagfeladásra váró rendelések: <?php echo $this->counters->countGLS; ?> db.</span>
     <span class="counter">Várakoztatott rendelések: <?php echo $this->counters->countPending; ?> db.</span>
-    <span class="last-updated-text">(Utoljára frissítve: <span id="last-updated-time"></span>)</span>
+</div>
 
+<div class="last-updated-wrapper">
+    <span class="last-updated-text">(Utoljára frissítve: <span id="last-updated-time"></span>)</span>
 </div>
 
 <table id="order-table" class="orderTable" data-duplicated="<?php echo ($this->duplicated) ? '1' : '0'; ?>" >

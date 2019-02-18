@@ -44,13 +44,14 @@ if ($this->duplicated) {
 </div>
 
 <div class="counters">
-
     <span class="counter">Megerősített rendelések: <span id="confirmed-counter"><?php echo $this->counters->countConfirmed; ?></span> db.</span>
     <span class="counter">Csomagolás rendelések: <?php echo $this->counters->countPackage; ?> db.</span>
     <span class="counter">GLS csomagfeladásra váró rendelések: <?php echo $this->counters->countGLS; ?> db.</span>
     <span class="counter">Várakoztatott rendelések: <?php echo $this->counters->countPending; ?> db.</span>
-    <span class="last-updated-text">(Utoljára frissítve: <span id="last-updated-time"></span>)</span>
+</div>
 
+<div class="last-updated-wrapper">
+    <span class="last-updated-text">(Utoljára frissítve: <span id="last-updated-time"></span>)</span>
 </div>
 
 <table id="order-table" class="orderTable" data-duplicated="<?php echo ($this->duplicated) ? '1' : '0'; ?>" >
@@ -59,7 +60,7 @@ if ($this->duplicated) {
         <!-- Buttons -->
         <tr>
             <!-- Kijelölés -->
-            <th style="width: 126px;">
+            <th style="width: 80px;">
                 <div class="header-container">
                     <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER1'); ?></span></div>
                     <div id="btnSelectAll" class="btn tssBtn"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_SELECTALL'); ?></div>
@@ -68,7 +69,7 @@ if ($this->duplicated) {
             </th>
 
             <!-- Megrendelő neve -->
-            <th>
+            <th style="width: 200px;">
                 <div class="header-container">
                     <div class="header-buttonTitle"><span><?php echo JText::_('COM_VIRTUEMART_PACKAGE_HEADER6'); ?></span></div>
                     <div id="btnStateToPackage" class="btn tssBtn btnList"><?php echo JText::_('COM_VIRTUEMART_PACKAGE_STATETOPACKAGE'); ?></div>
@@ -76,7 +77,7 @@ if ($this->duplicated) {
             </th>
 
             <!-- Megrendelő emailcíme -->
-            <th></th>
+            <th style="width: 200px;"></th>
 
             <!-- Kisker checkbox -->
             <th style="width: 107px;"></th>
@@ -88,13 +89,16 @@ if ($this->duplicated) {
             <th style="width: 120px;"></th>
 
             <!-- Számlanyomtás / Megrendelésnyomtatás  -->
-           <th colspan="2" style="width: 130px;"></th>
+           <th style="width: 60px;"></th>
 
-            <!-- Számla kiállítva -->
-            <th style="width: 141px;"></th>
+            <!-- Kézi számlázás -->
+            <th style="width: 100px;"></th>
+
+            <!-- Állapot -->
+            <th align="left" style="width: 150px;"></th>
 
             <!-- Megjegyzés -->
-            <th align="left" style="width: 350px;"></th>
+            <th align="left" style="width: 400px;"></th>
 
             <!-- Rendelés összege -->
             <th style="width: 95px;"></th>
@@ -152,7 +156,7 @@ if ($this->duplicated) {
             <?php }?>
 
             <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH7'); ?></div></th>
-            <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH8'); ?></div></th>
+            <!-- <th><div><?php //echo JText::_('COM_VIRTUEMART_PACKAGE_TH8'); ?></div></th> -->
             <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH9'); ?></div></th>
             <th><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH10'); ?></div></th>
             <th align="left"><div><?php echo JText::_('COM_VIRTUEMART_PACKAGE_TH11'); ?></div></th>
@@ -259,10 +263,10 @@ foreach ($this->orders as $order) {
         }
 
         // Nyomtatás
-        echo "<td style=\"width:60px\" align=\"center\">
-                        <a href=\"javascript:void window.open('index.php?option=com_virtuemart&view=csomagolo&task=printorder&orderid=$order->virtuemart_order_id', 'win2', 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no');\">
-                            <img src=\"./components/com_virtuemart/assets/images/icon_32/printer.png\" alt=\"Smiley face\" height=\"32\" width=\"32\">
-                        </a></td>";
+        // echo "<td style=\"width:60px\" align=\"center\">
+        //                 <a href=\"javascript:void window.open('index.php?option=com_virtuemart&view=csomagolo&task=printorder&orderid=$order->virtuemart_order_id', 'win2', 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no');\">
+        //                     <img src=\"./components/com_virtuemart/assets/images/icon_32/printer.png\" alt=\"Smiley face\" height=\"32\" width=\"32\">
+        //                 </a></td>";
 
         // Manuális számlázás
         echo "<td align=\"center\"><input type=\"checkbox\" name=\"cbManualInvoice\" value=\"$order->order_number\"";
