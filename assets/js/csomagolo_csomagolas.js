@@ -1,10 +1,8 @@
 window.addEventListener("load", function () {
-
   document.getElementById("last-updated-time").innerText = GetFormattedDate();
 
   const btnSelectAll = document.getElementById("btnSelectAll");
   const btnDeselect = document.getElementById("btnDeselect");
-  // const btnStateToPackage = document.getElementById("btnStateToPackage");
   const btnShowRetail = document.getElementById("btnShowRetail");
   const btnShowAll = document.getElementById("btnShowAll");
   const btnPrintAll = document.getElementById("btnPrintAll");
@@ -16,6 +14,9 @@ window.addEventListener("load", function () {
   let isDuplicated;
 
   let lastSelectedStates = [];
+
+  const btnActiveLink = document.getElementsByClassName('btn-toolbar')[0].children[1].children[0];
+  btnActiveLink.classList.add('active-link-button');
 
   addStateChangeEventListeners();
 
@@ -58,13 +59,13 @@ window.addEventListener("load", function () {
     } // for
   }); // btnShowAll.click
 
-
   btnPrintAll.addEventListener("click", function (e) {
     let oids = [];
     let rows = document.querySelector(".orderTable").rows;
     for (let i = 2; i < rows.length; i++) {
       let cb = rows[i].getElementsByTagName("td")[0].firstElementChild;
-      let orderState = rows[i].getElementsByTagName("td")[9].firstElementChild.value
+      let orderState = rows[i].getElementsByTagName("td")[9].firstElementChild
+        .value;
       if (cb.checked && orderState === "B") {
         if (!cb.parentElement.parentElement.classList.contains("tss-hidden")) {
           let oid = rows[i].getElementsByTagName("td")[4].firstElementChild
@@ -88,10 +89,9 @@ window.addEventListener("load", function () {
   // Deselect every checkbox in first column
   btnDuplicated.addEventListener("click", function (e) {
     let urlDuplicated =
-      "index.php?option=com_virtuemart&view=csomagolo&duplicated=yes&orderfunction=sortByNameAsc";
-    let urlAll =
-      "index.php?option=com_virtuemart&view=csomagolo";
-    window.location.href = (isDuplicated == "1") ? urlAll : urlDuplicated;
+      "index.php?option=com_virtuemart&view=csomagolo&task=csomagolas&duplicated=yes&orderfunction=sortByNameAsc";
+    let urlAll = "index.php?option=com_virtuemart&view=csomagolo&task=csomagolas";
+    window.location.href = isDuplicated == "1" ? urlAll : urlDuplicated;
   }); // btnDuplicated.click
 
   btnIssueInvoice.addEventListener("click", function (e) {
@@ -104,7 +104,8 @@ window.addEventListener("load", function () {
           if (
             rows[i].getElementsByTagName("td")[0].firstElementChild.checked &&
             !rows[i].getElementsByTagName("td")[8].firstElementChild.checked &&
-            rows[i].getElementsByTagName("td")[9].firstElementChild.value === "B" &&
+            rows[i].getElementsByTagName("td")[9].firstElementChild.value ===
+            "B" &&
             rows[i].dataset.invoice == 0
           ) {
             let oid = rows[i].getElementsByTagName("td")[4].firstElementChild
@@ -122,12 +123,17 @@ window.addEventListener("load", function () {
 
   // Change the status of the selected orders to 'GLS futárra vár' (L)
   btnStateToGLS.addEventListener("click", function (e) {
-
     let rows = document.querySelector(".orderTable").rows;
     for (let i = 2; i < rows.length; i++) {
-      if (rows[i].dataset.invoice == 0 && rows[i].dataset.manualinvoice == 0) {
-        alert('Ez a funkció nem elérhető amíg nem készül számla minden rendeléshez!')
-        return
+      let cb = rows[i].getElementsByTagName("td")[0].firstElementChild;
+      if (cb.checked) {
+        if (rows[i].dataset.invoice == 0 && rows[i].dataset.manualinvoice == 0 &&
+          rows[i].getElementsByTagName("td")[9].firstElementChild.value == "B") {
+          alert(
+            "Ez a funkció nem elérhető amíg nem készül számla minden rendeléshez!"
+          );
+          return;
+        }
       }
     }
 
@@ -135,7 +141,8 @@ window.addEventListener("load", function () {
     for (let i = 2; i < rows.length; i++) {
       if (!rows[i].classList.contains("tss-hidden")) {
         if (
-          rows[i].getElementsByTagName("td")[9].firstElementChild.value == "B" &&
+          rows[i].getElementsByTagName("td")[9].firstElementChild.value ==
+          "B" &&
           rows[i].getElementsByTagName("td")[0].firstElementChild.checked
         ) {
           let oid = rows[i].getElementsByTagName("td")[4].firstElementChild
@@ -262,40 +269,38 @@ window.addEventListener("load", function () {
   } // changeState
 
   function UpdateManualInvoiceFlag(data, flagValue, parentRow) {
-    let xhr = new XMLHttpRequest()
-    let method = "POST"
+    let xhr = new XMLHttpRequest();
+    let method = "POST";
     let url =
-      "index.php?option=com_virtuemart&view=csomagolo&task=statechange&job=manualinvoice&format=json"
-    xhr.open(method, url, true)
-    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+      "index.php?option=com_virtuemart&view=csomagolo&task=statechange&job=manualinvoice&format=json";
+    xhr.open(method, url, true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
     xhr.onload = function () {
       // display error message and exit function
       // in case of any error
       if (xhr.status != 200) {
-
-        alertError(xhr.status, xhr.statusText)
-        return
-
+        alertError(xhr.status, xhr.statusText);
+        return;
       } // if
 
       // create a result object by parsing the returned JSON data
-      let result = JSON.parse(xhr.response)
+      let result = JSON.parse(xhr.response);
 
       // Reload the page after the successful change
       if (result.result === "SUCCESS") {
-        loader.classList.add("tss-hidden")
-        parentRow.setAttribute('data-manualinvoice', flagValue)
+        loader.classList.add("tss-hidden");
+        parentRow.setAttribute("data-manualinvoice", flagValue);
       } else {
-        loader.classList.add("tss-hidden")
-        alert("Something went wrong")
+        loader.classList.add("tss-hidden");
+        alert("Something went wrong");
       } // if
     }; // onload
 
-    let params = "ordernumbers=" + data + "&flagvalue=" + flagValue
-    let loader = document.getElementById("loader")
-    xhr.send(params)
-    loader.classList.remove("tss-hidden")
+    let params = "ordernumbers=" + data + "&flagvalue=" + flagValue;
+    let loader = document.getElementById("loader");
+    xhr.send(params);
+    loader.classList.remove("tss-hidden");
   }
 
   // handling Dropdown box change event

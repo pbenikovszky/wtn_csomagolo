@@ -1,10 +1,11 @@
 window.addEventListener("load", function () {
-
   document.getElementById("last-updated-time").innerText = GetFormattedDate();
 
   const btnSelectAll = document.getElementById("btnSelectAll");
   const btnDeselect = document.getElementById("btnDeselect");
   const btnStateToPackage = document.getElementById("btnStateToPackage");
+  const btnActiveLink = document.getElementsByClassName('btn-toolbar')[0].children[0].children[0];
+  btnActiveLink.classList.add('active-link-button');
 
   let lastSelectedStates = [];
 
@@ -30,22 +31,17 @@ window.addEventListener("load", function () {
     let oids = [];
     let rows = document.querySelector(".orderTable").rows;
     for (let i = 2; i < rows.length; i++) {
-      if (!rows[i].classList.contains("tss-hidden")) {
-        if (
-          rows[i].getElementsByTagName("td")[9].firstElementChild.value == "C" &&
-          rows[i].getElementsByTagName("td")[0].firstElementChild.checked
-        ) {
-          let oid = rows[i].getElementsByTagName("td")[4].firstElementChild
-            .innerText;
-          oids.push(oid);
-        } // if value == "C"
-      } // if classList contains tss-hidden
+      if (rows[i].getElementsByTagName("td")[0].firstElementChild.checked) {
+        let oid = rows[i].getElementsByTagName("td")[4].firstElementChild
+          .innerText;
+        oids.push(oid);
+      } // if value == "C"
     } // for
 
     if (oids.length > 0) {
       changeState(oids.join(","), "B");
     } // if
-  }); // btnStateToGLS.click  
+  }); // btnStateToGLS.click
 
   // Function to change state of the selected orders
   function changeState(data, stateCode, isFromDropDown = false) {
@@ -102,10 +98,8 @@ window.addEventListener("load", function () {
       // display error message and exit function
       // in case of any error
       if (xhr.status != 200) {
-
         alertError(xhr.status, xhr.statusText);
         return;
-
       } // if
 
       // create a result object by parsing the returned JSON data
@@ -131,7 +125,7 @@ window.addEventListener("load", function () {
     let rows = document.querySelector(".orderTable").rows;
 
     for (let i = 2; i < rows.length; i++) {
-      let dbox = rows[i].getElementsByTagName("td")[9].firstElementChild;
+      let dbox = rows[i].getElementsByTagName("td")[8].firstElementChild;
       // store the selected elements in an array
       lastSelectedStates[i - 2] = dbox.selectedIndex;
       dbox.addEventListener("change", function (e) {

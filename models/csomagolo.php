@@ -694,13 +694,16 @@ class VirtueMartModelCsomagolo extends VmModel
         return $result;
     }
 
+    /**
+     * Get the number of orders in Confirmed status
+     */
     public function getConfirmedCount() {
         $db = JFactory::getDBO();
         $query = $db->getQuery(true);
         $query = 'SELECT COUNT(*) FROM #__virtuemart_orders 
                     WHERE order_status="C"';
         $db->setQuery($query);
-        return $db->loadResult();
+            return $db->loadResult();
     }
     
     /**

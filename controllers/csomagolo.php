@@ -125,6 +125,11 @@ class VirtuemartControllerCsomagolo extends VmController
     {
         $view = $this->getView('csomagolo', 'html');
         $view->setLayout('csomagolas');
+        $view->orderFunction = JRequest::getVar('orderfunction');
+        if ($view->orderFunction == '') {
+            $view->orderFunction = 'sortByDateDesc';
+        }
+        $view->duplicated = (JRequest::getVar('duplicated') == "yes");
         $view->display();
     }
 

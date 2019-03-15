@@ -25,9 +25,9 @@ $bar->appendButton('Link', 'checkmark-circle', 'Megerősített megrendelések', 
 $bar->appendButton('Separator');
 $bar->appendButton('Link', 'cube', 'Megrendelések csomagolásra', 'index.php?option=com_virtuemart&view=csomagolo&task=csomagolas');
 
-$sortByNameURL = "index.php?option=com_virtuemart&view=csomagolo&orderfunction=sortByNameAsc";
-$sortByDateURL = "index.php?option=com_virtuemart&view=csomagolo&orderfunction=sortByDateDesc";
-$sortByTotalURL = "index.php?option=com_virtuemart&view=csomagolo&orderfunction=sortByTotalDesc";
+$sortByNameURL = "index.php?option=com_virtuemart&view=csomagolo&task=csomagolas&orderfunction=sortByNameAsc";
+$sortByDateURL = "index.php?option=com_virtuemart&view=csomagolo&task=csomagolas&orderfunction=sortByDateDesc";
+$sortByTotalURL = "index.php?option=com_virtuemart&view=csomagolo&task=csomagolas&orderfunction=sortByTotalDesc";
 
 if ($this->duplicated) {
     $sortByNameURL .= "&duplicated=yes";
@@ -235,7 +235,7 @@ if ($this->duplicated) {
 $cnt = 0;
 foreach ($this->orders as $order) {
 
-    if ($order->order_status != 'C') {
+    if ($order->order_status != 'C' || $this->duplicated == true) {
 
         if ($this->duplicated == true && $order->isDuplicated == false) {
             continue;
@@ -312,14 +312,10 @@ foreach ($this->orders as $order) {
         }
 
         // Nyomtatás
-        if ($order->order_status == "B") {
-            echo "<td style=\"width:60px\" align=\"center\">
+        echo "<td style=\"width:60px\" align=\"center\">
                         <a href=\"javascript:void window.open('index.php?option=com_virtuemart&view=csomagolo&task=printorder&orderid=$order->virtuemart_order_id', 'win2', 'status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no');\">
                             <img src=\"./components/com_virtuemart/assets/images/icon_32/printer.png\" alt=\"Smiley face\" height=\"32\" width=\"32\">
                         </a></td>";
-        } else {
-            echo "<td style=\"width:60px\" align=\"center\"></td>";
-        }
         // Manuális számlázás
         echo "<td align=\"center\"><input type=\"checkbox\" name=\"cbManualInvoice\" value=\"$order->order_number\"";
         echo ($order->manualInvoice == true) ? " checked></td>" : "></td>";

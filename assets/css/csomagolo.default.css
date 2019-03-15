@@ -124,6 +124,14 @@ td {
     text-align: center;
 }
 
+.active-link-button {
+    background: #8CC743 !important;
+}
+
+.active-link-button:hover {
+    background: #7eb836 !important;
+}
+
 /* * Last updated text style */
 .last-updated-text {
     font-style: italic;
